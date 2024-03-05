@@ -1,0 +1,6 @@
+@Model.Application.API_HostAddress = http://localhost:5096
+
+GET {{Model.Application.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

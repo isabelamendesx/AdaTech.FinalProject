@@ -10,7 +10,7 @@ namespace Model.Domain.Entities
     {
         public static EStatus CheckStatusByRules(this ECategory category, decimal value)
         {
-            if (RejectedAny().Any(x => x(value)))
+            if (RejectAny().Any(x => x(value)))
                 return EStatus.Rejected;
 
             if (ApproveAny().Any(x => x(value)))
@@ -31,7 +31,7 @@ namespace Model.Domain.Entities
             };
         }
 
-        private static List<Func<decimal, bool>> RejectedAny()
+        private static List<Func<decimal, bool>> RejectAny()
         {
             return new List<Func<decimal, bool>>
             {

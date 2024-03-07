@@ -1,4 +1,5 @@
-
+using Microsoft.EntityFrameworkCore;
+using Model.Infra.Data.Context;
 namespace Model.Application.API
 {
     public class Program
@@ -13,6 +14,11 @@ namespace Model.Application.API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDbContext<DataContext>(options =>
+            {
+                options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
 
             var app = builder.Build();
 

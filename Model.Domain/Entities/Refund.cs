@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Model.Domain.Entities
 {
-    internal class Refund : BaseEntity
+    public class Refund : BaseEntity
     {
         public decimal Total { get; set; }
         public ECategory Category { get; set; }

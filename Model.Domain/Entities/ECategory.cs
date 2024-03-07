@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Model.Domain.Entities
 {
-    internal enum ECategory
+    public enum ECategory
     {
         Acomodation = 1,
         Trasportation = 2,

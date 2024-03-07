@@ -1,5 +1,7 @@
 
+using Microsoft.EntityFrameworkCore;
 using Model.Application.API.Filters;
+using Model.Infra.Data.Context;
 
 namespace Model.Application.API
 {
@@ -18,6 +20,11 @@ namespace Model.Application.API
 
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
+
+            builder.Services.AddDbContext<DataContext>(options =>
+            {
+                options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
 
             var app = builder.Build();
 

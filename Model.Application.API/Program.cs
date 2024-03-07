@@ -1,4 +1,6 @@
 
+using Model.Application.API.Filters;
+
 namespace Model.Application.API
 {
     public class Program
@@ -14,6 +16,9 @@ namespace Model.Application.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+            builder.Services.AddProblemDetails();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -22,6 +27,8 @@ namespace Model.Application.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseExceptionHandler();
 
             app.UseHttpsRedirection();
 

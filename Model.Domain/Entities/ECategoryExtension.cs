@@ -27,7 +27,7 @@ namespace Model.Domain.Entities
         {
             return new List<Func<decimal, bool>>
             {
-                (value) => { return value >= 100; },
+                (value) => { return value <= 100; },
             };
         }
 
@@ -43,7 +43,7 @@ namespace Model.Domain.Entities
         {
             return new Dictionary<ECategory, List<Func<decimal, bool>>>
             {
-                { ECategory.Trasportation, TransportationConditionsToApprove()},
+                { ECategory.Transportation, TransportationConditionsToApprove()},
                 { ECategory.Food, FoodConditionsToApprove()},
             };
         }

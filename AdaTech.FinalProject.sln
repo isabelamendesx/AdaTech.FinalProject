@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34601.278
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model.Domain", "Model.Domain\Model.Domain.csproj", "{909DD627-A34A-4765-9762-0C6F2A34F234}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model.Domain", "Model.Domain\Model.Domain.csproj", "{909DD627-A34A-4765-9762-0C6F2A34F234}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - Domain", "2 - Domain", "{F9137699-8A33-4490-9EE0-749998FEB04D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Application", "1 - Application", "{7910E8AD-FA8D-4479-8EDD-46E48A804617}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model.Application.API", "Model.Application.API\Model.Application.API.csproj", "{0C437897-9839-4470-9AFE-286299F0C0D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model.Application.API", "Model.Application.API\Model.Application.API.csproj", "{0C437897-9839-4470-9AFE-286299F0C0D1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 - Service", "3 - Service", "{C879B4C9-07CB-4CC0-A7C3-24FEDA347CE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model.Service", "Model.Service\Model.Service.csproj", "{B43D77A9-E4F9-4C9A-9177-D8E415110031}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model.Service", "Model.Service\Model.Service.csproj", "{B43D77A9-E4F9-4C9A-9177-D8E415110031}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Infra", "4 - Infra", "{3545493F-1EF9-4C4E-B104-AAFBE19FBE23}"
 EndProject
@@ -21,9 +21,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4.1 - Data", "4.1 - Data", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4.2 - CrossCutting", "4.2 - CrossCutting", "{A7A226DB-FCA9-478E-8489-8C31B64112B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model.Infra.Data", "Model.Infra.Data\Model.Infra.Data.csproj", "{C2232524-253E-4801-91DE-F5B893C5A9A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model.Infra.Data", "Model.Infra.Data\Model.Infra.Data.csproj", "{C2232524-253E-4801-91DE-F5B893C5A9A5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5 - Tests", "5 - Tests", "{4461B00B-51AF-4225-999A-44E51A732ECA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainTests", "DomainTests\DomainTests.csproj", "{C5790021-9CA0-4D8E-91C4-CBCF8862991B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,10 @@ Global
 		{C2232524-253E-4801-91DE-F5B893C5A9A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2232524-253E-4801-91DE-F5B893C5A9A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2232524-253E-4801-91DE-F5B893C5A9A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5790021-9CA0-4D8E-91C4-CBCF8862991B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5790021-9CA0-4D8E-91C4-CBCF8862991B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5790021-9CA0-4D8E-91C4-CBCF8862991B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5790021-9CA0-4D8E-91C4-CBCF8862991B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,6 +64,7 @@ Global
 		{E15E94B3-82A4-44EE-9E2B-67EC1129E84C} = {3545493F-1EF9-4C4E-B104-AAFBE19FBE23}
 		{A7A226DB-FCA9-478E-8489-8C31B64112B2} = {3545493F-1EF9-4C4E-B104-AAFBE19FBE23}
 		{C2232524-253E-4801-91DE-F5B893C5A9A5} = {E15E94B3-82A4-44EE-9E2B-67EC1129E84C}
+		{C5790021-9CA0-4D8E-91C4-CBCF8862991B} = {4461B00B-51AF-4225-999A-44E51A732ECA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EE6B6AC0-35B5-4FE1-BAD9-BC5F45016939}

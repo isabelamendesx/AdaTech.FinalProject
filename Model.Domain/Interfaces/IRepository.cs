@@ -10,10 +10,9 @@ namespace Model.Domain.Interfaces
 {
     public interface IRepository<T> where T : BaseEntity
     {
-        Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter = null!);
-        Task<T?> GetByParameter(Expression<Func<T, bool>> filter);
+        Task<IEnumerable<T?>> GetByParameter(Expression<Func<T, bool>> filter);
         Task<bool> AddAsync(T entity);
+        Task<T?> GetById(int Id);
         Task<bool> UpdateAsync(T entity);
-        Task<bool> Delete(T entity);
     }
 }

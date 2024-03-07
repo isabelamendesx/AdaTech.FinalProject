@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Model.Domain.Entities
 {
-    internal enum EStatus
+    public enum EStatus
     {
         Submitted = 1,
         Approved = 2,

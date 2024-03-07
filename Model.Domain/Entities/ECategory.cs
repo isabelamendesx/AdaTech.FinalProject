@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Model.Domain.Entities
 {
-    internal enum ECategory
+    public enum ECategory
     {
         Acomodation = 1,
         Trasportation = 2,
@@ -14,4 +15,5 @@ namespace Model.Domain.Entities
         Food = 4,
         Others = 5
     }
+
 }

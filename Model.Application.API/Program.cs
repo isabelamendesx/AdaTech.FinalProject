@@ -1,5 +1,8 @@
+
 using Microsoft.EntityFrameworkCore;
+using Model.Application.API.Filters;
 using Model.Infra.Data.Context;
+
 namespace Model.Application.API
 {
     public class Program
@@ -15,6 +18,9 @@ namespace Model.Application.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+            builder.Services.AddProblemDetails();
+
             builder.Services.AddDbContext<DataContext>(options =>
             {
                 options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -28,6 +34,8 @@ namespace Model.Application.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseExceptionHandler();
 
             app.UseHttpsRedirection();
 

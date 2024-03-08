@@ -22,6 +22,8 @@ namespace Model.Service.Services
         public Task<Refund> CreateRefund(Refund refund)
         {
             refund.Status = ProcessRefund(refund.Category, refund.Total);
+            refund.CreateDate = DateTime.Now;
+            refund.LastUpdate = DateTime.Now;
             return _repository.AddAsync(refund);
         }
 
@@ -39,6 +41,7 @@ namespace Model.Service.Services
                 throw new RefundNotFoundException();
 
             refund.Status = EStatus.Approved;
+            refund.LastUpdate = DateTime.Now;
 
             _repository.UpdateAsync(refund);
             return Task.FromResult(refund);
@@ -52,6 +55,7 @@ namespace Model.Service.Services
                 throw new RefundNotFoundException();
 
             refund.Status = EStatus.Rejected;
+            refund.LastUpdate = DateTime.Now;
 
             _repository.UpdateAsync(refund);
             return Task.FromResult(refund);

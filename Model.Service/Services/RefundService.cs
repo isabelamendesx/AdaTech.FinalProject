@@ -19,11 +19,11 @@ namespace Model.Service.Services
             _repository = repository;
         }
 
-       /* public Task<Refund> CreateRefund(Refund refund)
+        public Task<Refund> CreateRefund(Refund refund)
         {
             refund.Status = ProcessRefund(refund.Category, refund.Total);
             return _repository.AddAsync(refund);
-        }*/
+        }
 
 
         public Task<IEnumerable<Refund?>> GetAllByStatus(EStatus status)
@@ -40,10 +40,8 @@ namespace Model.Service.Services
 
             refund.Status = EStatus.Approved;
 
-            if (_repository.UpdateAsync(refund).Result)
-                return Task.FromResult(refund);
-
-            throw new InternalErrorException("refund update");
+            _repository.UpdateAsync(refund);
+            return Task.FromResult(refund);
         }
 
         public Task<Refund> RefuseRefund(int Id)
@@ -55,10 +53,8 @@ namespace Model.Service.Services
 
             refund.Status = EStatus.Rejected;
 
-            if (_repository.UpdateAsync(refund).Result)
-                return Task.FromResult(refund);
-
-            throw new InternalErrorException("refund update");
+            _repository.UpdateAsync(refund);
+            return Task.FromResult(refund);
         }
 
         private EStatus ProcessRefund(ECategory category, decimal value)

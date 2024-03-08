@@ -19,42 +19,46 @@ namespace Model.Service.Services
             _repository = repository;
         }
 
-        public Task<Refund> CreateRefund(Refund refund)
+        public async Task<Refund> CreateRefund(Refund refund)
         {
             refund.Status = ProcessRefund(refund.Category, refund.Total);
-            return _repository.AddAsync(refund);
+            refund.CreateDate = DateTime.Now;
+            refund.LastUpdate = DateTime.Now;
+            return await _repository.AddAsync(refund);
         }
 
 
-        public Task<IEnumerable<Refund?>> GetAllByStatus(EStatus status)
+        public async Task<IEnumerable<Refund?>> GetAllByStatus(EStatus status)
         {
-            return _repository.GetByParameter(x => x.Status == status);
+            return await _repository.GetByParameter(x => x.Status == status);
         }
 
-        public Task<Refund> ApproveRefund(int Id)
+        public async Task<Refund> ApproveRefund(int Id)
         {
-            var refund = _repository.GetById(Id).Result;
+            var refund = await _repository.GetById(Id);
 
             if (refund == null)
                 throw new RefundNotFoundException();
 
             refund.Status = EStatus.Approved;
+            refund.LastUpdate = DateTime.Now;
 
-            _repository.UpdateAsync(refund);
-            return Task.FromResult(refund);
+            await _repository.UpdateAsync(refund);
+            return refund;
         }
 
-        public Task<Refund> RefuseRefund(int Id)
+        public async Task<Refund> RefuseRefund(int Id)
         {
-            var refund = _repository.GetById(Id).Result;
+            var refund = await _repository.GetById(Id);
 
             if (refund == null)
                 throw new RefundNotFoundException();
 
             refund.Status = EStatus.Rejected;
+            refund.LastUpdate = DateTime.Now;
 
-            _repository.UpdateAsync(refund);
-            return Task.FromResult(refund);
+            await _repository.UpdateAsync(refund);
+            return refund;
         }
 
         private EStatus ProcessRefund(ECategory category, decimal value)

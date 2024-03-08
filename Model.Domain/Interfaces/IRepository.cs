@@ -11,8 +11,8 @@ namespace Model.Domain.Interfaces
     public interface IRepository<T> where T : BaseEntity
     {
         Task<IEnumerable<T?>> GetByParameter(Expression<Func<T, bool>> filter);
-        Task<bool> AddAsync(T entity);
+        Task<T> AddAsync(T entity);
         Task<T?> GetById(int Id);
-        Task<bool> UpdateAsync(T entity);
+        Task UpdateAsync(T entity);
     }
 }

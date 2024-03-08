@@ -24,20 +24,19 @@ namespace Model.Infra.Data.Repositories
         }
 
 
-        public async Task<bool> AddAsync(Refund refund)
+        public async Task<Refund> AddAsync(Refund refund)
         {
             await _context.Refunds.AddAsync(refund);
             await _context.SaveChangesAsync();
-            return true;
+            return refund;
         }
 
-        public async Task<bool> UpdateAsync(Refund refund)
+        public async Task UpdateAsync(Refund refund)
         {
             try
             {
                 _context.Update(refund);
                 await _context.SaveChangesAsync();
-                return true;
             }
             catch (DbUpdateException ex)
             {

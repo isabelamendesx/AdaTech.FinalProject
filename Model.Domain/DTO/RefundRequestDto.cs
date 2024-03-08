@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Model.Domain.DTO
 {
-    internal class RefundRequestDto
+    public class RefundRequestDto
     {
         public string Description { get; set; }
         public string Category { get; set;}

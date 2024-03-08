@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Model.Service.Services
 {
-    public class RefundService
+    public class RefundService : IRefundService
     {
         private IRepository<Refund> _repository;
 

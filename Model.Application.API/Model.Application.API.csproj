@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Model.Infra.Data\Model.Infra.Data.csproj" />
+    <ProjectReference Include="..\Model.Service\Model.Service.csproj" />
   </ItemGroup>
 
 </Project>

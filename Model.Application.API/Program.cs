@@ -1,7 +1,12 @@
 
+using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Model.Application.API.Filters;
+using Model.Domain.Entities;
+using Model.Domain.Interfaces;
 using Model.Infra.Data.Context;
+using Model.Infra.Data.Repositories;
+using Model.Service.Services;
 
 namespace Model.Application.API
 {
@@ -25,6 +30,9 @@ namespace Model.Application.API
             {
                 options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            builder.Services.AddScoped<IRefundService, RefundService>();
+            builder.Services.AddScoped<IRepository<Refund>, RefundRepository>();
 
             var app = builder.Build();
 

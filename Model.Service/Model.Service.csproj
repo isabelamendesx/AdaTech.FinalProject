@@ -8,7 +8,10 @@
 
   <ItemGroup>
     <Folder Include="Validators\" />
-    <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Model.Domain\Model.Domain.csproj" />
   </ItemGroup>
 
 </Project>

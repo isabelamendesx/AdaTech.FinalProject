@@ -9,7 +9,7 @@ namespace Model.Domain.Entities
 {
     public enum ECategory
     {
-        Acomodation = 1,
+        Accomodation = 1,
         Transportation = 2,
         Travel = 3,
         Food = 4,

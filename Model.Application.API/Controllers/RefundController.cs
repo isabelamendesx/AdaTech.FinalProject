@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Model.Service.Services;
-using Model.Domain.DTO;
+using Model.Application.DTO;
 using Model.Domain.Entities;
+using Model.Application.API.Util;
+using Model.Application.DTO.Validators;
 
 namespace Model.Application.API.Controllers
 {
@@ -18,33 +19,45 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpPost]
-        public Task<IActionResult> CreateRefund([FromBody] RefundRequestDto request)
+        public async Task<IActionResult> CreateRefund([FromBody] RefundRequestDto request)
         {
+            var refund = new Refund()
+            {
+                Description = request.Description,
+                Category = EnumParser.ParseCategory(request.Category),
+                Status = EnumParser.ParseStatus(request.Status),
+                Total = request.Total
+            };
 
+            var createdRefund = await _service.CreateRefund(refund);
+
+            return Ok(createdRefund);
         }
 
         [HttpGet]
         [Route("{status}")]
-        public Task<ActionResult<IEnumerable<Refund>>> GetAllByStatus(string status)
+        public async Task<ActionResult<IEnumerable<Refund?>>> GetAllByStatus([ValidateStatus] string status)
         {
+            var parsedStatus = EnumParser.ParseStatus(status);
 
+            return Ok(await _service.GetAllByStatus(parsedStatus));
         }
 
         [HttpPost]
         [Route("/approve/{id}")]
-        public Task<IActionResult> ApproveRefund(uint id)
+        public async Task<IActionResult> ApproveRefund([FromRoute] int id)
         {
-
+            var refund = await _service.ApproveRefund(id);
+            return Ok(refund);
         }
 
         [HttpPost]
         [Route("/refuse/{id}")]
-        public Task<IActionResult> RefuseRefund(uint id)
+        public async Task<IActionResult> RefuseRefund([FromRoute] int id)
         {
-
+            var refund = await _service.RefuseRefund(id);
+            return Ok(refund);
         }
-
-
 
     }
 }

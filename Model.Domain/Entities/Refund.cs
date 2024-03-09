@@ -9,7 +9,7 @@ namespace Model.Domain.Entities
     public class Refund : BaseEntity
     {
         public decimal Total { get; set; }
-        public int CategoryID { get; set; }
+        public Category CategoryID { get; set; }
         public string Description {  get; set; }
         public EStatus Status { get; set; }
         public DateTime CreateDate { get; set; }

@@ -8,7 +8,7 @@ namespace Model.Domain.Entities
 {
     public class RefundOperation : BaseEntity
     {
-        public int RefundID { get; set; }
+        public Refund RefundID { get; set; }
         public DateTime UpdateDate { get; set; }
         public Rule ApprovalRule { get; set; }
         public int ApprovedBy { get; set; }

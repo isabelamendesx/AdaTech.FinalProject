@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Model.Domain.Entities
+﻿namespace Model.Domain.Entities
 {
     public static class ECategoryExtension
     {
-        public static EStatus CheckStatusByRules(this ECategory category, decimal value)
+        //Deletamos o enum ECategory
+        public static EStatus CheckStatusByRules(this ECategory category, decimal value) 
         {
             if (RejectAny().Any(x => x(value)))
                 return EStatus.Rejected;

@@ -9,11 +9,14 @@ namespace Model.Domain.Entities
     public class Refund : BaseEntity
     {
         public decimal Total { get; set; }
-        public ECategory Category { get; set; }
+        public int CategoryID { get; set; }
         public string Description {  get; set; }
         public EStatus Status { get; set; }
         public DateTime CreateDate { get; set; }
-        public DateTime LastUpdate { get; set; }
+        public int OwnerID { get; set; }
+        public List<RefundOperation> Operations { get; set; }
+
+
 
         public bool UpdateStatus(EStatus status)
         {

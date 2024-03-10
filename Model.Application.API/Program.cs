@@ -28,7 +28,7 @@ namespace Model.Application.API
 
             builder.Services.AddDbContext<DataContext>(options =>
             {
-                options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
             builder.Services.AddScoped<IRefundService, RefundService>();

@@ -23,9 +23,9 @@ namespace Model.Infra.Data.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Refund>()
-                .HasOne(e => e.CategoryID)
+                .HasOne(e => e.Category)
                 .WithMany()
-                .HasForeignKey(e => e.CategoryID);D
+                .HasForeignKey(e => e.Category);D
 
             modelBuilder.Entity<Refund>()
                 .HasMany(e => e.Operations)

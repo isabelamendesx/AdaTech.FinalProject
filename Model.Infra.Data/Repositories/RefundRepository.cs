@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Model.Infra.Data.Repositories
 {
-    public class RefundRepository : IRepository<Refund>
+    public class RefundRepository : IPartialRepository<Refund>
     {
         private readonly DataContext _context;
         private readonly ILogger _logger;
@@ -22,7 +22,6 @@ namespace Model.Infra.Data.Repositories
             _context = context;
             _logger = logger;
         }
-
 
         public async Task<Refund> AddAsync(Refund refund)
         {
@@ -35,7 +34,7 @@ namespace Model.Infra.Data.Repositories
         {
             try
             {
-                _context.Update(refund);
+                _context.Refunds.Update(refund);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException ex)
@@ -45,7 +44,7 @@ namespace Model.Infra.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<Refund?>> GetByParameter(Expression<Func<Refund, bool>> filter)
+        public async Task<IEnumerable<Refund?>> GetByParameter(Expression<Func<Refund, bool>> filter = null)
         {
             try
             {

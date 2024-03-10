@@ -55,7 +55,7 @@ namespace Model.Infra.Data.Repositories
                 {
                     query = query
                          .Where(filter)
-                         .AsNoTracking();
+                         .AsNoTrackingWithIdentityResolution();
                 }
 
                 return await query.ToListAsync();

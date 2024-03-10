@@ -16,6 +16,33 @@ namespace Model.Infra.Data.Context
         }
 
         public DbSet<Refund> Refunds { get; set; }
+        public DbSet<Rule> Rules { get; set; }
+        public DbSet<RefundOperation> RefundOperations { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Refund>()
+                .HasOne(e => e.CategoryID)
+                .WithMany()
+                .HasForeignKey(e => e.CategoryID);D
+
+            modelBuilder.Entity<Refund>()
+                .HasMany(e => e.Operations)
+                .WithOne()
+                .HasForeignKey(op => op.RefundId);
+
+
+            modelBuilder.Entity<Rule>()
+                .HasOne(e => e.Category)
+                .WithMany()
+                .HasForeignKey(e => e.CategoryID);           
+
+
+            modelBuilder.Entity<RefundOperation>()
+                .HasMany(e => e.Refund)
+                .WithOne()
+                .HasForeignKey(e => e.RefundId);           
+        }
     }
 }

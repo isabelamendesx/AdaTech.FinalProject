@@ -8,9 +8,9 @@ namespace Model.Domain.Entities
 {
     public class Rule : BaseEntity
     {
-        public Category CategoryID { get; set; }
         public decimal MinValue { get; set; }
         public decimal MaxValue { get; set; }
         public bool Action { get; set; }
+        public Category Category { get; set; }
     }
 }

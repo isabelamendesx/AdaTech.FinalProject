@@ -8,10 +8,10 @@ namespace Model.Domain.Entities
 {
     public class RefundOperation : BaseEntity
     {
-        public Refund RefundID { get; set; }
         public DateTime UpdateDate { get; set; }
         public Rule ApprovalRule { get; set; }
         public int ApprovedBy { get; set; }
+        public Refund Refund { get; set; }
 
     }
 }

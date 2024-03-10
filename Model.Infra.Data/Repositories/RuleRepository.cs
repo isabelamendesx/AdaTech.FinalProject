@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Model.Infra.Data.Repositories
 {
-    public class RuleRepository : IFullRepository<Rule>
+    public class RuleRepository : IPartialRepository<Rule>
     {
         private readonly DataContext _context;
         private readonly ILogger _logger;
@@ -30,22 +30,6 @@ namespace Model.Infra.Data.Repositories
             await _context.SaveChangesAsync();
             return rule;
         }
-
-        public async Task<Rule> DeleteAsync(Rule rule)
-        {
-            try
-            {
-                _context.Rules.Remove(rule);
-                await _context.SaveChangesAsync();
-                return rule;
-            }
-            catch (DbException ex)
-            {
-                _logger.LogError(ex, "Error occurred while deleting rule with id {RuleId}.", rule.Id);
-                throw;
-            }
-        }
-
         public async Task<Rule?> GetById(int Id) => await _context.Rules.FindAsync(Id);
 
         public async Task<IEnumerable<Rule?>> GetByParameter(Expression<Func<Rule, bool>> filter = null)

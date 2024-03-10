@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Model.Domain.Interfaces
 {
-    public interface IRepository<T> where T : BaseEntity
+    public interface IPartialRepository<T> 
     {
-        Task<IEnumerable<T?>> GetByParameter(Expression<Func<T, bool>> filter);
+        Task<IEnumerable<T?>> GetByParameter(Expression<Func<T, bool>> filter = null);
         Task<T> AddAsync(T entity);
         Task<T?> GetById(int Id);
         Task UpdateAsync(T entity);

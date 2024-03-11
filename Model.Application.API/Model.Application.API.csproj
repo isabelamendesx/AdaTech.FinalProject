@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Identity\Identity.csproj" />
     <ProjectReference Include="..\Model.Domain\Model.Domain.csproj" />
     <ProjectReference Include="..\Model.Infra.Data\Model.Infra.Data.csproj" />
     <ProjectReference Include="..\Model.Service\Model.Service.csproj" />

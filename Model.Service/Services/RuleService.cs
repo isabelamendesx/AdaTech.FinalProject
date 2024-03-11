@@ -22,7 +22,7 @@ namespace Model.Service.Services
             return _repository.AddAsync(rule);
         }
 
-        public async Task<bool> DeactivateACategorysRules(int categoryId)
+        public async Task<bool> DeactivateACategorysRules(uint categoryId)
         {
             IEnumerable<Rule?> rulesToDeactivate = await _repository.GetByParameter(x => x.Category.Id == categoryId);
 
@@ -38,7 +38,7 @@ namespace Model.Service.Services
             return true;
         }
 
-        public async Task<bool> DeactivateRule(int Id)
+        public async Task<bool> DeactivateRule(uint Id)
         {
             var list = await _repository.GetByParameter(x => x.Id == Id);
 
@@ -60,7 +60,7 @@ namespace Model.Service.Services
             return list;
         }
 
-        public async Task<IEnumerable<Rule?>> GetRulesToApproveByCategoryId(int categoryId)
+        public async Task<IEnumerable<Rule?>> GetRulesToApproveByCategoryId(uint categoryId)
         {
             var list = await _repository.GetByParameter(x => x.Category.Id == categoryId);
             return list;

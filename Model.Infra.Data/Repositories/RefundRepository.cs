@@ -23,7 +23,6 @@ namespace Model.Infra.Data.Repositories
             _logger = logger;
         }
 
-
         public async Task<Refund> AddAsync(Refund refund)
         {
             await _context.Refunds.AddAsync(refund);
@@ -35,7 +34,7 @@ namespace Model.Infra.Data.Repositories
         {
             try
             {
-                _context.Update(refund);
+                _context.Refunds.Update(refund);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException ex)
@@ -45,7 +44,7 @@ namespace Model.Infra.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<Refund?>> GetByParameter(Expression<Func<Refund, bool>> filter)
+        public async Task<IEnumerable<Refund?>> GetByParameter(Expression<Func<Refund, bool>> filter = null)
         {
             try
             {
@@ -55,7 +54,7 @@ namespace Model.Infra.Data.Repositories
                 {
                     query = query
                          .Where(filter)
-                         .AsNoTracking();
+                         .AsNoTrackingWithIdentityResolution();
                 }
 
                 return await query.ToListAsync();

@@ -11,7 +11,6 @@ namespace Model.Application.DTO
 
 
         [Required(ErrorMessage = "Category is required.")]
-        [ValidateCategory]
         public string Category { get; set;}
 
 

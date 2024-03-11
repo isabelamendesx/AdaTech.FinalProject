@@ -32,7 +32,9 @@ namespace Model.Infra.Data.Repositories
             return category;
         }
 
-        public async Task<Category?> GetById(int Id) => await _context.Categories.FindAsync(Id);
+        public async Task<IEnumerable<Category?>> GetAll() => await _context.Categories.ToListAsync();
+
+        public async Task<Category?> GetById(uint Id) => await _context.Categories.FindAsync(Id);
 
         public async Task<IEnumerable<Category?>> GetByParameter(Expression<Func<Category, bool>> filter = null)
         {

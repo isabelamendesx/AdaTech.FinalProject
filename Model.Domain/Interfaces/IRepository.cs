@@ -12,7 +12,8 @@ namespace Model.Domain.Interfaces
     {
         Task<IEnumerable<T?>> GetByParameter(Expression<Func<T, bool>> filter = null);
         Task<T> AddAsync(T entity);
-        Task<T?> GetById(int Id);
+        Task<T?> GetById(uint Id);
         Task UpdateAsync(T entity);
+        Task<IEnumerable<T?>> GetAll();
     }
 }

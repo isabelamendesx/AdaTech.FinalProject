@@ -9,6 +9,8 @@ namespace Model.Service.Services
 {
     public interface IRuleService
     {
+        Task<Rule> GetById(uint id);
+        Task<IEnumerable<Rule?>> GetAll();
         Task<Rule> CreateRule(Rule rule);
         Task<IEnumerable<Rule?>> GetRulesToReproveAny();
         Task<IEnumerable<Rule?>> GetRulesToApproveAny();

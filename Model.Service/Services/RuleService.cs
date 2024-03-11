@@ -16,10 +16,17 @@ namespace Model.Service.Services
         {
             _repository = repository;
         }
-
-        public Task<Rule> CreateRule(Rule rule)
+        public async Task<Rule?> GetById(uint id)
         {
-            return _repository.AddAsync(rule);
+            return await _repository.GetById(id);
+        }
+        public async Task<IEnumerable<Rule?>> GetAll()
+        {
+            return await _repository.GetAll();
+        }
+        public async Task<Rule> CreateRule(Rule rule)
+        {
+            return await _repository.AddAsync(rule);
         }
 
         public async Task<bool> DeactivateACategorysRules(uint categoryId)

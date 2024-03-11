@@ -4,6 +4,7 @@ using Model.Application.DTO;
 using Model.Domain.Entities;
 using Model.Application.API.Util;
 using Model.Application.DTO.Validators;
+using IdempotentAPI.Filters;
 
 namespace Model.Application.API.Controllers
 {
@@ -19,6 +20,7 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpPost]
+        [Idempotent(ExpiresInMilliseconds = 10000)]
         public async Task<IActionResult> CreateRefund([FromBody] RefundRequestDto request)
         {
             var refund = new Refund()

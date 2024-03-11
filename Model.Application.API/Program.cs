@@ -1,4 +1,5 @@
 
+using IdempotentAPI.Cache.DistributedCache.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Model.Application.API.Filters;
@@ -25,6 +26,10 @@ namespace Model.Application.API
 
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
+
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddIdempotentAPIUsingDistributedCache();
+
 
             builder.Services.AddDbContext<DataContext>(options =>
             {

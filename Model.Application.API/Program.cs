@@ -32,9 +32,10 @@ namespace Model.Application.API
             });
 
             builder.Services.AddScoped<IRefundService, RefundService>();
+            builder.Services.AddScoped<IRuleService, RuleService>();
             builder.Services.AddScoped<IRepository<Refund>, RefundRepository>();
             builder.Services.AddScoped<IRepository<RefundOperation>, RefundOperationRepository>();
-            builder.Services.AddScoped<IFullRepository<Category>, CategoryRepository>();
+            builder.Services.AddScoped<IRepository<Category>, CategoryRepository>();
             builder.Services.AddScoped<IRepository<Rule>, RuleRepository>();
             builder.Services.AddScoped<ILogger, Logger<Refund>>();
 

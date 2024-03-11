@@ -11,7 +11,7 @@ namespace Model.Service.Services
     {
         Task<Refund> CreateRefund(Refund refund);
         Task<IEnumerable<Refund?>> GetAllByStatus(EStatus status);
-        Task<Refund> ApproveRefund(int Id);
-        Task<Refund> RefuseRefund(int Id);
+        Task<Refund> ApproveRefund(uint Id, uint userId);
+        Task<Refund> RefuseRefund(uint Id, uint userId);
     }
 }

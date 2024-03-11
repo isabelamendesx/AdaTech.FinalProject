@@ -1,5 +1,6 @@
 ﻿using Model.Domain.Entities;
 using Model.Domain.Interfaces;
+using Model.Service.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,13 @@ namespace Model.Service.Services
 
         public async Task<Category> CreateCategory(Category category)
         {
+            var sameNameCategories = _repository
+                .GetByParameter(
+                    x => x.Name.Equals(category.Name, StringComparison.OrdinalIgnoreCase)).Result;
+
+            if (sameNameCategories.Count() != 0)
+                throw new CategoryAlreadyRegisteredException();
+
             return await _repository.AddAsync(category);
         }
 

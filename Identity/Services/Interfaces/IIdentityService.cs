@@ -4,8 +4,8 @@ namespace Identity.Interfaces
 {
     public interface IIdentityService
     {
-        Task<UserRegisterResponse> RegisterUser(UserRegisterRequest registerUser);
+        Task<UserRegisterResponse> RegisterUser(UserRegisterRequest userRegister);
 
-        Task<UserLoginResponse> Login(UserLoginRequest loginUser);
+        Task<UserLoginResponse> Login(UserLoginRequest userLogin);
     }
 }

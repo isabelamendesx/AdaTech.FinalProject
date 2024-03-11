@@ -17,9 +17,12 @@ namespace Model.Service.Services
         private IRepository<RefundOperation> _operationRepository;
         private IRuleService _ruleService;
 
-        public RefundService(IRepository<Refund> repository)
+        public RefundService(IRepository<Refund> repository, 
+            IRepository<RefundOperation> operationRepository, IRuleService ruleService)
         {
             _repository = repository;
+            _operationRepository = operationRepository;
+            _ruleService = ruleService;
         }
 
         public async Task<Refund> CreateRefund(Refund refund)

@@ -2,7 +2,7 @@
 {
     public class UserRegisterResponse
     {
-        public bool Sucess { get; private set; }
+        public bool Success { get; private set; }
         public List<string> Errors { get; private set; }
 
         public UserRegisterResponse()
@@ -10,8 +10,8 @@
             Errors = new List<string>();
         }
 
-         public UserRegisterResponse(bool sucess = true) : this()
-            => Sucess = sucess;
+         public UserRegisterResponse(bool success = true) : this()
+            => Success = success;
 
         public void AddErrors(IEnumerable<string> errors) 
             => Errors.AddRange(errors);

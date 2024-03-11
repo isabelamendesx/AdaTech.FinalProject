@@ -25,20 +25,23 @@ namespace Identity.Services
             _jwtOptions = jwtOptions.Value;
         }
 
-        public Task<UserLoginResponse> Login(UserLoginRequest loginUser)
-        {
-            throw new NotImplementedException();
-        }
+       
 
-        public Task<UserRegisterResponse> RegisterUser(UserRegisterRequest registerUser, UserRegisterRequest userRegisterRequest)
+        public Task<UserRegisterResponse> RegisterUser(UserRegisterRequest registerUser)
         {
 
             var identityUser = new IdentityUser
             {
-                UserName = userRegisterRequest.Email,
-                Email = userRegisterRequest.Email,
+                UserName = userRegister.Email,
+                Email = userRegister.Email,
+                EmailConfirmed = true
 
-            }
+            };
+            throw new NotImplementedException();
+        }
+
+        public Task<UserLoginResponse> Login(UserLoginRequest loginUser)
+        {
             throw new NotImplementedException();
         }
     }

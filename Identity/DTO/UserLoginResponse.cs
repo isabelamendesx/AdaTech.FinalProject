@@ -4,7 +4,7 @@ namespace Identity.DTO
 {
     public class UserLoginResponse
     {
-        public bool Sucess { get; set; }
+        public bool Success { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string Token { get; private set; }
@@ -17,14 +17,14 @@ namespace Identity.DTO
         public UserLoginResponse() =>
             Erros = new List<string>();
 
-        public UserLoginResponse(bool sucess = true) : this() 
-            => Sucess = sucess;
+        public UserLoginResponse(bool success = true) : this() 
+            => Success = success;
 
-        public UserLoginResponse(bool sucess, string token, DateTime expirationDate) : this() 
+        public UserLoginResponse(bool success, string token, DateTime expirationDate) : this() 
         {
             Token = token;
             ExpirationDate = expirationDate;
-            Sucess = sucess;
+            Success = success;
           
         }
 

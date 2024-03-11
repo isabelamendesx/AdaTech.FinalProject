@@ -12,5 +12,6 @@ namespace Model.Domain.Entities
         public decimal MaxValue { get; set; }
         public bool Action { get; set; }
         public Category Category { get; set; }
+        public bool IsActive { get; set; }
     }
 }

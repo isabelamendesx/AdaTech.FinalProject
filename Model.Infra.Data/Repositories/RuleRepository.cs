@@ -30,7 +30,7 @@ namespace Model.Infra.Data.Repositories
             await _context.SaveChangesAsync();
             return rule;
         }
-        public async Task<Rule?> GetById(int Id) => await _context.Rules.FindAsync(Id);
+        public async Task<Rule?> GetById(uint Id) => await _context.Rules.FindAsync(Id);
 
         public async Task<IEnumerable<Rule?>> GetByParameter(Expression<Func<Rule, bool>> filter = null)
         {

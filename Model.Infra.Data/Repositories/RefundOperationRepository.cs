@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Model.Infra.Data.Repositories
 {
-    public class RefundOperationRepository : IPartialRepository<RefundOperation>
+    public class RefundOperationRepository : IRepository<RefundOperation>
     {
         private readonly DataContext _context;
         private readonly ILogger _logger;

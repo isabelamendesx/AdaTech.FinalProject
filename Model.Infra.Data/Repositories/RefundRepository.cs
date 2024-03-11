@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Model.Infra.Data.Repositories
 {
-    public class RefundRepository : IPartialRepository<Refund>
+    public class RefundRepository : IRepository<Refund>
     {
         private readonly DataContext _context;
         private readonly ILogger _logger;

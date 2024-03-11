@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Model.Infra.Data.Repositories
 {
-    public class RuleRepository : IPartialRepository<Rule>
+    public class RuleRepository : IRepository<Rule>
     {
         private readonly DataContext _context;
         private readonly ILogger _logger;

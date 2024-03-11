@@ -12,9 +12,9 @@ namespace Model.Service.Services
 {
     public class RefundService : IRefundService
     {
-        private IPartialRepository<Refund> _repository;
+        private IRepository<Refund> _repository;
 
-        public RefundService(IPartialRepository<Refund> repository)
+        public RefundService(IRepository<Refund> repository)
         {
             _repository = repository;
         }

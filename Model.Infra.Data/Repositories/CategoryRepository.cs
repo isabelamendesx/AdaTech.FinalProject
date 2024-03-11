@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Model.Infra.Data.Repositories
 {
-    public class CategoryRepository : IFullRepository<Category>
+    public class CategoryRepository : IRepository<Category>
     {
         private readonly DataContext _context;
         private readonly ILogger _logger;
@@ -30,21 +30,6 @@ namespace Model.Infra.Data.Repositories
             await _context.Categories.AddAsync(category);
             await _context.SaveChangesAsync();
             return category;
-        }
-
-        public async Task<Category> DeleteAsync(Category category)
-        {
-            try
-            {
-                _context.Categories.Remove(category);
-                await _context.SaveChangesAsync();
-                return category;
-            }
-            catch (DbException ex)
-            {
-                _logger.LogError(ex, "Error occurred while deleting Category with id {CategoryId}.", category.Id);
-                throw;
-            }
         }
 
         public async Task<Category?> GetById(int Id) => await _context.Categories.FindAsync(Id);

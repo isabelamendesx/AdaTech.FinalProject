@@ -32,10 +32,10 @@ namespace Model.Application.API
             });
 
             builder.Services.AddScoped<IRefundService, RefundService>();
-            builder.Services.AddScoped<IPartialRepository<Refund>, RefundRepository>();
-            builder.Services.AddScoped<IPartialRepository<RefundOperation>, RefundOperationRepository>();
+            builder.Services.AddScoped<IRepository<Refund>, RefundRepository>();
+            builder.Services.AddScoped<IRepository<RefundOperation>, RefundOperationRepository>();
             builder.Services.AddScoped<IFullRepository<Category>, CategoryRepository>();
-            builder.Services.AddScoped<IPartialRepository<Rule>, RuleRepository>();
+            builder.Services.AddScoped<IRepository<Rule>, RuleRepository>();
             builder.Services.AddScoped<ILogger, Logger<Refund>>();
 
             var app = builder.Build();

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Model.Domain.Interfaces
 {
-    public interface IPartialRepository<T> 
+    public interface IRepository<T> 
     {
         Task<IEnumerable<T?>> GetByParameter(Expression<Func<T, bool>> filter = null);
         Task<T> AddAsync(T entity);

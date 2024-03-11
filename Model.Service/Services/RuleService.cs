@@ -56,19 +56,19 @@ namespace Model.Service.Services
 
         public async Task<IEnumerable<Rule?>> GetRulesToApproveAny()
         {
-            var list = await _repository.GetByParameter(x => x.Category.Id == 0 && x.Action == true);
+            var list = await _repository.GetByParameter(x => x.Category.Id == 0 && x.Action == true && x.IsActive == true);
             return list;
         }
 
         public async Task<IEnumerable<Rule?>> GetRulesToApproveByCategoryId(uint categoryId)
         {
-            var list = await _repository.GetByParameter(x => x.Category.Id == categoryId);
+            var list = await _repository.GetByParameter(x => x.Category.Id == categoryId && x.IsActive == true);
             return list;
         }
 
         public async Task<IEnumerable<Rule?>> GetRulesToReproveAny()
         {
-            var list = await _repository.GetByParameter(x => x.Category.Id == 0 && x.Action == false);
+            var list = await _repository.GetByParameter(x => x.Category.Id == 0 && x.Action == false && x.IsActive == true);
             return list;
         }
     }

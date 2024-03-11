@@ -12,8 +12,8 @@ namespace Model.Service.Services
         Task<Rule> CreateRule(Rule rule);
         Task<IEnumerable<Rule?>> GetRulesToReproveAny();
         Task<IEnumerable<Rule?>> GetRulesToApproveAny();
-        Task<IEnumerable<Rule?>> GetRulesToApproveByCategoryId(int categoryId);
-        Task<bool> DeactivateRule(int Id);
-        Task<bool> DeactivateACategorysRules(int categoryId);
+        Task<IEnumerable<Rule?>> GetRulesToApproveByCategoryId(uint categoryId);
+        Task<bool> DeactivateRule(uint Id);
+        Task<bool> DeactivateACategorysRules(uint categoryId);
     }
 }

@@ -16,14 +16,13 @@ namespace Model.Domain.Entities
         public Category Category { get; set; }
         public List<RefundOperation> Operations { get; set; }
 
-
+        public Refund()
+        {
+            Operations = new List<RefundOperation>();
+        }
 
         public bool UpdateStatus(EStatus status)
         {
-            if(this.Status == EStatus.Approved || this.Status == EStatus.Rejected)
-                return false;
-
-
             this.Status = status;
             return true;
         }

@@ -44,6 +44,10 @@ namespace Model.Service.Services
             return await _repository.AddAsync(refund);
         }
 
+        public async Task<IEnumerable<Refund?>> GetAll()
+        {
+            return await _repository.GetByParameter();
+        }
 
         public async Task<IEnumerable<Refund?>> GetAllByStatus(EStatus status)
         {

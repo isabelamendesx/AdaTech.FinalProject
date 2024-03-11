@@ -68,6 +68,5 @@ namespace Model.Infra.Data.Repositories
 
         public async Task<Refund?> GetById(uint Id) => await _context.Refunds.FirstOrDefaultAsync(x => x.Id == Id);
 
-        public async Task<IEnumerable<Refund?>> GetAll() => await _context.Refunds.ToListAsync();
     }
 }

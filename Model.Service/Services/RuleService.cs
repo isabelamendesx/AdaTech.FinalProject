@@ -22,7 +22,7 @@ namespace Model.Service.Services
         }
         public async Task<IEnumerable<Rule?>> GetAll()
         {
-            return await _repository.GetAll();
+            return await _repository.GetByParameter();
         }
         public async Task<Rule> CreateRule(Rule rule)
         {

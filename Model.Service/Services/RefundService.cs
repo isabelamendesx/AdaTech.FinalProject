@@ -17,9 +17,12 @@ namespace Model.Service.Services
         private IRepository<RefundOperation> _operationRepository;
         private IRuleService _ruleService;
 
-        public RefundService(IRepository<Refund> repository)
+        public RefundService(IRepository<Refund> repository, 
+            IRepository<RefundOperation> operationRepository, IRuleService ruleService)
         {
             _repository = repository;
+            _operationRepository = operationRepository;
+            _ruleService = ruleService;
         }
 
         public async Task<Refund> CreateRefund(Refund refund)
@@ -44,6 +47,10 @@ namespace Model.Service.Services
             return await _repository.AddAsync(refund);
         }
 
+        public async Task<IEnumerable<Refund?>> GetAll()
+        {
+            return await _repository.GetByParameter();
+        }
 
         public async Task<IEnumerable<Refund?>> GetAllByStatus(EStatus status)
         {

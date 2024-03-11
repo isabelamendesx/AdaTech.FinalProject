@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Model.Application.API.DTO
+namespace Identity.DTO
 {
     public class UserLoginResponse
     {

@@ -1,12 +1,12 @@
-﻿using Model.Application.API.DTO;
-using Model.Application.API.Interfaces.Services;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Identity.Interfaces;
+using Identity.DTO;
 
 namespace Identity.Services
 {

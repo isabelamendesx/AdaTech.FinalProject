@@ -1,7 +1,7 @@
 ﻿using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
 
-namespace Model.Application.API.DTO
+namespace Identity.DTO
 {
     public class UserLoginRequest
     {

@@ -1,6 +1,6 @@
-﻿using Model.Application.API.DTO;
+﻿using Identity.DTO;
 
-namespace Model.Application.API.Interfaces.Services
+namespace Identity.Interfaces
 {
     public interface IIdentityService
     {

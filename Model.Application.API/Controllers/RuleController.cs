@@ -10,23 +10,25 @@ namespace Model.Application.API.Controllers
     public class RuleController : ControllerBase
     {
         private readonly IRuleService _service;
+        private readonly ICategoryService _categoryService;
 
-        public RuleController(IRuleService service)
+        public RuleController(IRuleService service, ICategoryService categoryService)
         {
             _service = service;
+            _categoryService = categoryService;
         }
 
         [HttpGet]
         [Route("/{id}")]
-        public IActionResult GetById([FromRoute] uint id)
+        public async Task<IActionResult> GetById([FromRoute] uint id)
         {
-            return Ok(_service.GetById(id));
+            return Ok(await _service.GetById(id));
         }
         
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            return Ok(_service.GetAll());
+            return Ok(await _service.GetAll());
         }
 
         [HttpPost]
@@ -34,14 +36,14 @@ namespace Model.Application.API.Controllers
         {
             var action = request.Action.Equals("Approve", StringComparison.OrdinalIgnoreCase) ? true : false;
 
-            //var category = _categoryService.GetCategoryById(request.CategoryId);
+            var category = _categoryService.GetById(request.CategoryId);
 
             Rule rule = new Rule()
             {
                 MinValue = request.MinValue,
                 MaxValue = request.MaxValue,
                 Action = action,
-                //Category = category,
+                Category = category,
                 IsActive = true
             };
 

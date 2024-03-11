@@ -22,13 +22,13 @@ namespace Model.Application.API.Controllers
         [Route("/{id}")]
         public async Task<IActionResult> GetById([FromRoute] uint id)
         {
-            return Ok(await _service.GetById(id));
+            return Ok(/*await _service.GetById(id)*/);
         }
         
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _service.GetAll());
+            return Ok(/*await _service.GetBy()*/);
         }
 
         [HttpPost]
@@ -43,7 +43,7 @@ namespace Model.Application.API.Controllers
                 MinValue = request.MinValue,
                 MaxValue = request.MaxValue,
                 Action = action,
-                Category = category,
+                //Category = category,
                 IsActive = true
             };
 

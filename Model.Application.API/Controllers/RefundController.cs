@@ -26,7 +26,7 @@ namespace Model.Application.API.Controllers
             var refund = new Refund()
             {
                 Description = request.Description,
-                Category = new Category(request.Category),
+                Category = new Category{ Name = request.Category},
                 Status = EnumParser.ParseStatus(request.Status),
                 Total = request.Total
             };

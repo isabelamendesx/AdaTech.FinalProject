@@ -1,5 +1,6 @@
 
 using IdempotentAPI.Cache.DistributedCache.Extensions.DependencyInjection;
+using Identity;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Model.Application.API.Filters;
@@ -32,6 +33,11 @@ namespace Model.Application.API
 
 
             builder.Services.AddDbContext<DataContext>(options =>
+            {
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            builder.Services.AddDbContext<IdentityDataContext>(options =>
             {
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
             });

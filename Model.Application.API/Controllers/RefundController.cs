@@ -24,7 +24,7 @@ namespace Model.Application.API.Controllers
             var refund = new Refund()
             {
                 Description = request.Description,
-                Category = EnumParser.ParseCategory(request.Category),
+                Category = new Category(request.Category),
                 Status = EnumParser.ParseStatus(request.Status),
                 Total = request.Total
             };
@@ -44,18 +44,18 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpPost]
-        [Route("/approve/{id}")]
-        public async Task<IActionResult> ApproveRefund([FromRoute] int id)
+        [Route("/approve/{id}/{userId}")]
+        public async Task<IActionResult> ApproveRefund([FromRoute] uint id, uint userId)
         {
-            var refund = await _service.ApproveRefund(id);
+            var refund = await _service.ApproveRefund(id, userId);
             return Ok(refund);
         }
 
         [HttpPost]
-        [Route("/refuse/{id}")]
-        public async Task<IActionResult> RefuseRefund([FromRoute] int id)
+        [Route("/refuse/{id}/{userId}")]
+        public async Task<IActionResult> RefuseRefund([FromRoute] uint id, uint userId)
         {
-            var refund = await _service.RefuseRefund(id);
+            var refund = await _service.RefuseRefund(id, userId);
             return Ok(refund);
         }
 

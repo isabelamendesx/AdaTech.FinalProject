@@ -31,7 +31,9 @@ namespace Model.Infra.Data.Repositories
             return operation;
         }
 
-        public async Task<RefundOperation?> GetById(int Id) => await _context.RefundOperations.FindAsync(Id);
+        public async Task<IEnumerable<RefundOperation?>> GetAll() => await _context.RefundOperations.ToListAsync();
+
+        public async Task<RefundOperation?> GetById(uint Id) => await _context.RefundOperations.FindAsync(Id);
 
         public async Task<IEnumerable<RefundOperation?>> GetByParameter(Expression<Func<RefundOperation, bool>> filter = null)
         {

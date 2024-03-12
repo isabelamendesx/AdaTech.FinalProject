@@ -14,7 +14,7 @@ namespace Model.Application.API.Controllers
         public UserController(IIdentityService identityService) 
             => _identityService = identityService;
 
-        [HttpPost("register")] //ver se quer deixar em PT
+        [HttpPost("register")] 
         public async Task<ActionResult<UserRegisterResponse>> Register(UserRegisterRequest userRegister)
         {
             if (!ModelState.IsValid)

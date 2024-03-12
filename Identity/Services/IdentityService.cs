@@ -72,7 +72,7 @@ namespace Identity.Services
         {
             var user = await _userManager.FindByEmailAsync(email);
             var tokenClaims = await GetClaimsAndRoles(user);
-            var expirationDate = DateTime.Now.AddSeconds(_jwtOptions.Expiration);
+            var expirationDate = DateTime.Now.AddSeconds(_jwtOptions.AccessTokenExpiration);
 
             var jwt = new JwtSecurityToken(
                 issuer: _jwtOptions.Issuer,

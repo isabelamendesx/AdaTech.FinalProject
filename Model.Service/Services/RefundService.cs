@@ -2,6 +2,7 @@
 using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
 using Model.Service.Services.DTO;
+using Model.Service.Services.Util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -104,122 +105,63 @@ namespace Model.Service.Services
             return refund;
         }
 
-        private ProcessRefundResult ProcessRefund(uint categoryId, decimal value)
+        private async Task<ProcessRefundResult> ProcessRefund(uint categoryId, decimal value)
         {
-            var reproveAny = GetReproveAny().Select(rule => rule(value)).FirstOrDefault(result => result.funcResult);
+            var rulesThatReproveAny = await _ruleService.GetRulesToReproveAny();
 
-            if (reproveAny.rule != null)
-                return new ProcessRefundResult() { Status = EStatus.Rejected, Rule = reproveAny.rule };
+            Rule? reproveAnyResult = GetFirstMatchingRule(rulesThatReproveAny, value);
+
+            if (reproveAnyResult is not null)
+                return new ProcessRefundResult() { 
+                    Status = EStatus.Rejected, 
+                    Rule = reproveAnyResult
+                };
 
 
-            var approveAny = GetApproveAny().Select(rule => rule(value)).FirstOrDefault(result => result.funcResult);
+            var rulesThatApproveAny = await _ruleService.GetRulesToApproveAny();
 
-            if (approveAny.rule != null)
-                return new ProcessRefundResult() { Status = EStatus.Approved, Rule = approveAny.rule };
+            Rule? approveAnyResult = GetFirstMatchingRule(rulesThatApproveAny, value);
 
-            var approveByCategory = GetRulesToApproveByCategoryId(categoryId)
-                .Select(rule => rule(value))
-                .FirstOrDefault(result => result.funcResult);
+            if (approveAnyResult is not null)
+                return new ProcessRefundResult()
+                {
+                    Status = EStatus.Approved,
+                    Rule = approveAnyResult
+                };
 
-            if (approveByCategory.rule != null)
-                return new ProcessRefundResult() { Status = EStatus.Approved, Rule = approveAny.rule };
+
+
+            var rulesThatApproveByCategory = await _ruleService
+                .GetRulesToApproveByCategoryId(categoryId);
+
+            Rule? approveByCategoryResult = GetFirstMatchingRule(rulesThatApproveByCategory, value);
+
+            if (approveByCategoryResult is not null)
+                return new ProcessRefundResult()
+                {
+                    Status = EStatus.Approved,
+                    Rule = approveByCategoryResult
+                };
+
+           
 
             return new ProcessRefundResult() { Status = EStatus.UnderEvaluation, Rule = null };
         }
 
-        private List<Func<decimal, (bool funcResult, Rule rule)>> GetReproveAny()
+        private Rule? GetFirstMatchingRule(IEnumerable<Rule?> rules, decimal value)
         {
-            var rules = _ruleService.GetRulesToReproveAny().Result;
+            var rulesFuncs = RuleToFuncConverter.ConvertListOfRules(rules);
 
-            List<Func<decimal, (bool, Rule)>> reproveAny = new List<Func<decimal, (bool, Rule)>>();
+            var rulesFuncsResult = rulesFuncs
+                .Select(rule => rule(value))
+                .FirstOrDefault(result => result.FuncResult);
 
-            foreach (var rule in rules)
-            {
-                Func<decimal, (bool, Rule)> ruleToReprove;
+            if (rulesFuncsResult is not null)
+                return rulesFuncsResult.Rule;
+            
 
-                if (rule.MaxValue == null)
-                {
-                    ruleToReprove = (x) =>
-                    {
-                        return (x >= rule.MinValue, rule);
-                    };
-                }
-                else
-                {
-                    ruleToReprove = (x) =>
-                    {
-                        return (x >= rule.MinValue && x <= rule.MaxValue, rule);
-                    };
-                }
-
-                reproveAny.Add(ruleToReprove);
-            }
-
-            return reproveAny;
-        }
-
-        private List<Func<decimal, (bool funcResult, Rule rule)>> GetApproveAny()
-        {
-            var rules = _ruleService.GetRulesToApproveAny().Result;
-
-            List<Func<decimal, (bool funcResult, Rule rule)>> reproveAny = new List<Func<decimal, (bool funcResult, Rule rule)>>();
-
-            foreach (var rule in rules)
-            {
-                Func<decimal, (bool funcResult, Rule rule)> ruleToReprove;
-
-                if (rule.MaxValue == null)
-                {
-                    ruleToReprove = (x) =>
-                    {
-                        return (x >= rule.MinValue, rule);
-                    };
-                }
-                else
-                {
-                    ruleToReprove = (x) =>
-                    {
-                        return (x >= rule.MinValue && x <= rule.MaxValue, rule);
-                    };
-                }
-
-                reproveAny.Add(ruleToReprove);
-            }
-
-            return reproveAny;
-        }
-        
-        private List<Func<decimal, (bool funcResult, Rule rule)>> GetRulesToApproveByCategoryId(uint categoryId)
-        {
-            var rules = _ruleService.GetRulesToApproveByCategoryId(categoryId).Result;
-
-            List<Func<decimal, (bool funcResult, Rule rule)>> reproveAny = new List<Func<decimal, (bool funcResult, Rule rule)>>();
-
-            foreach (var rule in rules)
-            {
-                Func<decimal, (bool funcResult, Rule rule)> ruleToReprove;
-
-                if (rule.MaxValue == null)
-                {
-                    ruleToReprove = (x) =>
-                    {
-                        return (x >= rule.MinValue, rule);
-                    };
-                }
-                else
-                {
-                    ruleToReprove = (x) =>
-                    {
-                        return (x >= rule.MinValue && x <= rule.MaxValue, rule);
-                    };
-                }
-
-                reproveAny.Add(ruleToReprove);
-            }
-
-            return reproveAny;
-        }
-
+            return null;
+        }   
 
     }
 }

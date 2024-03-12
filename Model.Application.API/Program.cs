@@ -61,6 +61,18 @@ namespace Model.Application.API
             builder.Services.AddScoped<IRepository<Rule>, RuleRepository>();
             builder.Services.AddScoped<ILogger, Logger<Refund>>();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowOrigin",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
+                    });
+            });
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -69,6 +81,8 @@ namespace Model.Application.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors("AllowOrigin");
 
             app.UseExceptionHandler();
 

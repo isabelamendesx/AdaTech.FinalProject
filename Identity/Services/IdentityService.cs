@@ -80,7 +80,7 @@ namespace Identity.Services
             var expirationDate = DateTime.Now.AddSeconds(_jwtOptions.Expiration);
 
             var jwt = new JwtSecurityToken(
-                issuer: _jwtOptions.Issue,
+                issuer: _jwtOptions.Issuer,
                 audience: _jwtOptions.Audience,
                 claims: tokenClaims,
                 notBefore: DateTime.Now,

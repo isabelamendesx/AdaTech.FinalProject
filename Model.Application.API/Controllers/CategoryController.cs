@@ -44,7 +44,6 @@ namespace Model.Application.API.Controllers
             return Ok(await _service.GetById(id));
         }
 
-        [Authorize(Roles = Roles.Admin)]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {

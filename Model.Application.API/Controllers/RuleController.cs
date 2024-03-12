@@ -27,13 +27,13 @@ namespace Model.Application.API.Controllers
         [Route("rule/{id}")]
         public async Task<IActionResult> GetById([FromRoute] uint id)
         {
-            return Ok(/*await _service.GetById(id)*/);
+            return Ok(await _service.GetById(id));
         }
         
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok("Rules");
+            return Ok(await _service.GetAll());
         }
 
         [HttpPost]
@@ -43,14 +43,14 @@ namespace Model.Application.API.Controllers
         {
             var action = request.Action.Equals("Approve", StringComparison.OrdinalIgnoreCase) ? true : false;
 
-            var category = _categoryService.GetById(request.CategoryId);
+            var category = await _categoryService.GetById(request.CategoryId);
 
             Rule rule = new Rule()
             {
                 MinValue = request.MinValue,
                 MaxValue = request.MaxValue,
                 Action = action,
-                //Category = category,
+                Category = category,
                 IsActive = true
             };
 

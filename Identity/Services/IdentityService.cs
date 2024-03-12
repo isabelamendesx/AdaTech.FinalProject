@@ -1,10 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 using Identity.Interfaces;
 using Identity.DTO;
 using System.IdentityModel.Tokens.Jwt;
@@ -76,7 +71,7 @@ namespace Identity.Services
         private async Task<UserLoginResponse> GenerateToken(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            var tokenClaims = await GetClaims(user);
+            var tokenClaims = await GetClaimsAndRoles(user);
             var expirationDate = DateTime.Now.AddSeconds(_jwtOptions.Expiration);
 
             var jwt = new JwtSecurityToken(
@@ -97,7 +92,7 @@ namespace Identity.Services
                 );
         }
 
-        private async Task<IList<Claim>> GetClaims(IdentityUser user)
+        private async Task<IList<Claim>> GetClaimsAndRoles(IdentityUser user)
         {
             var claims = await _userManager.GetClaimsAsync(user);
             var roles = await _userManager.GetRolesAsync(user);
@@ -106,7 +101,7 @@ namespace Identity.Services
             claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
             claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
             claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, DateTime.Now.ToString()));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToString()));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()));
 
             foreach (var role in roles)
                 claims.Add(new Claim("role", role));

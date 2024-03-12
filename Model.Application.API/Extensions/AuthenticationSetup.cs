@@ -1,67 +1,75 @@
 ﻿using Identity.Configuration;
+using Identity.Constants;
+using Identity.PolicyRequirements;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace Model.Application.API.Extensions
+namespace Model.Application.API.Extensions;
+
+public static class AuthenticationSetup
 {
-    public static class AuthenticationSetup
+    public static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        public static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
+        var jwtAppSettingsOptions = configuration.GetSection(nameof(JwtOptions));
+        var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration.GetSection("JwtOptions:SecurityKey").Value));
+
+        services.Configure<JwtOptions>(options =>
         {
-            var jwtAppSettingsOptions = configuration.GetSection(nameof(JwtOptions));
-            var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration.GetSection("JwtOptions:SecurityKey").Value));
+            options.Issuer = jwtAppSettingsOptions[nameof(JwtOptions.Issuer)];
+            options.Audience = jwtAppSettingsOptions[nameof(JwtOptions.Audience)];
+            options.SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512);
+            options.Expiration = int.Parse(jwtAppSettingsOptions[nameof(JwtOptions.Expiration)] ?? "0");
+        });
 
-            services.Configure<JwtOptions>(options =>
-            {
-                options.Issuer = jwtAppSettingsOptions[nameof(JwtOptions.Issuer)];
-                options.Audience = jwtAppSettingsOptions[nameof(JwtOptions.Audience)];
-                options.SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512);
-                options.Expiration = int.Parse(jwtAppSettingsOptions[nameof(JwtOptions.Expiration)] ?? "0");
-            });
+        services.Configure<IdentityOptions>(options =>
+        {
+            options.Password.RequireDigit = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireNonAlphanumeric = true;
+            options.Password.RequiredLength = 6;
+        });
 
-            services.Configure<IdentityOptions>(options =>
-            {
-                options.Password.RequireDigit = true;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireLowercase = true;
-                options.Password.RequireNonAlphanumeric = true;
-                options.Password.RequiredLength = 6;
-            });
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = configuration.GetSection("JwtOptions:Issuer").Value,
 
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidIssuer = configuration.GetSection("JwtOptions:Issuer").Value,
+            ValidateAudience = true,
+            ValidAudience = configuration.GetSection("JwtOptions:Audience").Value,
 
-                ValidateAudience = true,
-                ValidAudience = configuration.GetSection("JwtOptions:Audience").Value,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = securityKey,
 
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = securityKey,
+            RequireExpirationTime = true,
+            ValidateLifetime = true,
 
-                RequireExpirationTime = true,
-                ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
+        };
 
-                ClockSkew = TimeSpan.Zero
-            };
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = tokenValidationParameters;
+        });
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = tokenValidationParameters;
-            });
-
-
-
-
-
-
-
-        }
     }
-}
+        public static void AddAuthorizationPolicies(this IServiceCollection services)
+        {
+            services.AddSingleton<IAuthorizationHandler, BusinessHourHandler>();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(Policies.BusinessHour, policy =>
+                    policy.Requirements.Add(new BusinessHoursRequirement()));
+            });
+        }
+
+
+    }
+

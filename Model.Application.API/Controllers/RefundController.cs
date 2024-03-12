@@ -5,11 +5,13 @@ using Model.Domain.Entities;
 using Model.Application.API.Util;
 using Model.Application.DTO.Validators;
 using IdempotentAPI.Filters;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Model.Application.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class RefundController : ControllerBase
     {
         private readonly IRefundService _service;

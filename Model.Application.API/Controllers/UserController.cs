@@ -1,5 +1,6 @@
 ﻿using Identity.DTO;
 using Identity.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Model.Application.API.Controllers
@@ -10,7 +11,8 @@ namespace Model.Application.API.Controllers
     {
         private IIdentityService _identityService;
 
-        public UserController(IIdentityService identityService) => _identityService = identityService;
+        public UserController(IIdentityService identityService) 
+            => _identityService = identityService;
 
         [HttpPost("register")] //ver se quer deixar em PT
         public async Task<ActionResult<UserRegisterResponse>> Register(UserRegisterRequest userRegister)
@@ -22,7 +24,7 @@ namespace Model.Application.API.Controllers
             if (result.Success)
                 return Ok(result);
             else if (result.Errors.Count > 0)
-                return BadRequest();
+                return BadRequest(result);
 
             return StatusCode(StatusCodes.Status500InternalServerError);
         }

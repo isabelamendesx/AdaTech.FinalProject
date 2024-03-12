@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Identity.PolicyRequirements
 {
-    internal class BusinessHourHandler: AuthorizationHandler<BusinessHoursRequirement>
+    public class BusinessHourHandler : AuthorizationHandler<BusinessHoursRequirement>
     {
-        protected override Task HandlerRequirementAsync(AuthorizationHandlerContext context, BusinessHoursRequirement requirement)
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, BusinessHoursRequirement requirement)
         {
             var currentTime = TimeOnly.FromDateTime(DateTime.Now);
-            if (currentTime.Hour >= 8 && currentTime <= 18)
+            if (currentTime.Hour >= 8 && currentTime.Hour <= 18)
                 context.Succeed(requirement);
 
             return Task.CompletedTask;

@@ -2,6 +2,7 @@
 using IdempotentAPI.Cache.DistributedCache.Extensions.DependencyInjection;
 using Identity;
 using Microsoft.AspNetCore.DataProtection.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Model.Application.API.Filters;
 using Model.Domain.Entities;
@@ -25,6 +26,13 @@ namespace Model.Application.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            //Estas duas linhas que eu estou deixando comentada, não dá pra usar aqui. Tem que refatorar.
+            //Estão no min 13:00 do vídeo 4. Ficava na Startup, mas eu não sei como usar aqui
+
+            //builder.Services.AddAuthorization(Configuration);
+            //builder.Services.RegisterServices(Configuration);
+
+
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
 
@@ -41,6 +49,11 @@ namespace Model.Application.API
             {
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            builder.Services.AddDefaultIdentity<IdentityUser>()
+                            .AddRoles<IdentityRole>()
+                            .AddEntityFrameworkStores<IdentityDataContext>()
+                            .AddDefaultTokenProviders();
 
             builder.Services.AddScoped<IRefundService, RefundService>();
             builder.Services.AddScoped<IRuleService, RuleService>();
@@ -73,3 +86,4 @@ namespace Model.Application.API
         }
     }
 }
+

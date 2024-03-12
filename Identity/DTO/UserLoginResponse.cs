@@ -12,10 +12,10 @@ namespace Identity.DTO
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 
         public DateTime? ExpirationDate { get; private set; }
-        public List<string> Erros { get; private set; }
+        public List<string> Errors { get; private set; }
 
         public UserLoginResponse() =>
-            Erros = new List<string>();
+            Errors = new List<string>();
 
         public UserLoginResponse(bool success = true) : this() 
             => Success = success;
@@ -27,7 +27,11 @@ namespace Identity.DTO
             Success = success;
           
         }
+        public void AddError(string error) =>
+            Errors.Add(error);
 
+        public void AddErros(IEnumerable<string> erros) =>
+            Errors.AddRange(erros);
 
 
     }

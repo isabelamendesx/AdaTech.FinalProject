@@ -25,9 +25,7 @@ namespace Identity.Services
             _jwtOptions = jwtOptions.Value;
         }
 
-       
-
-        public Task<UserRegisterResponse> RegisterUser(UserRegisterRequest registerUser)
+        public async Task<UserRegisterResponse> RegisterUser(UserRegisterRequest userRegister)
         {
 
             var identityUser = new IdentityUser
@@ -37,12 +35,38 @@ namespace Identity.Services
                 EmailConfirmed = true
 
             };
-            throw new NotImplementedException();
+            var result = await _userManager.CreateAsync(identityUser, userRegister.Password);
+            if (result.Succeeded)
+                await _userManager.SetLockoutEnabledAsync(identityUser, false);
+
+            var userRegisterResponse = new UserRegisterResponse(result.Succeeded);
+            if (!result.Succeeded && result.Errors.Count() > 0)
+                userRegisterResponse.AddErrors(result.Errors.Select(r => r.Description));
+
+
+            return userRegisterResponse;
         }
 
-        public Task<UserLoginResponse> Login(UserLoginRequest loginUser)
+        public async Task<UserLoginResponse> Login(UserLoginRequest userLogin)
         {
-            throw new NotImplementedException();
+            var result = await _signInManager.PasswordSignInAsync(userLogin.Email, userLogin.Password, false, true);
+                //if (result.Succeeded)
+                //   return await GenerateToken(userLogin.Email);
+
+            var userLoginResponse = new UserLoginResponse(result.Succeeded);
+            if (!result.Succeeded)
+            {
+                if (result.IsLockedOut)
+                    userLoginResponse.AddError("This account is blocked");
+                else if (result.IsNotAllowed)
+                    userLoginResponse.AddError("This account does not have permission to log in");
+                else if (result.RequiresTwoFactor)
+                    userLoginResponse.AddError("This account does not have permission to log in");
+                else userLoginResponse.AddError("Username or password is incorrect");
+
+            }
+
+            return userLoginResponse;
         }
     }
 }

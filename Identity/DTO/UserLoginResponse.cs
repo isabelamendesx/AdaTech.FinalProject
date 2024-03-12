@@ -4,29 +4,25 @@ namespace Identity.DTO
 {
     public class UserLoginResponse
     {
-        public bool Success { get; set; }
+        public bool Success => Errors.Count == 0;
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public string Token { get; private set; }
+        public string AcessToken { get; private set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string RefreshToken { get; private set; }
 
-        public DateTime? ExpirationDate { get; private set; }
         public List<string> Errors { get; private set; }
 
         public UserLoginResponse() =>
             Errors = new List<string>();
 
-        public UserLoginResponse(bool success = true) : this() 
-            => Success = success;
-
-        public UserLoginResponse(bool success, string token, DateTime expirationDate) : this() 
+        public UserLoginResponse(bool success, string accessToken, string refreshToken) : this() 
         {
-            Token = token;
-            ExpirationDate = expirationDate;
-            Success = success;
-          
+            AcessToken = accessToken;
+            RefreshToken = refreshToken;          
         }
+
         public void AddError(string error) =>
             Errors.Add(error);
 

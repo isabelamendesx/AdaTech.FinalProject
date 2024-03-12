@@ -19,27 +19,14 @@ namespace Model.Service.Services.Util
             {
                 Func<decimal, RuleFuncResult> ruleFunc;
 
-                if (rule.MaxValue == null)
+                ruleFunc = (x) =>
                 {
-                    ruleFunc = (x) =>
+                    return new RuleFuncResult
                     {
-                        return new RuleFuncResult { 
-                            FuncResult = x >= rule.MinValue, 
-                            Rule = rule 
-                        };
+                        FuncResult = x >= rule.MinValue && x <= rule.MaxValue,
+                        Rule = rule
                     };
-                }
-                else
-                {
-                    ruleFunc = (x) =>
-                    {
-                        return new RuleFuncResult
-                        {
-                            FuncResult = x >= rule.MinValue && x <= rule.MaxValue,
-                            Rule = rule
-                        };
-                    };
-                }
+                };
 
                 funcs.Add(ruleFunc);
             }

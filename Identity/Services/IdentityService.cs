@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Identity.Interfaces;
 using Identity.DTO;
+using System.IdentityModel.Tokens.Jwt;
+using Identity.Configuration;
+using Microsoft.Extensions.Options;
+using System.Security.Claims;
 
 namespace Identity.Services
 {
@@ -18,7 +22,7 @@ namespace Identity.Services
 
         public IdentityService(SignInManager<IdentityUser> signInManager, 
                                UserManager<IdentityUser> userManager, 
-                               JwtOptions jwtOptions)
+                               IOptions<JwtOptions> jwtOptions)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -50,8 +54,8 @@ namespace Identity.Services
         public async Task<UserLoginResponse> Login(UserLoginRequest userLogin)
         {
             var result = await _signInManager.PasswordSignInAsync(userLogin.Email, userLogin.Password, false, true);
-                //if (result.Succeeded)
-                //   return await GenerateToken(userLogin.Email);
+            if (result.Succeeded)
+                return await GenerateToken(userLogin.Email);
 
             var userLoginResponse = new UserLoginResponse(result.Succeeded);
             if (!result.Succeeded)
@@ -68,5 +72,48 @@ namespace Identity.Services
 
             return userLoginResponse;
         }
+
+        private async Task<UserLoginResponse> GenerateToken(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            var tokenClaims = await GetClaims(user);
+            var expirationDate = DateTime.Now.AddSeconds(_jwtOptions.Expiration);
+
+            var jwt = new JwtSecurityToken(
+                issuer: _jwtOptions.Issue,
+                audience: _jwtOptions.Audience,
+                claims: tokenClaims,
+                notBefore: DateTime.Now,
+                expires: expirationDate,
+                signingCredentials: _jwtOptions.SigningCredentials);
+
+            var token = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+            return new UserLoginResponse
+                (
+                    success: true,
+                    token: token,
+                    expirationDate: expirationDate
+                );
+        }
+
+        private async Task<IList<Claim>> GetClaims(IdentityUser user)
+        {
+            var claims = await _userManager.GetClaimsAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, DateTime.Now.ToString()));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToString()));
+
+            foreach (var role in roles)
+                claims.Add(new Claim("role", role));
+
+            return claims;
+        }
+
+
     }
 }

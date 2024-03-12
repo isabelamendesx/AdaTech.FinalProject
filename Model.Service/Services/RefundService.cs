@@ -28,7 +28,7 @@ namespace Model.Service.Services
 
         public async Task<Refund> CreateRefund(Refund refund)
         {
-            var processResult = ProcessRefund(refund.Category.Id, refund.Total);
+            var processResult = await ProcessRefund(refund.Category.Id, refund.Total);
             refund.Status = processResult.Status;
             refund.CreateDate = DateTime.Now;
 

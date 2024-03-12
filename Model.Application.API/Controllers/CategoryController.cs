@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Identity.Constants;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Model.Application.API.Attributes;
 using Model.Application.API.DTO;
 using Model.Application.API.Util;
 using Model.Application.DTO;
@@ -9,6 +12,8 @@ namespace Model.Application.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
+    [Authorize(Policy = Policies.BusinessHour)]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _service;
@@ -19,6 +24,7 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> CreateCategory([FromBody] CategoryRequestDTO request)
         {
             var category = new Category()
@@ -32,7 +38,7 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpGet]
-        [Route("/{id}")]
+        [Route("/category/{id}")]
         public async Task<IActionResult> GetById([FromRoute] uint id)
         {
             return Ok(await _service.GetById(id));
@@ -41,7 +47,11 @@ namespace Model.Application.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(_service.GetAll());
+            var categories = await _service.GetAll();
+
+            if(categories is not null) return Ok(categories);
+
+            return NoContent();
         }
 
     }

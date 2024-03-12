@@ -1,13 +1,19 @@
 
 using IdempotentAPI.Cache.DistributedCache.Extensions.DependencyInjection;
+using Identity;
+using Identity.Interfaces;
+using Identity.Services;
 using Microsoft.AspNetCore.DataProtection.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Model.Application.API.Extensions;
 using Model.Application.API.Filters;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Infra.Data.Context;
 using Model.Infra.Data.Repositories;
 using Model.Service.Services;
+using Way2Commerce.Api.Extensions;
 
 namespace Model.Application.API
 {
@@ -17,13 +23,12 @@ namespace Model.Application.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwagger();
+            builder.Services.AddAuthorizationPolicies();
+            builder.Services.AddAuthentication(builder.Configuration);
 
+            //builder.Services.RegisterServices();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
 
@@ -36,6 +41,17 @@ namespace Model.Application.API
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            builder.Services.AddDbContext<IdentityDataContext>(options =>
+            {
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            builder.Services.AddDefaultIdentity<IdentityUser>()
+                            .AddRoles<IdentityRole>()
+                            .AddEntityFrameworkStores<IdentityDataContext>()
+                            .AddDefaultTokenProviders();
+
+            builder.Services.AddScoped<IIdentityService, IdentityService>();
             builder.Services.AddScoped<IRefundService, RefundService>();
             builder.Services.AddScoped<IRuleService, RuleService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
@@ -58,8 +74,9 @@ namespace Model.Application.API
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            app.UseAuthentication();
 
+            app.UseAuthorization();
 
             app.MapControllers();
 
@@ -67,3 +84,4 @@ namespace Model.Application.API
         }
     }
 }
+

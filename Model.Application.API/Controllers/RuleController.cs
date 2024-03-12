@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Identity.Constants;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Model.Application.API.Attributes;
 using Model.Application.API.DTO;
 using Model.Domain.Entities;
 using Model.Service.Services;
@@ -7,6 +10,8 @@ namespace Model.Application.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
+    [Authorize(Policy = Policies.BusinessHour)]
     public class RuleController : ControllerBase
     {
         private readonly IRuleService _service;
@@ -19,7 +24,7 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpGet]
-        [Route("/{id}")]
+        [Route("rule/{id}")]
         public async Task<IActionResult> GetById([FromRoute] uint id)
         {
             return Ok(await _service.GetById(id));
@@ -32,11 +37,13 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.Admin)]
+        [ClaimsAuthorize(ClaimTypes.Rule, "Create")]
         public async Task<Rule> CreateRule(RuleRequestDTO request)
         {
             var action = request.Action.Equals("Approve", StringComparison.OrdinalIgnoreCase) ? true : false;
 
-            var category = _categoryService.GetById(request.CategoryId);
+            var category = await _categoryService.GetById(request.CategoryId);
 
             Rule rule = new Rule()
             {

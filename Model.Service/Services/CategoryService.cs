@@ -18,26 +18,26 @@ namespace Model.Service.Services
             _repository = repository;
         }
 
-        public async Task<Category> CreateCategory(Category category)
+        public async Task<Category> CreateCategory(Category category, CancellationToken ct)
         {
-            var sameNameCategories = _repository
-                .GetByParameter(
-                    x => x.Name.Equals(category.Name, StringComparison.OrdinalIgnoreCase)).Result;
+            var sameNameCategories = await _repository
+                .GetByParameter(ct,
+                    x => x.Name.Equals(category.Name, StringComparison.OrdinalIgnoreCase));
 
             if (sameNameCategories.Count() != 0)
                 throw new CategoryAlreadyRegisteredException();
 
-            return await _repository.AddAsync(category);
+            return await _repository.AddAsync(category, ct);
         }
 
-        public async Task<IEnumerable<Category?>> GetAll()
+        public async Task<IEnumerable<Category?>> GetAll(CancellationToken ct)
         {
-            return await _repository.GetByParameter();
+            return await _repository.GetByParameter(ct);
         }
 
-        public async Task<Category?> GetById(uint id)
+        public async Task<Category?> GetById(uint id, CancellationToken ct)
         {
-            return await _repository.GetById(id);
+            return await _repository.GetById(id, ct);
         }
     }
 }

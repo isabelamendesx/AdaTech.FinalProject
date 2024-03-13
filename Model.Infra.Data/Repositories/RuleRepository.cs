@@ -24,15 +24,15 @@ namespace Model.Infra.Data.Repositories
             _context = context;
         }
 
-        public async Task<Rule> AddAsync(Rule rule)
+        public async Task<Rule> AddAsync(Rule rule, CancellationToken ct)
         {
             await _context.Rules.AddAsync(rule);
             await _context.SaveChangesAsync();
             return rule;
         }
-        public async Task<Rule?> GetById(uint Id) => await _context.Rules.FindAsync(Id);
+        public async Task<Rule?> GetById(uint Id, CancellationToken ct) => await _context.Rules.FindAsync(Id);
 
-        public async Task<IEnumerable<Rule?>> GetByParameter(Expression<Func<Rule, bool>> filter = null)
+        public async Task<IEnumerable<Rule?>> GetByParameter(CancellationToken ct, Expression<Func<Rule, bool>> filter = null)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace Model.Infra.Data.Repositories
             }
         }
 
-        public async Task UpdateAsync(Rule rule)
+        public async Task UpdateAsync(Rule rule, CancellationToken ct)
         {
             try
             {

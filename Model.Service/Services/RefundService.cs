@@ -26,9 +26,9 @@ namespace Model.Service.Services
             _ruleService = ruleService;
         }
 
-        public async Task<Refund> CreateRefund(Refund refund)
+        public async Task<Refund> CreateRefund(Refund refund, CancellationToken ct)
         {
-            var processResult = await ProcessRefund(refund.Category.Id, refund.Total);
+            var processResult = await ProcessRefund(refund.Category.Id, refund.Total, ct);
             refund.Status = processResult.Status;
             refund.CreateDate = DateTime.Now;
 
@@ -42,25 +42,25 @@ namespace Model.Service.Services
 
             refund.Operations.Add(op);
 
-            await _repository.UpdateAsync(refund);
-            await _operationRepository.AddAsync(op);
+            await _repository.UpdateAsync(refund, ct);
+            await _operationRepository.AddAsync(op, ct);
 
-            return await _repository.AddAsync(refund);
+            return await _repository.AddAsync(refund, ct);
         }
 
-        public async Task<IEnumerable<Refund?>> GetAll()
+        public async Task<IEnumerable<Refund?>> GetAll(CancellationToken ct)
         {
-            return await _repository.GetByParameter();
+            return await _repository.GetByParameter(ct);
         }
 
-        public async Task<IEnumerable<Refund?>> GetAllByStatus(EStatus status)
+        public async Task<IEnumerable<Refund?>> GetAllByStatus(EStatus status, CancellationToken ct)
         {
-            return await _repository.GetByParameter(x => x.Status == status);
+            return await _repository.GetByParameter(ct, (x => x.Status == status));
         }
 
-        public async Task<Refund> ApproveRefund(uint Id, uint userId)
+        public async Task<Refund> ApproveRefund(uint Id, uint userId, CancellationToken ct)
         {
-            var refund = await _repository.GetById(Id);
+            var refund = await _repository.GetById(Id, ct);
 
             if (refund == null)
                 throw new RefundNotFoundException();
@@ -76,14 +76,14 @@ namespace Model.Service.Services
             };
             refund.Operations.Add(op);
 
-            await _repository.UpdateAsync(refund);
-            await _operationRepository.AddAsync(op);
+            await _repository.UpdateAsync(refund, ct);
+            await _operationRepository.AddAsync(op, ct);
             return refund;
         }
 
-        public async Task<Refund> RefuseRefund(uint Id, uint userId)
+        public async Task<Refund> RefuseRefund(uint Id, uint userId, CancellationToken ct)
         {
-            var refund = await _repository.GetById(Id);
+            var refund = await _repository.GetById(Id, ct);
 
             if (refund == null)
                 throw new RefundNotFoundException();
@@ -99,15 +99,15 @@ namespace Model.Service.Services
             };
             refund.Operations.Add(op);
 
-            await _repository.UpdateAsync(refund);
-            await _operationRepository.AddAsync(op);
+            await _repository.UpdateAsync(refund, ct);
+            await _operationRepository.AddAsync(op, ct);
 
             return refund;
         }
 
-        private async Task<ProcessRefundResult> ProcessRefund(uint categoryId, decimal value)
+        private async Task<ProcessRefundResult> ProcessRefund(uint categoryId, decimal value, CancellationToken ct)
         {
-            var rulesThatReproveAny = await _ruleService.GetRulesToReproveAny();
+            var rulesThatReproveAny = await _ruleService.GetRulesToReproveAny(ct);
 
             Rule? reproveAnyResult = GetFirstMatchingRule(rulesThatReproveAny, value);
 
@@ -118,7 +118,7 @@ namespace Model.Service.Services
                 };
 
 
-            var rulesThatApproveAny = await _ruleService.GetRulesToApproveAny();
+            var rulesThatApproveAny = await _ruleService.GetRulesToApproveAny(ct);
 
             Rule? approveAnyResult = GetFirstMatchingRule(rulesThatApproveAny, value);
 
@@ -132,7 +132,7 @@ namespace Model.Service.Services
 
 
             var rulesThatApproveByCategory = await _ruleService
-                .GetRulesToApproveByCategoryId(categoryId);
+                .GetRulesToApproveByCategoryId(categoryId, ct);
 
             Rule? approveByCategoryResult = GetFirstMatchingRule(rulesThatApproveByCategory, value);
 

@@ -1,11 +1,13 @@
 ﻿using Identity.Constants;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
 using Model.Application.API.Attributes;
 using Model.Application.API.DTO;
 using Model.Application.API.Util;
 using Model.Application.DTO;
 using Model.Domain.Entities;
+using Model.Domain.Interfaces;
 using Model.Service.Services;
 
 namespace Model.Application.API.Controllers
@@ -13,7 +15,7 @@ namespace Model.Application.API.Controllers
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    [Authorize(Policy = Policies.BusinessHour)]
+   // [Authorize(Policy = Policies.BusinessHour)]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _service;
@@ -24,15 +26,18 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = Roles.Manager)]
         public async Task<IActionResult> CreateCategory([FromBody] CategoryRequestDTO request)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var category = new Category()
             {
-                Name = request.Name,
+                Name = request.Name
             };
 
-            var createdCategory = await _service.CreateCategory(category);
+            var createdCategory = await _service.CreateCategory(category, HttpContext.RequestAborted);
 
             return Ok(createdCategory);
         }
@@ -41,17 +46,15 @@ namespace Model.Application.API.Controllers
         [Route("/category/{id}")]
         public async Task<IActionResult> GetById([FromRoute] uint id)
         {
-            return Ok(await _service.GetById(id));
+            var category = await _service.GetById(id, HttpContext.RequestAborted);      
+            return category is not null ? Ok(category) : NoContent();
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var categories = await _service.GetAll();
-
-            if(categories is not null) return Ok(categories);
-
-            return NoContent();
+            var categories = await _service.GetAll(HttpContext.RequestAborted);           
+            return categories is not null ? Ok(categories) : NoContent();
         }
 
     }

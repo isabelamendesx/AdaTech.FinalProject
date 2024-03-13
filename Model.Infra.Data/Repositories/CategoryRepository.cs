@@ -25,16 +25,16 @@ namespace Model.Infra.Data.Repositories
             _context = context;
         }
 
-        public async Task<Category> AddAsync(Category category)
+        public async Task<Category> AddAsync(Category category, CancellationToken ct)
         {
             await _context.Categories.AddAsync(category);
             await _context.SaveChangesAsync();
             return category;
         }
 
-        public async Task<Category?> GetById(uint Id) => await _context.Categories.FindAsync(Id);
+        public async Task<Category?> GetById(uint Id, CancellationToken ct) => await _context.Categories.FindAsync(Id);
 
-        public async Task<IEnumerable<Category?>> GetByParameter(Expression<Func<Category, bool>> filter = null)
+        public async Task<IEnumerable<Category?>> GetByParameter(CancellationToken ct, Expression<Func<Category, bool>> filter = null)
         {
             try
             {
@@ -56,7 +56,7 @@ namespace Model.Infra.Data.Repositories
             }
         }
 
-        public async Task UpdateAsync(Category category)
+        public async Task UpdateAsync(Category category, CancellationToken ct)
         {
             try
             {

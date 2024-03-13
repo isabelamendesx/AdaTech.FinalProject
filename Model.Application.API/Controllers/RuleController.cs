@@ -5,6 +5,8 @@ using Model.Application.API.Attributes;
 using Model.Application.API.DTO;
 using Model.Domain.Entities;
 using Model.Service.Services;
+using System.Data;
+using Rule = Model.Domain.Entities.Rule;
 
 namespace Model.Application.API.Controllers
 {
@@ -27,23 +29,31 @@ namespace Model.Application.API.Controllers
         [Route("rule/{id}")]
         public async Task<IActionResult> GetById([FromRoute] uint id)
         {
-            return Ok(await _service.GetById(id));
+            var rule = await _service.GetById(id);
+            return rule is not null ? Ok(rule) : NotFound();
         }
         
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _service.GetAll());
+            var rules = await _service.GetAll();
+            return rules is not null ? Ok(rules) : NotFound();
         }
 
         [Authorize(Roles = Roles.Manager)]
         [ClaimsAuthorize(ClaimTypes.Rule, "Create")]
         [HttpPost]
-        public async Task<Rule> CreateRule(RuleRequestDTO request)
+        public async Task<IActionResult> CreateRule(RuleRequestDTO request)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var action = request.Action.Equals("Approve", StringComparison.OrdinalIgnoreCase) ? true : false;
 
             var category = await _categoryService.GetById(request.CategoryId);
+
+            if (category is null) 
+                return BadRequest("Category not found");
 
             Rule rule = new Rule()
             {
@@ -54,7 +64,9 @@ namespace Model.Application.API.Controllers
                 IsActive = true
             };
 
-            return await _service.CreateRule(rule);
+            var createdRule = await _service.CreateRule(rule);
+
+            return Ok(createdRule);
         }
 
         [Authorize(Roles = Roles.Manager)]

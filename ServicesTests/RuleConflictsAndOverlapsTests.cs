@@ -28,6 +28,15 @@ namespace ServicesTests
                 RuleConflictAndOverlapChecker.CheckForConflictAndOverlap(newRule, existingRules));
         }
 
+        [Theory]
+        [MemberData(nameof(ShouldNotThrowException))]
+        public void should_not_throw_exception(Rule newRule, List<Rule?> existingRules)
+        {
+            var exception = Record.Exception(() => 
+                RuleConflictAndOverlapChecker.CheckForConflictAndOverlap(newRule, existingRules));
+            Assert.Null(exception);
+        }
+
         public static IEnumerable<object[]> ShouldDetectOverlap()
         {
             return new[]
@@ -106,6 +115,48 @@ namespace ServicesTests
                                 MinValue = 1400,
                                 MaxValue = decimal.MaxValue,
                                 Action = false
+                            }
+                        }
+                }
+            };
+        }
+
+        public static IEnumerable<object[]> ShouldNotThrowException()
+        {
+            return new[]
+            {
+                new object[]{
+                    new Rule()
+                        {
+                            MinValue = 1400,
+                            MaxValue = decimal.MaxValue,
+                            Action = false
+                        },
+                     new List<Rule?>()
+                        {
+                            new Rule()
+                            {
+                                MinValue = 0,
+                                MaxValue = 100,
+                                Action = true
+                            }
+                        }
+                } ,
+                new object[]{
+                    new Rule()
+                        {
+                            MinValue = 0,
+                            MaxValue = 100,
+                            Action = true
+                        },
+                     new List<Rule?>()
+                        {
+                            new Rule()
+                            {
+
+                                MinValue = 1400,
+                                MaxValue = decimal.MaxValue,
+                                Action = true
                             }
                         }
                 }

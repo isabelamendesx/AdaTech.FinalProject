@@ -24,6 +24,7 @@ namespace Model.Application.API
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddControllers();
+            builder.Services.AddRequestTimeouts();
             builder.Services.AddSwagger();
             builder.Services.AddAuthorizationPolicies();
             builder.Services.AddAuthentication(builder.Configuration);
@@ -85,6 +86,8 @@ namespace Model.Application.API
             app.UseExceptionHandler();
 
             app.UseHttpsRedirection();
+
+            app.UseRequestTimeouts();
 
             app.UseAuthentication();
 

@@ -1,4 +1,5 @@
 ﻿using Model.Domain.Entities;
+using Rule = Model.Domain.Entities.Rule;
 using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
 using System;
@@ -7,6 +8,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Model.Service.Services.Util;
 
 namespace Model.Service.Services
 {
@@ -31,6 +33,16 @@ namespace Model.Service.Services
         }
         public async Task<Rule> CreateRule(Rule rule, CancellationToken ct)
         {
+            List<Rule?> existingRules;
+
+            if (rule.Category.Id == 0)
+                existingRules = (List<Rule?>)await _repository.GetByParameter(ct);
+            else
+                existingRules = (List<Rule?>)await _repository.GetByParameter(ct, 
+                    x => x.Category.Id == 0 || x.Category.Id == rule.Category.Id);
+
+            RuleConflictAndOverlapChecker.CheckForConflictAndOverlap(rule, existingRules);
+
             return await _repository.AddAsync(rule, ct);
         }
 

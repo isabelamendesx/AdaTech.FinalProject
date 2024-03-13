@@ -27,8 +27,6 @@ namespace Model.Application.API
             builder.Services.AddSwagger();
             builder.Services.AddAuthorizationPolicies();
             builder.Services.AddAuthentication(builder.Configuration);
-
-            //builder.Services.RegisterServices();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
 

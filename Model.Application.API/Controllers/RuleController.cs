@@ -32,14 +32,14 @@ namespace Model.Application.API.Controllers
         public async Task<IActionResult> GetById([FromRoute] uint id)
         {
             var rule = await _service.GetById(id, HttpContext.RequestAborted);
-            return rule is not null ? Ok(rule) : NotFound();
+            return Ok(rule);
         }
         
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var rules = await _service.GetAll(HttpContext.RequestAborted);
-            return rules is not null ? Ok(rules) : NotFound();
+            return Ok(rules);
         }
 
         [Authorize(Roles = Roles.Manager)]

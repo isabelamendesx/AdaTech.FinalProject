@@ -6,6 +6,7 @@ using Model.Service.Services.Util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,8 +63,8 @@ namespace Model.Service.Services
         {
             var refund = await _repository.GetById(Id, ct);
 
-            if (refund == null)
-                throw new RefundNotFoundException();
+            if (refund is null)
+                throw new ResourceNotFoundException("Refund");
 
             refund.Status = EStatus.Approved;
             RefundOperation op = new RefundOperation()
@@ -85,8 +86,8 @@ namespace Model.Service.Services
         {
             var refund = await _repository.GetById(Id, ct);
 
-            if (refund == null)
-                throw new RefundNotFoundException();
+            if (refund is null)
+                throw new ResourceNotFoundException("Refund");
 
             refund.Status = EStatus.Rejected;
 

@@ -3,6 +3,7 @@ using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,7 +38,10 @@ namespace Model.Service.Services
 
         public async Task<Category?> GetById(uint id, CancellationToken ct)
         {
-            return await _repository.GetById(id, ct);
+            var category = await _repository.GetById(id, ct);
+            if (category is null)
+                throw new ResourceNotFoundException("Category");
+            return category;
         }
     }
 }

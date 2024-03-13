@@ -47,14 +47,14 @@ namespace Model.Application.API.Controllers
         public async Task<IActionResult> GetById([FromRoute] uint id)
         {
             var category = await _service.GetById(id, HttpContext.RequestAborted);      
-            return category is not null ? Ok(category) : NoContent();
+            return Ok(category);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var categories = await _service.GetAll(HttpContext.RequestAborted);           
-            return categories is not null ? Ok(categories) : NoContent();
+            return Ok(categories);
         }
 
     }

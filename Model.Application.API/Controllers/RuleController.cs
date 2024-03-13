@@ -36,9 +36,9 @@ namespace Model.Application.API.Controllers
             return Ok(await _service.GetAll());
         }
 
-        [HttpPost]
-        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = Roles.Manager)]
         [ClaimsAuthorize(ClaimTypes.Rule, "Create")]
+        [HttpPost]
         public async Task<Rule> CreateRule(RuleRequestDTO request)
         {
             var action = request.Action.Equals("Approve", StringComparison.OrdinalIgnoreCase) ? true : false;
@@ -57,6 +57,7 @@ namespace Model.Application.API.Controllers
             return await _service.CreateRule(rule);
         }
 
+        [Authorize(Roles = Roles.Manager)]
         [HttpPost]
         [Route("/deactivate/{id}")]
         public async Task<IActionResult> DeactivateRule([FromRoute] uint Id)
@@ -66,7 +67,8 @@ namespace Model.Application.API.Controllers
                 return Ok();
             return BadRequest();
         }
-        
+
+        [Authorize(Roles = Roles.Manager)]
         [HttpPost]
         [Route("/deactivate/category/{categoryId}")]
         public async Task<IActionResult> DeactivateACategorysRules([FromRoute] uint categoryId)

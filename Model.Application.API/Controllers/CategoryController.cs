@@ -24,7 +24,7 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = Roles.Manager)]
         public async Task<IActionResult> CreateCategory([FromBody] CategoryRequestDTO request)
         {
             var category = new Category()

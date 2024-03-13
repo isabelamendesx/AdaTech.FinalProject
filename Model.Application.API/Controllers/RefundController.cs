@@ -6,6 +6,7 @@ using Model.Application.API.Util;
 using Model.Application.DTO.Validators;
 using IdempotentAPI.Filters;
 using Microsoft.AspNetCore.Authorization;
+using Identity.Constants;
 
 namespace Model.Application.API.Controllers
 {
@@ -49,6 +50,7 @@ namespace Model.Application.API.Controllers
 
         [HttpPost]
         [Route("/approve/{id}/{userId}")]
+        [Authorize(Roles = Roles.Manager)]
         public async Task<IActionResult> ApproveRefund([FromRoute] uint id, uint userId)
         {
             var refund = await _service.ApproveRefund(id, userId);
@@ -57,6 +59,7 @@ namespace Model.Application.API.Controllers
 
         [HttpPost]
         [Route("/refuse/{id}/{userId}")]
+        [Authorize(Roles = Roles.Manager + "," + Roles.Supervisor)]
         public async Task<IActionResult> RefuseRefund([FromRoute] uint id, uint userId)
         {
             var refund = await _service.RefuseRefund(id, userId);

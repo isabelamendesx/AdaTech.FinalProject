@@ -39,28 +39,19 @@ namespace Model.Service.Services.Util
         }
 
         private static bool IsRulePartiallyContainedWithin(Rule rule, Rule newRule)
-        {            
-            if (rule.MinValue <= newRule.MaxValue && newRule.MinValue <= rule.MaxValue)
-                return true;
-
-            if (newRule.MinValue <= rule.MaxValue && rule.MinValue <= newRule.MaxValue)
-                return true;
-
-            return false;
+        {
+            return rule.MinValue <= newRule.MaxValue && newRule.MinValue <= rule.MaxValue;
         }
 
         private static bool IsRuleContainedWithin(Rule rule, Rule newRule)
         {
-            //new rule is contained within rule
-            if (rule.MinValue >= newRule.MinValue && rule.MaxValue >= newRule.MaxValue)
+            if (rule.MinValue >= newRule.MinValue && rule.MaxValue <= newRule.MaxValue)
                 return true;
 
-            //rule is contained within new rule
-            if (newRule.MinValue >= rule.MinValue && newRule.MaxValue >= rule.MaxValue)
+            if (newRule.MinValue >= rule.MinValue && newRule.MaxValue <= rule.MaxValue)
                 return true;
 
             return false;
         }
-
     }
 }

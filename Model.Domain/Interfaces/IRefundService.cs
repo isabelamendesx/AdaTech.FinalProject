@@ -9,9 +9,9 @@ namespace Model.Domain.Interfaces
 {
     public interface IRefundService
     {
-        Task<Refund> CreateRefund(Refund refund);
-        Task<IEnumerable<Refund?>> GetAllByStatus(EStatus status);
-        Task<Refund> ApproveRefund(uint Id, uint userId);
-        Task<Refund> RefuseRefund(uint Id, uint userId);
+        Task<Refund> CreateRefund(Refund refund, CancellationToken ct);
+        Task<IEnumerable<Refund?>> GetAllByStatus(EStatus status, CancellationToken ct);
+        Task<Refund> ApproveRefund(uint Id, uint userId, CancellationToken ct);
+        Task<Refund> RefuseRefund(uint Id, uint userId, CancellationToken ct);
     }
 }

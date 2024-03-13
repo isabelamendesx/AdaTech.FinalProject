@@ -9,8 +9,8 @@ namespace Model.Domain.Interfaces
 {
     public interface ICategoryService
     {
-        Task<Category?> GetById(uint id);
-        Task<IEnumerable<Category?>> GetAll();
-        Task<Category> CreateCategory(Category category);
+        Task<Category?> GetById(uint id, CancellationToken ct);
+        Task<IEnumerable<Category?>> GetAll(CancellationToken ct);
+        Task<Category> CreateCategory(Category category, CancellationToken ct);
     }
 }

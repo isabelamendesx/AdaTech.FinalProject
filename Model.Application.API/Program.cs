@@ -26,8 +26,10 @@ namespace Model.Application.API
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services
-                .AddServices(builder.Configuration)
-                .AddInterfaces();
+                .AddConfig(builder.Configuration)
+                .AddDB(builder.Configuration)
+                .AddInterfaces()
+                .UseTimeouts();
 
             var app = builder.Build();
 

@@ -16,19 +16,11 @@ using Way2Commerce.Api.Extensions;
 
 namespace Model.Application.API.Extensions
 {
-    public static class ServiceSetup
+    public static class AplicationSetup
     {
-        public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration config)
+        public static IServiceCollection AddConfig(this IServiceCollection services, IConfiguration config) 
         {
-            services.AddControllers();
-            services.AddRequestTimeouts(options =>
-            {
-                options.DefaultPolicy = new RequestTimeoutPolicy()
-                {
-                    Timeout = TimeSpan.FromMilliseconds(5000),
-                    TimeoutStatusCode = (int) HttpStatusCode.RequestTimeout
-                };
-            });
+            services.AddControllers();           
             services.AddSwagger();
             services.AddAuthorizationPolicies();
             services.AddAuthentication(config);
@@ -38,6 +30,22 @@ namespace Model.Application.API.Extensions
             services.AddDistributedMemoryCache();
             services.AddIdempotentAPIUsingDistributedCache();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowOrigin",
+                                       builder =>
+                                       {
+                        builder.AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
+                    });
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection AddDB(this IServiceCollection services, IConfiguration config)
+        {
             services.AddDbContext<DataContext>(options =>
             {
                 options.UseNpgsql(config.GetConnectionString("DefaultConnection"));
@@ -48,27 +56,16 @@ namespace Model.Application.API.Extensions
                 options.UseNpgsql(config.GetConnectionString("DefaultConnection"));
             });
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowOrigin",
-                    builder =>
-                    {
-                        builder.AllowAnyOrigin()
-                               .AllowAnyHeader()
-                               .AllowAnyMethod();
-                    });
-            });
+            services.AddDefaultIdentity<IdentityUser>()
+                            .AddRoles<IdentityRole>()
+                            .AddEntityFrameworkStores<IdentityDataContext>()
+                            .AddDefaultTokenProviders();
 
             return services;
         }
 
         public static IServiceCollection AddInterfaces (this IServiceCollection services)
         {
-            services.AddDefaultIdentity<IdentityUser>()
-                            .AddRoles<IdentityRole>()
-                            .AddEntityFrameworkStores<IdentityDataContext>()
-                            .AddDefaultTokenProviders();
-
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IRefundService, RefundService>();
             services.AddScoped<IRuleService, RuleService>();

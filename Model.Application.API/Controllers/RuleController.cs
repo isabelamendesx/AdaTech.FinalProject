@@ -9,6 +9,9 @@ using Model.Domain.Interfaces;
 using Model.Service.Services;
 using System.Data;
 using Rule = Model.Domain.Entities.Rule;
+using ICategoryService = Model.Domain.Interfaces.ICategoryService;
+using IRuleService = Model.Domain.Interfaces.IRuleService;
+
 
 namespace Model.Application.API.Controllers
 {

@@ -8,6 +8,8 @@ using Model.Application.API.Util;
 using Model.Application.DTO;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
+using ICategoryService = Model.Domain.Interfaces.ICategoryService;
+
 using Model.Service.Services;
 
 namespace Model.Application.API.Controllers

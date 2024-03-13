@@ -38,7 +38,7 @@ namespace Model.Application.API.Controllers
                 Total = request.Total
             };
 
-            var createdRefund = await _service.CreateRefund(refund);
+            var createdRefund = await _service.CreateRefund(refund, HttpContext.RequestAborted);
 
             return Ok(createdRefund);
         }
@@ -49,7 +49,7 @@ namespace Model.Application.API.Controllers
         {
             var parsedStatus = EnumParser.ParseStatus(status);
 
-            var refunds = await _service.GetAllByStatus(parsedStatus);
+            var refunds = await _service.GetAllByStatus(parsedStatus, HttpContext.RequestAborted);
 
             return Ok(refunds);
         }
@@ -59,7 +59,7 @@ namespace Model.Application.API.Controllers
         [Authorize(Roles = Roles.Manager)]
         public async Task<IActionResult> ApproveRefund([FromRoute] uint id, [FromRoute] uint userId)
         {
-            var refund = await _service.ApproveRefund(id, userId);
+            var refund = await _service.ApproveRefund(id, userId, HttpContext.RequestAborted);
             return Ok(refund);
         }
 
@@ -68,7 +68,7 @@ namespace Model.Application.API.Controllers
         [Authorize(Roles = Roles.Manager + "," + Roles.Supervisor)]
         public async Task<IActionResult> RefuseRefund([FromRoute] uint id, [FromRoute] uint userId)
         {
-            var refund = await _service.RefuseRefund(id, userId);
+            var refund = await _service.RefuseRefund(id, userId, HttpContext.RequestAborted);
             return Ok(refund);
         }
 

@@ -1,5 +1,6 @@
 ﻿using Identity.Constants;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
 using Model.Application.API.Attributes;
 using Model.Application.API.DTO;
@@ -36,7 +37,7 @@ namespace Model.Application.API.Controllers
                 Name = request.Name
             };
 
-            var createdCategory = await _service.CreateCategory(category);
+            var createdCategory = await _service.CreateCategory(category, HttpContext.RequestAborted);
 
             return Ok(createdCategory);
         }
@@ -45,14 +46,15 @@ namespace Model.Application.API.Controllers
         [Route("/category/{id}")]
         public async Task<IActionResult> GetById([FromRoute] uint id)
         {
-            var category = await _service.GetById(id);      
+            var category = await _service.GetById(id, HttpContext.RequestAborted);      
             return category is not null ? Ok(category) : NoContent();
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var categories = await _service.GetAll();           
+            await Task.Delay(4000, HttpContext.RequestAborted);
+            var categories = await _service.GetAll(HttpContext.RequestAborted);           
             return categories is not null ? Ok(categories) : NoContent();
         }
 

@@ -30,14 +30,14 @@ namespace Model.Application.API.Controllers
         [Route("rule/{id}")]
         public async Task<IActionResult> GetById([FromRoute] uint id)
         {
-            var rule = await _service.GetById(id);
+            var rule = await _service.GetById(id, HttpContext.RequestAborted);
             return rule is not null ? Ok(rule) : NotFound();
         }
         
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var rules = await _service.GetAll();
+            var rules = await _service.GetAll(HttpContext.RequestAborted);
             return rules is not null ? Ok(rules) : NotFound();
         }
 
@@ -51,7 +51,7 @@ namespace Model.Application.API.Controllers
 
             var action = request.Action.Equals("Approve", StringComparison.OrdinalIgnoreCase) ? true : false;
 
-            var category = await _categoryService.GetById(request.CategoryId);
+            var category = await _categoryService.GetById(request.CategoryId, HttpContext.RequestAborted);
 
             if (category is null) 
                 return BadRequest("Category not found");
@@ -65,7 +65,7 @@ namespace Model.Application.API.Controllers
                 IsActive = true
             };
 
-            var createdRule = await _service.CreateRule(rule);
+            var createdRule = await _service.CreateRule(rule, HttpContext.RequestAborted);
 
             return Ok(createdRule);
         }
@@ -75,7 +75,7 @@ namespace Model.Application.API.Controllers
         [Route("/deactivate/{id}")]
         public async Task<IActionResult> DeactivateRule([FromRoute] uint Id)
         {
-            var deactivate = await _service.DeactivateRule(Id);
+            var deactivate = await _service.DeactivateRule(Id, HttpContext.RequestAborted);
             if (deactivate)
                 return Ok();
             return BadRequest();
@@ -86,7 +86,7 @@ namespace Model.Application.API.Controllers
         [Route("/deactivate/category/{categoryId}")]
         public async Task<IActionResult> DeactivateACategorysRules([FromRoute] uint categoryId)
         {
-            var deactivate = await _service.DeactivateACategorysRules(categoryId);
+            var deactivate = await _service.DeactivateACategorysRules(categoryId, HttpContext.RequestAborted);
             if (deactivate)
                 return Ok();
             return BadRequest();

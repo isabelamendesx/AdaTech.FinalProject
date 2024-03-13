@@ -36,10 +36,10 @@ namespace Model.Service.Services
             List<Rule?> existingRules;
 
             if (rule.Category.Id == 0)
-                existingRules = (List<Rule?>)await _repository.GetByParameter(ct);
+                existingRules = (List<Rule?>)await _repository.GetByParameter(ct, x => x.IsActive == true);
             else
                 existingRules = (List<Rule?>)await _repository.GetByParameter(ct, 
-                    x => x.Category.Id == 0 || x.Category.Id == rule.Category.Id);
+                    x => (x.Category.Id == 0 || x.Category.Id == rule.Category.Id) && x.IsActive == true);
 
             RuleConflictAndOverlapChecker.CheckForConflictAndOverlap(rule, existingRules);
 

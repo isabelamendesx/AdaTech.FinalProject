@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Model.Application.API.Attributes;
 using Model.Application.API.DTO;
 using Model.Domain.Entities;
+using Model.Domain.Interfaces;
 using Model.Service.Services;
 using System.Data;
 using Rule = Model.Domain.Entities.Rule;

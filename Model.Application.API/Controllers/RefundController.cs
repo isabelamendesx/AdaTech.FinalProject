@@ -7,6 +7,7 @@ using Model.Application.DTO.Validators;
 using IdempotentAPI.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Identity.Constants;
+using Model.Domain.Interfaces;
 
 namespace Model.Application.API.Controllers
 {

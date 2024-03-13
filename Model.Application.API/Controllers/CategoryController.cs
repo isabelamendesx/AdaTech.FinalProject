@@ -6,6 +6,7 @@ using Model.Application.API.DTO;
 using Model.Application.API.Util;
 using Model.Application.DTO;
 using Model.Domain.Entities;
+using Model.Domain.Interfaces;
 using Model.Service.Services;
 
 namespace Model.Application.API.Controllers

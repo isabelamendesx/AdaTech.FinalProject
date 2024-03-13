@@ -25,61 +25,9 @@ namespace Model.Application.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddControllers();
-            builder.Services.AddRequestTimeouts(options =>
-            {
-                options.DefaultPolicy = new RequestTimeoutPolicy()
-                {
-                    Timeout = TimeSpan.FromMilliseconds(5000),
-                    TimeoutStatusCode = (int) HttpStatusCode.RequestTimeout
-                };
-            });
-            builder.Services.AddSwagger();
-            builder.Services.AddAuthorizationPolicies();
-            builder.Services.AddAuthentication(builder.Configuration);
-            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-            builder.Services.AddProblemDetails();
-
-            builder.Services.AddDistributedMemoryCache();
-            builder.Services.AddIdempotentAPIUsingDistributedCache();
-
-
-            builder.Services.AddDbContext<DataContext>(options =>
-            {
-                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
-
-            builder.Services.AddDbContext<IdentityDataContext>(options =>
-            {
-                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
-
-            builder.Services.AddDefaultIdentity<IdentityUser>()
-                            .AddRoles<IdentityRole>()
-                            .AddEntityFrameworkStores<IdentityDataContext>()
-                            .AddDefaultTokenProviders();
-
-            builder.Services.AddScoped<IIdentityService, IdentityService>();
-            builder.Services.AddScoped<IRefundService, RefundService>();
-            builder.Services.AddScoped<IRuleService, RuleService>();
-            builder.Services.AddScoped<ICategoryService, CategoryService>();
-            builder.Services.AddScoped<IRepository<Refund>, RefundRepository>();
-            builder.Services.AddScoped<IRepository<RefundOperation>, RefundOperationRepository>();
-            builder.Services.AddScoped<IRepository<Category>, CategoryRepository>();
-            builder.Services.AddScoped<IRepository<Rule>, RuleRepository>();
-            builder.Services.AddScoped<ILogger, Logger<Refund>>();
-
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowOrigin",
-                    builder =>
-                    {
-                        builder.AllowAnyOrigin()
-                               .AllowAnyHeader()
-                               .AllowAnyMethod();
-                    });
-            });
-
+            builder.Services
+                .AddServices(builder.Configuration)
+                .AddInterfaces();
 
             var app = builder.Build();
 

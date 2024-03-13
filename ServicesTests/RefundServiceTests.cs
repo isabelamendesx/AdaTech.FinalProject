@@ -21,9 +21,11 @@ namespace ServicesTests
         private IRepository<Refund> repository;
         private IRepository<RefundOperation> operationRepository;
         private IRuleService ruleService;
+        private CancellationToken ct;
 
         public RefundServiceTests()
         {
+            ct = new CancellationToken();
             repository = Substitute.For<IRepository<Refund>>();
             operationRepository = Substitute.For<IRepository<RefundOperation>>();
             ruleService = Substitute.For<IRuleService>();
@@ -34,19 +36,19 @@ namespace ServicesTests
         [Fact]
         public async Task approve_refund_must_throw_an_exception_when_refund_could_not_be_found()
         {
-            repository.GetById(Arg.Any<uint>()).Returns(Task.FromResult<Refund?>(null));
+            repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Refund?>(null));
 
-            await _sut.Invoking(x => x.ApproveRefund(3, 9))
-                .Should().ThrowAsync<RefundNotFoundException>();            
+            await _sut.Invoking(x => x.ApproveRefund(3, 9, ct))
+                .Should().ThrowAsync<ResourceNotFoundException>();            
         }
         
         [Fact]
         public async Task refuse_refund_must_throw_an_exception_when_refund_could_not_be_found()
         {
-            repository.GetById(Arg.Any<uint>()).Returns(Task.FromResult<Refund?>(null));
+            repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Refund?>(null));
 
-            await _sut.Invoking(x => x.RefuseRefund(3, 9))
-                .Should().ThrowAsync<RefundNotFoundException>();            
+            await _sut.Invoking(x => x.RefuseRefund(3, 9, ct))
+                .Should().ThrowAsync<ResourceNotFoundException>();            
         }
         [Theory]
         [MemberData(nameof(ReturnsFrom0To1000))]
@@ -58,9 +60,9 @@ namespace ServicesTests
                     MinValue = 0, MaxValue = 1000, Action = false,
                 }
             };
-            ruleService.GetRulesToReproveAny().Returns(rules);
+            ruleService.GetRulesToReproveAny(ct).Returns(rules);
 
-            await _sut.CreateRefund(refund);
+            await _sut.CreateRefund(refund, ct);
 
             refund.Status.Should().Be(EStatus.Rejected);
         }
@@ -76,9 +78,9 @@ namespace ServicesTests
                     MinValue = 0, MaxValue = 1000, Action = true,
                 }
             };
-            ruleService.GetRulesToApproveAny().Returns(rules);
+            ruleService.GetRulesToApproveAny(ct).Returns(rules);
 
-            await _sut.CreateRefund(refund);
+            await _sut.CreateRefund(refund, ct);
 
             refund.Status.Should().Be(EStatus.Approved);
         }
@@ -93,9 +95,9 @@ namespace ServicesTests
                     MinValue = 0, MaxValue = 1000, Action = true,
                 }
             };
-            ruleService.GetRulesToApproveByCategoryId(3).Returns(rules);
+            ruleService.GetRulesToApproveByCategoryId(3, ct).Returns(rules);
 
-            await _sut.CreateRefund(refund);
+            await _sut.CreateRefund(refund, ct);
 
             if(refund.Category.Id == 3)
                 refund.Status.Should().Be(EStatus.Approved);
@@ -109,14 +111,14 @@ namespace ServicesTests
         [MemberData(nameof(AllRefundsAndExpectedStatus))]
         public async Task status_should_be_correct(Refund refund, EStatus expectedStatus)
         {
-            ruleService.GetRulesToReproveAny().Returns(ListOfRuleToRejectAny());
+            ruleService.GetRulesToReproveAny(ct).Returns(ListOfRuleToRejectAny());
 
-            ruleService.GetRulesToApproveAny().Returns(ListOfRuleToApproveAny());
+            ruleService.GetRulesToApproveAny(ct).Returns(ListOfRuleToApproveAny());
 
-            ruleService.GetRulesToApproveByCategoryId(3)
+            ruleService.GetRulesToApproveByCategoryId(3, ct)
                 .Returns(ListOfRulesToApproveCategory3());
 
-            await _sut.CreateRefund(refund);
+            await _sut.CreateRefund(refund, ct);
 
             refund.Status.Should().Be(expectedStatus);
         }

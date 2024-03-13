@@ -130,6 +130,17 @@ namespace Model.Service.Services
                     Rule = approveAnyResult
                 };
 
+            var rulesThatReproveByCategory = await _ruleService
+               .GetRulesToReproveByCategoryId(categoryId, ct);
+
+            Rule? reproveByCategoryResult = GetFirstMatchingRule(rulesThatReproveByCategory, value);
+
+            if (reproveByCategoryResult is not null)
+                return new ProcessRefundResult()
+                {
+                    Status = EStatus.Approved,
+                    Rule = reproveByCategoryResult
+                };
 
 
             var rulesThatApproveByCategory = await _ruleService

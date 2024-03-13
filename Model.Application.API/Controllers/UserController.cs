@@ -2,6 +2,7 @@
 using Identity.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Model.Application.API.Controllers
 {
@@ -14,7 +15,7 @@ namespace Model.Application.API.Controllers
         public UserController(IIdentityService identityService) 
             => _identityService = identityService;
 
-        [HttpPost("register")] //ver se quer deixar em PT
+        [HttpPost("register")] 
         public async Task<ActionResult<UserRegisterResponse>> Register(UserRegisterRequest userRegister)
         {
             if (!ModelState.IsValid)
@@ -40,6 +41,22 @@ namespace Model.Application.API.Controllers
                 return Ok(result);
 
             return Unauthorized(result);
+        }
+
+        [Authorize]
+        [HttpPost("refresh-login")]
+        public async Task<ActionResult<UserRegisterResponse>> RefreshLogin()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var usuarioId = identity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (usuarioId == null)
+                return BadRequest();
+
+            var resultado = await _identityService.LoginWithoutPassword(usuarioId);
+            if (resultado.Success)
+                return Ok(resultado);
+
+            return Unauthorized();
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Model.Domain.Entities;
 using Model.Domain.Interfaces;
+using Model.Service.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +20,10 @@ namespace Model.Service.Services
         }
         public async Task<Rule?> GetById(uint id, CancellationToken ct)
         {
-            return await _repository.GetById(id, ct);
+            var rule = await _repository.GetById(id, ct);
+            if (rule is null)
+                throw new ResourceNotFoundException("Rule");
+            return rule;
         }
         public async Task<IEnumerable<Rule?>> GetAll(CancellationToken ct)
         {
@@ -33,8 +38,9 @@ namespace Model.Service.Services
         {
             IEnumerable<Rule?> rulesToDeactivate = await _repository.GetByParameter(ct, (x => x.Category.Id == categoryId));
 
-            if (rulesToDeactivate.Count() == 0)
-                return false;
+            if (rulesToDeactivate is null)
+                throw new ResourceNotFoundException("Rules");
+
 
             foreach (Rule rule in rulesToDeactivate)
             {
@@ -47,12 +53,11 @@ namespace Model.Service.Services
 
         public async Task<bool> DeactivateRule(uint Id, CancellationToken ct)
         {
-            var list = await _repository.GetByParameter(ct, (x => x.Id == Id));
+            var rule = await _repository.GetById(Id, ct);
 
-            if (list.Count() == 0)
-                return false;
+            if (rule is null)
+                throw new ResourceNotFoundException("Rule");
 
-            var rule = list.First();
 
             rule.IsActive = false;
 

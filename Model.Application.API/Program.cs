@@ -4,6 +4,7 @@ using Identity;
 using Identity.Interfaces;
 using Identity.Services;
 using Microsoft.AspNetCore.DataProtection.Repositories;
+using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Model.Application.API.Extensions;
@@ -13,6 +14,7 @@ using Model.Domain.Interfaces;
 using Model.Infra.Data.Context;
 using Model.Infra.Data.Repositories;
 using Model.Service.Services;
+using System.Net;
 using Way2Commerce.Api.Extensions;
 
 namespace Model.Application.API
@@ -24,7 +26,14 @@ namespace Model.Application.API
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddControllers();
-            builder.Services.AddRequestTimeouts();
+            builder.Services.AddRequestTimeouts(options =>
+            {
+                options.DefaultPolicy = new RequestTimeoutPolicy()
+                {
+                    Timeout = TimeSpan.FromMilliseconds(4000),
+                    TimeoutStatusCode = (int) HttpStatusCode.RequestTimeout
+                };
+            });
             builder.Services.AddSwagger();
             builder.Services.AddAuthorizationPolicies();
             builder.Services.AddAuthentication(builder.Configuration);

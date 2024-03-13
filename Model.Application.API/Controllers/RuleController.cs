@@ -1,5 +1,6 @@
 ﻿using Identity.Constants;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
 using Model.Application.API.Attributes;
 using Model.Application.API.DTO;

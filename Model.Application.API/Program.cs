@@ -30,7 +30,7 @@ namespace Model.Application.API
             {
                 options.DefaultPolicy = new RequestTimeoutPolicy()
                 {
-                    Timeout = TimeSpan.FromMilliseconds(4000),
+                    Timeout = TimeSpan.FromMilliseconds(5000),
                     TimeoutStatusCode = (int) HttpStatusCode.RequestTimeout
                 };
             });

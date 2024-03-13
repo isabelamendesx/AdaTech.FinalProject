@@ -1,6 +1,7 @@
 ﻿using Identity.DTO;
 using Identity.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 

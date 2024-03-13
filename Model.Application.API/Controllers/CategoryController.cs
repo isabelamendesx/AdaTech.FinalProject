@@ -53,7 +53,6 @@ namespace Model.Application.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            await Task.Delay(4000, HttpContext.RequestAborted);
             var categories = await _service.GetAll(HttpContext.RequestAborted);           
             return categories is not null ? Ok(categories) : NoContent();
         }

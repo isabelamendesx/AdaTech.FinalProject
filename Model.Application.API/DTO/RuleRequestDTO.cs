@@ -10,7 +10,7 @@ namespace Model.Application.API.DTO
         [NotNull]
         [Range(0, double.MaxValue, ErrorMessage = "MinValue must be a positive number")]
         public decimal MinValue { get; set; }
-
+        [NotNull]
         [Range(0, double.MaxValue, ErrorMessage = "MaxValue must be a positive number")]
         public decimal MaxValue { get; set; }
 
@@ -20,7 +20,7 @@ namespace Model.Application.API.DTO
 
         [NotNull]
         [Required(ErrorMessage = "CategoryId is required")]
-        [Range(1, uint.MaxValue, ErrorMessage = "CategoryId must be a positive number")]
+        [Range(0, uint.MaxValue, ErrorMessage = "CategoryId must be a positive number")]
         public uint CategoryId { get; set; }
     
     }

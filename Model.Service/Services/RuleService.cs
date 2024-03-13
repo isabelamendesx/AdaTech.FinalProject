@@ -1,4 +1,5 @@
 ﻿using Model.Domain.Entities;
+using Rule = Model.Domain.Entities.Rule;
 using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
 using System;
@@ -7,6 +8,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Model.Service.Services.Util;
 
 namespace Model.Service.Services
 {
@@ -31,12 +33,22 @@ namespace Model.Service.Services
         }
         public async Task<Rule> CreateRule(Rule rule, CancellationToken ct)
         {
+            List<Rule?> existingRules;
+
+            if (rule.Category.Id == 0)
+                existingRules = (List<Rule?>)await _repository.GetByParameter(ct, x => x.IsActive);
+            else
+                existingRules = (List<Rule?>)await _repository.GetByParameter(ct, 
+                    x => (x.Category.Id == 0 || x.Category.Id == rule.Category.Id) && x.IsActive);
+
+            RuleConflictAndOverlapChecker.CheckForConflictAndOverlap(rule, existingRules);
+
             return await _repository.AddAsync(rule, ct);
         }
 
         public async Task<bool> DeactivateACategorysRules(uint categoryId, CancellationToken ct)
         {
-            IEnumerable<Rule?> rulesToDeactivate = await _repository.GetByParameter(ct, (x => x.Category.Id == categoryId));
+            IEnumerable<Rule?> rulesToDeactivate = await _repository.GetByParameter(ct, (x => x.Category.Id == categoryId && x.IsActive));
 
             if (rulesToDeactivate is null)
                 throw new ResourceNotFoundException("Rules");
@@ -68,27 +80,27 @@ namespace Model.Service.Services
 
         public async Task<IEnumerable<Rule?>> GetRulesToApproveAny(CancellationToken ct)
         {
-            var list = await _repository.GetByParameter(ct, x => x.Category.Id == 0 && x.Action == true && x.IsActive == true);
+            var list = await _repository.GetByParameter(ct, x => x.Category.Id == 0 && x.Action && x.IsActive);
             return list;
         }
 
         public async Task<IEnumerable<Rule?>> GetRulesToReproveByCategoryId(uint categoryId, CancellationToken ct)
         {
             var list = await _repository.GetByParameter(ct, x => x.Category.Id == categoryId 
-                && x.IsActive == true && x.Action == false);
+                && x.IsActive && !x.Action);
             return list;
         }
 
         public async Task<IEnumerable<Rule?>> GetRulesToApproveByCategoryId(uint categoryId, CancellationToken ct)
         {
             var list = await _repository.GetByParameter(ct, x => x.Category.Id == categoryId 
-                && x.IsActive == true && x.Action == true);
+                && x.IsActive && x.Action);
             return list;
         }
 
         public async Task<IEnumerable<Rule?>> GetRulesToReproveAny(CancellationToken ct)
         {
-            var list = await _repository.GetByParameter(ct, x => x.Category.Id == 0 && x.Action == false && x.IsActive == true);
+            var list = await _repository.GetByParameter(ct, x => x.Category.Id == 0 && !x.Action && x.IsActive);
             return list;
         }
     }

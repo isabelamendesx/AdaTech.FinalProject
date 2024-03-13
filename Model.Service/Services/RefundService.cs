@@ -3,6 +3,7 @@ using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
 using Model.Service.Services.DTO;
 using Model.Service.Services.Util;
+using Rule = Model.Domain.Entities.Rule;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

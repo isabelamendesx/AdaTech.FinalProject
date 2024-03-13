@@ -14,6 +14,7 @@ namespace Model.Domain.Interfaces
         Task<Rule> CreateRule(Rule rule, CancellationToken ct);
         Task<IEnumerable<Rule?>> GetRulesToReproveAny(CancellationToken ct);
         Task<IEnumerable<Rule?>> GetRulesToApproveAny(CancellationToken ct);
+        Task<IEnumerable<Rule?>> GetRulesToReproveByCategoryId(uint categoryId, CancellationToken ct);
         Task<IEnumerable<Rule?>> GetRulesToApproveByCategoryId(uint categoryId, CancellationToken ct);
         Task<bool> DeactivateRule(uint Id, CancellationToken ct);
         Task<bool> DeactivateACategorysRules(uint categoryId, CancellationToken ct);

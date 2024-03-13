@@ -26,7 +26,7 @@ namespace Model.Service.Services
             _ruleService = ruleService;
         }
 
-        public async Task<Refund> CreateRefund(Refund refund)
+        public async Task<Refund> CreateRefund(Refund refund, CancellationToken ct)
         {
             var processResult = await ProcessRefund(refund.Category.Id, refund.Total);
             refund.Status = processResult.Status;
@@ -42,10 +42,10 @@ namespace Model.Service.Services
 
             refund.Operations.Add(op);
 
-            await _repository.UpdateAsync(refund);
-            await _operationRepository.AddAsync(op);
+            await _repository.UpdateAsync(refund, ct);
+            await _operationRepository.AddAsync(op, ct);
 
-            return await _repository.AddAsync(refund);
+            return await _repository.AddAsync(refund, ct);
         }
 
         public async Task<IEnumerable<Refund?>> GetAll()

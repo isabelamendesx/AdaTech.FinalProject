@@ -23,14 +23,14 @@ namespace Model.Infra.Data.Repositories
             _logger = logger;
         }
 
-        public async Task<Refund> AddAsync(Refund refund)
+        public async Task<Refund> AddAsync(Refund refund, CancellationToken ct)
         {
             await _context.Refunds.AddAsync(refund);
             await _context.SaveChangesAsync();
             return refund;
         }
 
-        public async Task UpdateAsync(Refund refund)
+        public async Task UpdateAsync(Refund refund, CancellationToken ct)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace Model.Infra.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<Refund?>> GetByParameter(Expression<Func<Refund, bool>> filter = null)
+        public async Task<IEnumerable<Refund?>> GetByParameter(CancellationToken ct, Expression<Func<Refund, bool>> filter = null)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace Model.Infra.Data.Repositories
             }
         }
 
-        public async Task<Refund?> GetById(uint Id) => await _context.Refunds.FirstOrDefaultAsync(x => x.Id == Id);
+        public async Task<Refund?> GetById(uint Id, CancellationToken ct) => await _context.Refunds.FirstOrDefaultAsync(x => x.Id == Id);
 
     }
 }

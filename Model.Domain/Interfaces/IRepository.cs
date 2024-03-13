@@ -10,7 +10,7 @@ namespace Model.Domain.Interfaces
 {
     public interface IRepository<T> 
     {
-        Task<IEnumerable<T?>> GetByParameter(Expression<Func<T, bool>> filter = null, CancellationToken ct);
+        Task<IEnumerable<T?>> GetByParameter(CancellationToken ct, Expression<Func<T, bool>> filter = null);
         Task<T> AddAsync(T entity, CancellationToken ct);
         Task<T?> GetById(uint Id, CancellationToken ct);
         Task UpdateAsync(T entity, CancellationToken ct);

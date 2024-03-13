@@ -11,7 +11,7 @@ namespace Model.Application.API.Controllers
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    [Authorize(Policy = Policies.BusinessHour)]
+    //[Authorize(Policy = Policies.BusinessHour)]
     public class RuleController : ControllerBase
     {
         private readonly IRuleService _service;

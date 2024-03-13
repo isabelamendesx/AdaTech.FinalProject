@@ -29,29 +29,15 @@ namespace Model.Service.Services.Util
 
         private static bool HasConflictingIntervals(Rule rule, Rule newRule)
         {
-            if (IsRuleContainedWithin(rule, newRule))
-                return true;
-
-            if (IsRulePartiallyContainedWithin(rule, newRule))
+            if (IsIntervalOverlappingOrContained(rule, newRule))
                 return true;
 
             return false;
         }
 
-        private static bool IsRulePartiallyContainedWithin(Rule rule, Rule newRule)
+        private static bool IsIntervalOverlappingOrContained(Rule rule, Rule newRule)
         {
             return rule.MinValue <= newRule.MaxValue && newRule.MinValue <= rule.MaxValue;
-        }
-
-        private static bool IsRuleContainedWithin(Rule rule, Rule newRule)
-        {
-            if (rule.MinValue >= newRule.MinValue && rule.MaxValue <= newRule.MaxValue)
-                return true;
-
-            if (newRule.MinValue >= rule.MinValue && newRule.MaxValue <= rule.MaxValue)
-                return true;
-
-            return false;
         }
     }
 }

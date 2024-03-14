@@ -132,6 +132,27 @@ namespace ServicesTests
                 new object[]{ new Refund ()
                 {Total = 100,
                     Category = new Category() { Id = 4 } } },
+                new object[]{ new Refund ()
+                {Total = 500,
+                    Category = new Category() { Id = 5 } } },
+                new object[]{ new Refund ()
+                {Total = 300,
+                    Category = new Category() { Id = 3 } } },
+                new object[]{ new Refund ()
+                {Total = 600,
+                    Category = new Category() { Id =4 } } },
+                new object[]{ new Refund ()
+                {Total = 700,
+                    Category = new Category() { Id = 5 } } },
+                new object[]{ new Refund ()
+                {Total = 850,
+                    Category = new Category() { Id = 3 } } },
+                new object[]{ new Refund ()
+                {Total = 1000,
+                    Category = new Category() { Id = 4 } } },
+                new object[]{ new Refund ()
+                {Total = 50,
+                    Category = new Category() { Id = 5 } } },
             };
         }
 
@@ -140,7 +161,7 @@ namespace ServicesTests
             return new List<Rule>(){
                      new Rule() {
                         MinValue = 1000, Action = false,
-                    }
+                    },
             };
         }
         
@@ -157,7 +178,7 @@ namespace ServicesTests
         {
             return new List<Rule>{
                      new Rule() {
-                        MinValue = 101, MaxValue = 500, Action = true,
+                        MinValue = 100.01M, MaxValue = 500, Action = true,
                     }
             };
         }
@@ -172,20 +193,36 @@ namespace ServicesTests
                     Total = 100,
                     Category = new Category() { Id = 3 } }, EStatus.Approved },
                 new object[]{ new Refund ()
-                {Total = 200,
-                    Category = new Category() { Id = 4 } }, EStatus.UnderEvaluation },
+                {
+                    Total = 300,
+                    Category = new Category() { Id = 3 } }, EStatus.Approved },
                 new object[]{ new Refund ()
                 {
-                    Total = 100,
-                    Category = new Category() { Id = 2 } }, EStatus.Approved },
-                new object[]{ new Refund ()
-                {
-                    Total = 1005,
+                    Total = 1001,
                     Category = new Category() { Id = 3 } }, EStatus.Rejected },
                 new object[]{ new Refund ()
                 {
-                    Total = 200,
-                    Category = new Category() { Id = 5 } }, EStatus.UnderEvaluation},
+                    Total = 1005,
+                    Category = new Category() { Id = 4 } }, EStatus.Rejected },
+                new object[]{ new Refund ()
+                {
+                    Total = 800,
+                    Category = new Category() { Id = 4 } }, EStatus.UnderEvaluation},
+                new object[]{ new Refund ()
+                {
+                    Total = 80,
+                    Category = new Category() { Id = 4 } }, EStatus.Approved },
+                new object[]{ new Refund ()
+                {Total = 300,
+                    Category = new Category() { Id = 5 } }, EStatus.UnderEvaluation },
+                new object[]{ new Refund ()
+                {
+                    Total = 50,
+                    Category = new Category() { Id = 5 } }, EStatus.Approved },
+                new object[]{ new Refund ()
+                {
+                    Total = 1000,
+                    Category = new Category() { Id = 5 } }, EStatus.Rejected },
             };
         }
     }

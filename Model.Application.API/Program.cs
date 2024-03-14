@@ -9,11 +9,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Model.Application.API.Extensions;
 using Model.Application.API.Filters;
+using Model.Application.API.Middlewares;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Infra.Data.Context;
 using Model.Infra.Data.Repositories;
 using Model.Service.Services;
+using Serilog;
 using System.Net;
 using Way2Commerce.Api.Extensions;
 
@@ -25,6 +27,9 @@ namespace Model.Application.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Host.UseSerilog((context, loggerConfig) =>
+            loggerConfig.ReadFrom.Configuration(context.Configuration));
+
             builder.Services
                 .AddConfig(builder.Configuration)
                 .AddDB(builder.Configuration)
@@ -33,7 +38,6 @@ namespace Model.Application.API
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -45,6 +49,8 @@ namespace Model.Application.API
             app.UseExceptionHandler();
 
             app.UseHttpsRedirection();
+
+            app.UseSerilogRequestLogging();
 
             app.UseRequestTimeouts();
 

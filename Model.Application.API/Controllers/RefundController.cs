@@ -65,11 +65,11 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpPost]
-        [Route("/refuse/{id}/{userId}")]
+        [Route("/reject/{id}/{userId}")]
         [Authorize(Roles = Roles.Manager + "," + Roles.Supervisor)]
-        public async Task<IActionResult> RefuseRefund([FromRoute] uint id, [FromRoute] uint userId)
+        public async Task<IActionResult> RejectRefund([FromRoute] uint id, [FromRoute] uint userId)
         {
-            var refund = await _service.RefuseRefund(id, userId, HttpContext.RequestAborted);
+            var refund = await _service.RejectRefund(id, userId, HttpContext.RequestAborted);
             return Ok(refund);
         }
 

@@ -20,11 +20,15 @@ namespace Model.Application.API.Extensions
     {
         public static IServiceCollection AddConfig(this IServiceCollection services, IConfiguration config) 
         {
-            services.AddControllers();           
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<ExceptionFilter>();
+            });     
+            
             services.AddSwagger();
             services.AddAuthorizationPolicies();
             services.AddAuthentication(config);
-            services.AddExceptionHandler<GlobalExceptionHandler>();
+            //services.AddExceptionHandler<ExceptionFilter>();
             services.AddProblemDetails();
 
             services.AddDistributedMemoryCache();

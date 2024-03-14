@@ -41,8 +41,6 @@ namespace Model.Application.API
 
             app.UseCors("AllowOrigin");
 
-            //app.UseExceptionHandler();
-
             app.UseHttpsRedirection();
 
             app.UseRequestTimeouts();

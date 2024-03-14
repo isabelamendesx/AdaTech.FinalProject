@@ -33,7 +33,6 @@ namespace Model.Application.API
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -41,8 +40,6 @@ namespace Model.Application.API
             }
 
             app.UseCors("AllowOrigin");
-
-            app.UseExceptionHandler();
 
             app.UseHttpsRedirection();
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Model.Service.Exceptions
 {
-    internal class CategoryAlreadyRegisteredException : Exception
+    public class CategoryAlreadyRegisteredException : Exception
     {
         public int StatusCode { get; set; }
         public CategoryAlreadyRegisteredException() : base("You can not create the same category twice.")

@@ -83,7 +83,7 @@ namespace Model.Service.Services
             return refund;
         }
 
-        public async Task<Refund> RefuseRefund(uint Id, uint userId, CancellationToken ct)
+        public async Task<Refund> RejectRefund(uint Id, uint userId, CancellationToken ct)
         {
             var refund = await _repository.GetById(Id, ct);
 
@@ -109,7 +109,7 @@ namespace Model.Service.Services
 
         private async Task<ProcessRefundResult> ProcessRefund(uint categoryId, decimal value, CancellationToken ct)
         {
-            var rulesThatReproveAny = await _ruleService.GetRulesToReproveAny(ct);
+            var rulesThatReproveAny = await _ruleService.GetRulesToRejectAny(ct);
 
             Rule? reproveAnyResult = GetFirstMatchingRule(rulesThatReproveAny, value);
 
@@ -132,7 +132,7 @@ namespace Model.Service.Services
                 };
 
             var rulesThatReproveByCategory = await _ruleService
-               .GetRulesToReproveByCategoryId(categoryId, ct);
+               .GetRulesToRejectByCategoryId(categoryId, ct);
 
             Rule? reproveByCategoryResult = GetFirstMatchingRule(rulesThatReproveByCategory, value);
 

@@ -43,7 +43,7 @@ namespace ServicesTests
         }
         
         [Fact]
-        public async Task refuse_refund_must_throw_an_exception_when_refund_could_not_be_found()
+        public async Task reject_refund_must_throw_an_exception_when_refund_could_not_be_found()
         {
             repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Refund?>(null));
 

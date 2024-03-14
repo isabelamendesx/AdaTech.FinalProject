@@ -109,14 +109,14 @@ namespace Model.Service.Services
 
         private async Task<ProcessRefundResult> ProcessRefund(uint categoryId, decimal value, CancellationToken ct)
         {
-            var rulesThatReproveAny = await _ruleService.GetRulesToRejectAny(ct);
+            var rulesThatRejectAny = await _ruleService.GetRulesToRejectAny(ct);
 
-            Rule? reproveAnyResult = GetFirstMatchingRule(rulesThatReproveAny, value);
+            Rule? rejectAnyResult = GetFirstMatchingRule(rulesThatRejectAny, value);
 
-            if (reproveAnyResult is not null)
+            if (rejectAnyResult is not null)
                 return new ProcessRefundResult() { 
                     Status = EStatus.Rejected, 
-                    Rule = reproveAnyResult
+                    Rule = rejectAnyResult
                 };
 
 
@@ -131,16 +131,16 @@ namespace Model.Service.Services
                     Rule = approveAnyResult
                 };
 
-            var rulesThatReproveByCategory = await _ruleService
+            var rulesThatRejectByCategory = await _ruleService
                .GetRulesToRejectByCategoryId(categoryId, ct);
 
-            Rule? reproveByCategoryResult = GetFirstMatchingRule(rulesThatReproveByCategory, value);
+            Rule? rejectByCategoryResult = GetFirstMatchingRule(rulesThatRejectByCategory, value);
 
-            if (reproveByCategoryResult is not null)
+            if (rejectByCategoryResult is not null)
                 return new ProcessRefundResult()
                 {
                     Status = EStatus.Approved,
-                    Rule = reproveByCategoryResult
+                    Rule = rejectByCategoryResult
                 };
 
 

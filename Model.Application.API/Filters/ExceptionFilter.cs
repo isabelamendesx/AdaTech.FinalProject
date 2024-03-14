@@ -26,7 +26,8 @@ namespace Model.Application.API.Filters
 
             if (context.Exception is RuleException ruleEx)
                 errorResultBuilder
-                   .WithConflictingRuleId(ruleEx.ConflictingRuleId);
+                   .WithConflictingRuleId(ruleEx.ConflictingRuleId)
+                   .WithDetails(ruleEx.Details);
 
             var errorResult = errorResultBuilder.Build();
             var ignoreNullFields = new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };

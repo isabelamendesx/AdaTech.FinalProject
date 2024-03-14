@@ -23,7 +23,7 @@ namespace Model.Service.Services
         {
             var sameNameCategories = await _repository
                 .GetByParameter(ct,
-                    x => x.Name.Equals(category.Name, StringComparison.OrdinalIgnoreCase));
+                    x => x.Name.ToLower().Equals(category.Name.ToLower()));
 
             if (sameNameCategories.Count() != 0)
                 throw new CategoryAlreadyRegisteredException();

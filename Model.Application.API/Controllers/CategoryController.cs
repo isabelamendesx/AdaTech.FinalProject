@@ -11,6 +11,7 @@ using Model.Domain.Interfaces;
 using ICategoryService = Model.Domain.Interfaces.ICategoryService;
 
 using Model.Service.Services;
+using Serilog;
 
 namespace Model.Application.API.Controllers
 {
@@ -32,7 +33,10 @@ namespace Model.Application.API.Controllers
         public async Task<IActionResult> CreateCategory([FromBody] CategoryRequestDTO request)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            {
+                Log.Warning("Invalid model state: {@ModelState}", ModelState);
+                return UnprocessableEntity(ModelState);
+            }
 
             var category = new Category()
             {
@@ -40,6 +44,8 @@ namespace Model.Application.API.Controllers
             };
 
             var createdCategory = await _service.CreateCategory(category, HttpContext.RequestAborted);
+
+            Log.Information("New cateogry created: {@Category}", createdCategory);
 
             return Ok(createdCategory);
         }

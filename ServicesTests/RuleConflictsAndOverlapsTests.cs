@@ -32,7 +32,7 @@ namespace ServicesTests
         [MemberData(nameof(ShouldNotThrowException))]
         public void should_not_throw_exception(Rule newRule, List<Rule?> existingRules)
         {
-            var exception = Record.Exception(() => 
+            var exception = Record.Exception(() =>
                 RuleConflictAndOverlapChecker.CheckForConflictAndOverlap(newRule, existingRules));
             Assert.Null(exception);
         }
@@ -69,13 +69,83 @@ namespace ServicesTests
                         {
                             new Rule()
                             {
-                                
+
                                 MinValue = 1400,
                                 MaxValue = decimal.MaxValue,
                                 Action = true
                             }
                         }
-                }
+                },
+                new object[]{
+                    new Rule()
+                        {
+                            MinValue = 500,
+                            MaxValue = 1500,
+                            Action = true
+                        },
+                     new List<Rule?>()
+                        {
+                            new Rule()
+                            {
+                                MinValue = 1000,
+                                MaxValue = 2000,
+                                Action = true
+                            }
+                        }
+                },
+                new object[]{
+                    new Rule()
+                        {
+                            MinValue = 500,
+                            MaxValue = 1500,
+                            Action = true
+                        },
+                     new List<Rule?>()
+                        {
+                            new Rule()
+                            {
+                                MinValue = 100,
+                                MaxValue = 500,
+                                Action = true
+                            }
+                        }
+                },
+                new object[]{
+                    new Rule()
+                        {
+                            MinValue = 100,
+                            MaxValue = 500,
+                            Action = true
+                        },
+                     new List<Rule?>()
+                        {
+                            new Rule()
+                            {
+                                MinValue = 500,
+                                MaxValue = 2000,
+                                Action = true
+                            }
+                        }
+                } ,
+                 new object[]{
+                    new Rule()
+                        {
+                            MinValue = 100,
+                            MaxValue = 1500,
+                            Action = true
+                        },
+                     new List<Rule?>()
+                        {
+                            new Rule()
+                            {
+                                MinValue = 500,
+                                MaxValue = 1000,
+                                Action = true
+                            }
+                        }
+                } ,
+
+
             };
         }
 
@@ -117,18 +187,46 @@ namespace ServicesTests
                                 Action = false
                             }
                         }
-                }
-            };
-        }
-
-        public static IEnumerable<object[]> ShouldNotThrowException()
-        {
-            return new[]
-            {
+                },
                 new object[]{
                     new Rule()
                         {
-                            MinValue = 1400,
+                            MinValue = 500,
+                            MaxValue = 2000,
+                            Action = true
+                        },
+                     new List<Rule?>()
+                        {
+                            new Rule()
+                            {
+                                MinValue = 1000,
+                                MaxValue = 1500,
+                                Action = false
+                            }
+                        }
+                } ,
+                new object[]{
+                    new Rule()
+                        {
+                            MinValue = 1000,
+                            MaxValue = 3000,
+                            Action = true
+                        },
+                     new List<Rule?>()
+                        {
+                            new Rule()
+                            {
+
+                                MinValue = 2000,
+                                MaxValue = decimal.MaxValue,
+                                Action = false
+                            }
+                        }
+                },
+                new object[]{
+                    new Rule()
+                        {
+                            MinValue = 500,
                             MaxValue = decimal.MaxValue,
                             Action = false
                         },
@@ -136,12 +234,111 @@ namespace ServicesTests
                         {
                             new Rule()
                             {
-                                MinValue = 0,
-                                MaxValue = 100,
+
+                                MinValue = 500,
+                                MaxValue = 1000,
                                 Action = true
                             }
                         }
+                },
+                new object[]{
+                    new Rule()
+                        {
+                            MinValue = 500,
+                            MaxValue = 1500,
+                            Action = true
+                        },
+                     new List<Rule?>()
+                        {
+                            new Rule()
+                            {
+
+                                MinValue = 1000,
+                                MaxValue = 5000,
+                                Action = false
+                            }
+                        }
+                },
+            };
+        }
+
+        public static IEnumerable<object[]> ShouldNotThrowException()
+        {
+            return new[]
+            {
+                new object[]
+                {
+                    new Rule()
+                    {
+                        MinValue = 1400,
+                        MaxValue = decimal.MaxValue,
+                        Action = false
+                    },
+                    new List<Rule?>()
+                    {
+                        new Rule()
+                        {
+                            MinValue = 0,
+                            MaxValue = 100,
+                            Action = true
+                        }
+                    }
+                },
+
+                new object[]
+                {
+                    new Rule()
+                    {
+                        MinValue = 0,
+                        MaxValue = 100,
+                        Action = true
+                    },
+                    new List<Rule?>()
+                    {
+                        new Rule()
+                        {
+                            MinValue = 1400,
+                            MaxValue = decimal.MaxValue,
+                            Action = true
+                        }
+                    }
+                },
+
+                new object[]{
+                    new Rule()
+                        {
+                            MinValue = 0,
+                            MaxValue = 500,
+                            Action = true
+                        },
+                     new List<Rule?>()
+                        {
+                            new Rule()
+                            {
+                                MinValue = 500.01M,
+                                MaxValue = 1000,
+                                Action = false
+                            }
+                        }
                 } ,
+                new object[]{
+                    new Rule()
+                        {
+                            MinValue = 500,
+                            MaxValue = 1000,
+                            Action = false
+                        },
+                     new List<Rule?>()
+                        {
+                            new Rule()
+                            {
+
+                                MinValue = 1001,
+                                MaxValue = decimal.MaxValue,
+                                Action = false
+                            }
+                        }
+                },
                 new object[]{
                     new Rule()
                         {
@@ -154,12 +351,12 @@ namespace ServicesTests
                             new Rule()
                             {
 
-                                MinValue = 1400,
-                                MaxValue = decimal.MaxValue,
+                                MinValue = 500,
+                                MaxValue = 700,
                                 Action = true
                             }
                         }
-                }
+                },
             };
         }
     }

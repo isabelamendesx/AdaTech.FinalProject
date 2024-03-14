@@ -28,7 +28,6 @@ namespace Model.Application.API.Extensions
             services.AddSwagger();
             services.AddAuthorizationPolicies();
             services.AddAuthentication(config);
-            //services.AddExceptionHandler<ExceptionFilter>();
             services.AddProblemDetails();
 
             services.AddDistributedMemoryCache();

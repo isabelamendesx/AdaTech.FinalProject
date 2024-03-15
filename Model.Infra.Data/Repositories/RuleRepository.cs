@@ -25,36 +25,15 @@ namespace Model.Infra.Data.Repositories
 
         public async Task<Rule> AddAsync(Rule rule, CancellationToken ct)
         {
-            try
-            {
-                await _context.Rules.AddAsync(rule);
-                await _context.SaveChangesAsync();
-                return rule;
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "An error occurred while trying to add a new Rule to the Database.");
-                throw;
-            }
-
+              await _context.Rules.AddAsync(rule);
+              await _context.SaveChangesAsync();
+              return rule;
         }
         public async Task<Rule?> GetById(uint Id, CancellationToken ct)
-        {
-            try
-            {
-                return await _context.Rules.FindAsync(Id);
-            } 
-            catch (Exception ex)
-            {
-                Log.Error(ex, "An error occurred while trying to fetch Rule with ID {@RefundOpId} in the Database.", Id);
-                throw;
-            }
-        } 
+                    => await _context.Rules.FindAsync(Id);
 
         public async Task<IEnumerable<Rule?>> GetByParameter(CancellationToken ct, Expression<Func<Rule, bool>> filter = null)
         {
-            try
-            {
                 var query = _context.Rules.AsQueryable();
 
                 if (filter != null)
@@ -67,27 +46,13 @@ namespace Model.Infra.Data.Repositories
                 return await query
                     .Include(x => x.Category)
                     .ToListAsync();
-                   
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "An error occurred while trying to fetch Rules with filter in the Database: {@Filter}", filter?.ToString() ?? "No filter applied");
-                throw;
-            }
         }
 
         public async Task UpdateAsync(Rule rule, CancellationToken ct)
         {
-            try
-            {
-                _context.Rules.Update(rule);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "An error occurred while updating Rule with ID {@RefundOpID} in the Database", rule.Id);
-                throw;
-            }
+            _context.Rules.Update(rule);
+            await _context.SaveChangesAsync();
         }
+
     }
 }

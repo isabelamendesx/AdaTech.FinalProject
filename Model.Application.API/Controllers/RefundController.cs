@@ -25,7 +25,7 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpPost]
-        [Idempotent(ExpiresInMilliseconds = 10000)]
+        //[Idempotent(ExpiresInMilliseconds = 10000)]
         public async Task<IActionResult> CreateRefund([FromBody] RefundRequestDto request)
         {
             if (!ModelState.IsValid)
@@ -34,7 +34,7 @@ namespace Model.Application.API.Controllers
             var refund = new Refund()
             {
                 Description = request.Description,
-                Category = new Category { Name = request.Category},
+                Category = new Category { Id = request.CategoryId},
                 Status = EnumParser.ParseStatus(request.Status),
                 Total = request.Total
             };

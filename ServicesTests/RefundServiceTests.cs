@@ -43,11 +43,11 @@ namespace ServicesTests
         }
         
         [Fact]
-        public async Task refuse_refund_must_throw_an_exception_when_refund_could_not_be_found()
+        public async Task reject_refund_must_throw_an_exception_when_refund_could_not_be_found()
         {
             repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Refund?>(null));
 
-            await _sut.Invoking(x => x.RefuseRefund(3, 9, ct))
+            await _sut.Invoking(x => x.RejectRefund(3, 9, ct))
                 .Should().ThrowAsync<ResourceNotFoundException>();            
         }
         [Theory]
@@ -60,7 +60,7 @@ namespace ServicesTests
                     MinValue = 0, MaxValue = 1000, Action = false,
                 }
             };
-            ruleService.GetRulesToReproveAny(ct).Returns(rules);
+            ruleService.GetRulesToRejectAny(ct).Returns(rules);
 
             await _sut.CreateRefund(refund, ct);
 
@@ -111,7 +111,7 @@ namespace ServicesTests
         [MemberData(nameof(AllRefundsAndExpectedStatus))]
         public async Task status_should_be_correct(Refund refund, EStatus expectedStatus)
         {
-            ruleService.GetRulesToReproveAny(ct).Returns(ListOfRuleToRejectAny());
+            ruleService.GetRulesToRejectAny(ct).Returns(ListOfRuleToRejectAny());
 
             ruleService.GetRulesToApproveAny(ct).Returns(ListOfRuleToApproveAny());
 

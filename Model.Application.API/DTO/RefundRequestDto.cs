@@ -11,7 +11,7 @@ namespace Model.Application.DTO
 
 
         [Required(ErrorMessage = "Category is required.")]
-        public string Category { get; set;}
+        public uint CategoryId { get; set;}
 
 
         [Required(ErrorMessage = "Total is required.")]

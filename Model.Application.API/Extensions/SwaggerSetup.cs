@@ -18,13 +18,13 @@ public static class SwaggerSetup
 
             options.SwaggerDoc("v1", new OpenApiInfo
             {
-                Title = "Way2Commerce.Api",
+                Title = "ApprovalMotor.Api",
                 Version = "v1"
             });
 
             options.SwaggerDoc("v2", new OpenApiInfo
             {
-                Title = "Way2Commerce.Api",
+                Title = "ApprovalMotor.Api",
                 Version = "v2"
             });
 

@@ -43,12 +43,6 @@ namespace Model.Application.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var rules = await _service.GetAll(HttpContext.RequestAborted);
-
-            foreach (var rule in rules)
-            {
-                
-            }
-
             return Ok(rules);
         }
 

@@ -67,10 +67,7 @@ namespace Model.Application.API.Controllers
                 return Ok(categories);
 
 
-            var paginatedCategories = categories
-                                    .Skip((paginationParameters.PageNumber - 1) * paginationParameters.PageSize)
-                                    .Take(paginationParameters.PageSize)
-                                    .ToList();
+            var paginatedCategories = PaginationGenerator.GetPaginatedResponse(paginationParameters, categories);
 
             return Ok(paginatedCategories);
         }

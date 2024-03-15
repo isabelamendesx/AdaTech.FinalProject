@@ -53,20 +53,16 @@ namespace Model.Application.API.Controllers
         [HttpGet]
         [Route("{status}")]
         public async Task<ActionResult<IEnumerable<Refund?>>> GetAllByStatus([ValidateStatus] string status,
-                                                    [FromQuery] PaginationParametersDTO paginationParameters)
-        public async Task<ActionResult<IEnumerable<Refund?>>> GetAllByStatus([ValidateStatus] string status, CancellationToken ct)
+                                                    [FromQuery] PaginationParametersDTO paginationParameters, CancellationToken ct)
         {
             var parsedStatus = EnumParser.ParseStatus(status);
 
             var refunds = await _service.GetAllByStatus(parsedStatus, ct);
 
-
             if (paginationParameters.PageNumber == 0 || paginationParameters.PageSize == 0)
                 return Ok(refunds);
 
-
             var paginatedRefunds = PaginationGenerator.GetPaginatedResponse(paginationParameters, refunds);
-
 
             return Ok(paginatedRefunds);
         }

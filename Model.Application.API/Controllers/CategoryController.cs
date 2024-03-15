@@ -59,20 +59,16 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] PaginationParametersDTO paginationParameters)
-        public async Task<IActionResult> GetAll(CancellationToken ct)
+        public async Task<IActionResult> GetAll([FromQuery] PaginationParametersDTO paginationParameters, CancellationToken ct)
         {
             var categories = await _service.GetAll(HttpContext.RequestAborted);
 
             if (paginationParameters.PageNumber == 0 || paginationParameters.PageSize == 0)
                 return Ok(categories);
 
-
             var paginatedCategories = PaginationGenerator.GetPaginatedResponse(paginationParameters, categories);
 
             return Ok(paginatedCategories);
-            var categories = await _service.GetAll(ct);           
-            return Ok(categories);
         }
 
     }

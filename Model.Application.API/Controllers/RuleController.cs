@@ -12,6 +12,7 @@ using Rule = Model.Domain.Entities.Rule;
 using ICategoryService = Model.Domain.Interfaces.ICategoryService;
 using IRuleService = Model.Domain.Interfaces.IRuleService;
 using Serilog;
+using Model.Application.API.Util;
 
 
 namespace Model.Application.API.Controllers
@@ -40,8 +41,18 @@ namespace Model.Application.API.Controllers
         }
         
         [HttpGet]
+        public async Task<IActionResult> GetAll([FromQuery] PaginationParametersDTO paginationParameters)
         public async Task<IActionResult> GetAll(CancellationToken ct)
         {
+            var rules = await _service.GetAll(HttpContext.RequestAborted);
+
+            if (paginationParameters.PageNumber == 0 || paginationParameters.PageSize == 0)
+                return Ok(rules);
+
+
+            var paginatedRules = PaginationGenerator.GetPaginatedResponse(paginationParameters, rules);
+
+            return Ok(paginatedRules);
             var rules = await _service.GetAll(ct);
             return Ok(rules);
         }

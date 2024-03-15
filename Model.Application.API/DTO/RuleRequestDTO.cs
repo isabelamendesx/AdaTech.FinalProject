@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Model.Application.API.DTO
 {
-    [MinValueOrMaxValueRequiredAttibute]
+    [MinValueOrMaxValueValidatorAttibute]
     public class RuleRequestDTO {
 
         [Range(0, double.MaxValue, ErrorMessage = "MinValue must be a positive number")]

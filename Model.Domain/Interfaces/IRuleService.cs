@@ -18,5 +18,6 @@ namespace Model.Domain.Interfaces
         Task<IEnumerable<Rule?>> GetRulesToApproveByCategoryId(uint categoryId, CancellationToken ct);
         Task<bool> DeactivateRule(uint Id, CancellationToken ct);
         Task<bool> DeactivateACategorysRules(uint categoryId, CancellationToken ct);
+        Task<IEnumerable<uint>> GetACategorysActiveRulesId(uint categoryId, CancellationToken ct);
     }
 }

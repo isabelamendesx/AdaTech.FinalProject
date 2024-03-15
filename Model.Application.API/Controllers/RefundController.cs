@@ -11,12 +11,15 @@ using Model.Domain.Interfaces;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Serilog;
 using Model.Application.API.DTO;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Model.Application.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
     [Authorize]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     public class RefundController : ControllerBase
     {
         private readonly IRefundService _service;
@@ -26,9 +29,10 @@ namespace Model.Application.API.Controllers
             _service = service;
         }
 
+        
         [HttpPost]
-        //[Idempotent(ExpiresInMilliseconds = 10000)]
-        public async Task<IActionResult> CreateRefund([FromBody] RefundRequestDto request, CancellationToken ct)
+        [Idempotent(ExpiresInMilliseconds = 10000)]
+        public async Task<IActionResult> CreateRefund([FromHeader] string IdempotencyKey, [FromBody] RefundRequestDto request, CancellationToken ct)            
         {
             if (!ModelState.IsValid)
             {

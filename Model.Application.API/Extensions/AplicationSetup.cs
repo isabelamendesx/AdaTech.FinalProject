@@ -1,4 +1,5 @@
 ﻿using IdempotentAPI.Cache.DistributedCache.Extensions.DependencyInjection;
+using IdempotentAPI.Extensions.DependencyInjection;
 using Identity;
 using Identity.Interfaces;
 using Identity.Services;
@@ -34,8 +35,9 @@ namespace Model.Application.API.Extensions
             services.AddAuthentication(config);
             services.AddProblemDetails();
 
-            //services.AddDistributedMemoryCache();
-            //services.AddIdempotentAPIUsingDistributedCache();
+            services.AddIdempotentAPI();
+            services.AddDistributedMemoryCache();
+            services.AddIdempotentAPIUsingDistributedCache();
 
             services.AddCors(options =>
             {

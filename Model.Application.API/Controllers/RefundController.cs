@@ -30,9 +30,9 @@ namespace Model.Application.API.Controllers
         }
 
         
-        [HttpPost]       
-        public async Task<IActionResult> CreateRefund([FromBody] RefundRequestDto request, CancellationToken ct)
-        [Idempotent(ExpiresInMilliseconds = 10000)]       
+        [HttpPost]
+        [Idempotent(ExpiresInMilliseconds = 10000)]
+        public async Task<IActionResult> CreateRefund([FromHeader] string IndempotencyKey, [FromBody] RefundRequestDto request, CancellationToken ct)            
         {
             if (!ModelState.IsValid)
             {

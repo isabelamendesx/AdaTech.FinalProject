@@ -61,8 +61,12 @@ namespace Model.Application.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] PaginationParametersDTO paginationParameters)
         {
-            var categories = await _service.GetAll(HttpContext.RequestAborted);       
-            
+            var categories = await _service.GetAll(HttpContext.RequestAborted);
+
+            if (paginationParameters.PageNumber == 0 || paginationParameters.PageSize == 0)
+                return Ok(categories);
+
+
             var paginatedCategories = categories
                                     .Skip((paginationParameters.PageNumber - 1) * paginationParameters.PageSize)
                                     .Take(paginationParameters.PageSize)

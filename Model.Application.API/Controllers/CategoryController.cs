@@ -45,7 +45,7 @@ namespace Model.Application.API.Controllers
 
             var createdCategory = await _service.CreateCategory(category, HttpContext.RequestAborted);
 
-            Log.Information("New cateogry created: {@Category}", createdCategory);
+            Log.Information("New category created: {@Category}", createdCategory);
 
             return Ok(createdCategory);
         }

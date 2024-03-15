@@ -58,7 +58,7 @@ namespace Model.Service.Services
 
             if (rulesToDeactivate is null)
             {
-                Log.Information("Rules for Category with ID {@RuleId} not found", categoryId);
+                Log.Information("Attempt to deactived Rules for Category with ID {@RuleId} not found", categoryId);
                 throw new ResourceNotFoundException("Rules");
             }
 
@@ -77,7 +77,7 @@ namespace Model.Service.Services
 
             if (rule is null)
             {
-                Log.Information("Rule with ID {@RuleId} not found", Id);
+                Log.Information("Attempt to deactivate Rule with ID {@RuleId} not found", Id);
                 throw new ResourceNotFoundException("Rule");
             }
 

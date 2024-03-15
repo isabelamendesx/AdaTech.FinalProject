@@ -24,10 +24,11 @@ namespace Model.Application.API.Extensions
             services.AddControllers(options =>
             {
                 options.Filters.Add<ExceptionFilter>();
-            });
-
-            services.Configure<ApiBehaviorOptions>(options
-    => options.SuppressModelStateInvalidFilter = true);
+            })
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });   
             services.AddSwagger();
             services.AddAuthorizationPolicies();
             services.AddAuthentication(config);

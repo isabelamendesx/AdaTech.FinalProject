@@ -28,6 +28,11 @@ namespace Model.Application.API.Filters.Model
             _errorResponse.ConflictingRuleId = conflictingRuleId;
             return this;
         }
+          public ErrorResponseBuilder WithConflictingCategoryId(uint conflictingCategoryId)
+        {
+            _errorResponse.ConflictingCategoryId = conflictingCategoryId;
+            return this;
+        }
 
         public ErrorResponseBuilder WithDetails(string details)
         {

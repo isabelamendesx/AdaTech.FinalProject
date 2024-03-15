@@ -44,7 +44,7 @@ namespace Model.Application.API.Controllers
             };
 
             var createdRefund = await _service.CreateRefund(refund, HttpContext.RequestAborted);
-            Log.Information("New Refund Submited and {@Status} by rule with ID {@RuleId}", createdRefund.Status, createdRefund.Operations.First().ApprovalRule.Id);
+            Log.Information("New Refund Submitted and {@Status} by rule with ID {@RuleId}", createdRefund.Status, createdRefund.Operations.First().ApprovalRule.Id);
 
             return Ok(createdRefund);
         }

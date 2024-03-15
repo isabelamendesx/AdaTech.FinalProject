@@ -23,7 +23,7 @@ namespace Model.Application.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                Log.Warning("Invalid model state: {@ModelState}", ModelState.Values);
+                Log.Warning("Invalid User model state: {@ModelState}", ModelState.Values);
                 return UnprocessableEntity(ModelState);
             }
 
@@ -49,7 +49,7 @@ namespace Model.Application.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                Log.Warning("Invalid model state: {@ModelState}", ModelState.Values);
+                Log.Warning("Invalid User model state: {@ModelState}", ModelState.Values);
                 return UnprocessableEntity(ModelState);
             }
 

@@ -94,23 +94,36 @@ namespace Model.Application.API.Controllers
             if (deactivate)
             {
                 Log.Warning("Rule with id {@Ruleid} was deactived", ruleId);
-                return Ok();
+                var response = new DeactivateRuleResponseDTO();
+
+                response.DeactivatedRules.Append(ruleId);
+
+                return Ok(response);
             }
 
             return BadRequest();
         }
+       
+
 
         [Authorize(Roles = Roles.Manager)]
         [HttpPost]
         [Route("/deactivate/category/{categoryId}")]
         public async Task<IActionResult> DeactivateACategorysRules([FromRoute] uint categoryId, CancellationToken ct)
         {
+            var rulesIds = await _service.GetACategorysActiveRulesId(categoryId, ct);
+
             var deactivate = await _service.DeactivateACategorysRules(categoryId, ct);
 
             if (deactivate)
             {
                 Log.Warning("Rules for Category with id {@CategoryId} were deactived", categoryId);
-                return Ok();
+
+                var response = new DeactivateRuleResponseDTO();
+
+                response.DeactivatedRules = rulesIds;
+
+                return Ok(response);
             }
 
             return BadRequest();

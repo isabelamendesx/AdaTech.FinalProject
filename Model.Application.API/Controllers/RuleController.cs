@@ -40,10 +40,20 @@ namespace Model.Application.API.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] PaginationParametersDTO paginationParameters)
         {
             var rules = await _service.GetAll(HttpContext.RequestAborted);
-            return Ok(rules);
+
+            if (paginationParameters.PageNumber == 0 || paginationParameters.PageSize == 0)
+                return Ok(rules);
+
+
+            var paginatedRules = rules
+                                    .Skip((paginationParameters.PageNumber - 1) * paginationParameters.PageSize)
+                                    .Take(paginationParameters.PageSize)
+                                    .ToList();
+
+            return Ok(paginatedRules);
         }
 
         [Authorize(Roles = Roles.Manager)]

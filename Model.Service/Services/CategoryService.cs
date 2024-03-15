@@ -1,6 +1,8 @@
-﻿using Model.Domain.Entities;
+﻿using Microsoft.Extensions.Logging;
+using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -25,22 +27,32 @@ namespace Model.Service.Services
                 .GetByParameter(ct,
                     x => x.Name.ToLower().Equals(category.Name.ToLower()));
 
-            if (sameNameCategories.Count() != 0)
+            if (sameNameCategories.Any())
+            {
+                Log.Warning("Attempted to create category '{@CategoryName}' which already exists.", category.Name);
                 throw new CategoryAlreadyRegisteredException();
+            }
 
             return await _repository.AddAsync(category, ct);
         }
 
         public async Task<IEnumerable<Category?>> GetAll(CancellationToken ct)
         {
+            //Log.Information("Fetching all categories");
             return await _repository.GetByParameter(ct);
         }
 
         public async Task<Category?> GetById(uint id, CancellationToken ct)
         {
             var category = await _repository.GetById(id, ct);
+
             if (category is null)
+            {
+                Log.Information("Category with ID {@CategoryId} not found", id);
                 throw new ResourceNotFoundException("Category");
+            }
+
+            //Log.Information("Category fetched: {@Category}", category);
             return category;
         }
     }

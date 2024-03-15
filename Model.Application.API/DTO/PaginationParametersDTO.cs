@@ -3,9 +3,9 @@
     public class PaginationParametersDTO
     {
         const int MaxPageSize = 50;
-        private int _pageSize = 1;
+        private int _pageSize;
 
-        public int PageNumber { get; set; } = 1;
+        public int PageNumber { get; set; }
         public int PageSize
         {
             get { 

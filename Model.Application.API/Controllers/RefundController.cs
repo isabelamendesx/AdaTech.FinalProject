@@ -10,6 +10,7 @@ using Identity.Constants;
 using Model.Domain.Interfaces;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Serilog;
+using Model.Application.API.DTO;
 
 namespace Model.Application.API.Controllers
 {
@@ -51,13 +52,22 @@ namespace Model.Application.API.Controllers
 
         [HttpGet]
         [Route("{status}")]
-        public async Task<ActionResult<IEnumerable<Refund?>>> GetAllByStatus([ValidateStatus] string status)
+        public async Task<ActionResult<IEnumerable<Refund?>>> GetAllByStatus([ValidateStatus] string status,
+                                                    [FromQuery] PaginationParametersDTO paginationParameters)
         {
             var parsedStatus = EnumParser.ParseStatus(status);
 
             var refunds = await _service.GetAllByStatus(parsedStatus, HttpContext.RequestAborted);
 
-            return Ok(refunds);
+
+            if (paginationParameters.PageNumber == 0 || paginationParameters.PageSize == 0)
+                return Ok(refunds);
+
+
+            var paginatedRefunds = PaginationGenerator.GetPaginatedResponse(paginationParameters, refunds);
+
+
+            return Ok(paginatedRefunds);
         }
 
         [HttpPost]

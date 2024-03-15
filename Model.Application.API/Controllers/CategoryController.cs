@@ -34,7 +34,7 @@ namespace Model.Application.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                Log.Warning("Invalid model state: {@ModelState}", ModelState);
+                Log.Warning("Invalid Category model state: {@ModelState}", ModelState.Values);
                 return UnprocessableEntity(ModelState);
             }
 

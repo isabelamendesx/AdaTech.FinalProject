@@ -52,7 +52,7 @@ namespace Model.Application.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                Log.Warning("Invalid model state: {@ModelState}", ModelState.Values);
+                Log.Warning("Invalid Rule model state: {@ModelState}", ModelState.Values);
                 return UnprocessableEntity(ModelState);
             }
 

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Identity.Constants;
 using Model.Domain.Interfaces;
 using Microsoft.AspNetCore.Http.Timeouts;
+using Serilog;
 
 namespace Model.Application.API.Controllers
 {
@@ -29,7 +30,10 @@ namespace Model.Application.API.Controllers
         public async Task<IActionResult> CreateRefund([FromBody] RefundRequestDto request)
         {
             if (!ModelState.IsValid)
-                return BadRequest();
+            {
+                Log.Warning("Invalid Refund model state: {@ModelState}", ModelState.Values);
+                return UnprocessableEntity(ModelState);
+            }
 
             var refund = new Refund()
             {

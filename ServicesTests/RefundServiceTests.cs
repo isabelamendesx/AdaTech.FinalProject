@@ -21,6 +21,7 @@ namespace ServicesTests
         private IRepository<Refund> repository;
         private IRepository<RefundOperation> operationRepository;
         private IRuleService ruleService;
+        private ICategoryService categoryService;
         private CancellationToken ct;
 
         public RefundServiceTests()
@@ -29,8 +30,9 @@ namespace ServicesTests
             repository = Substitute.For<IRepository<Refund>>();
             operationRepository = Substitute.For<IRepository<RefundOperation>>();
             ruleService = Substitute.For<IRuleService>();
+            categoryService = Substitute.For<ICategoryService>();
 
-            _sut = new RefundService(repository, operationRepository, ruleService);
+            _sut = new RefundService(repository, operationRepository, ruleService, categoryService);
         }
 
         [Fact]

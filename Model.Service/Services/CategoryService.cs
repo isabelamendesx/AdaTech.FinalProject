@@ -22,10 +22,9 @@ namespace Model.Service.Services
         public async Task<Category> CreateCategory(Category category, CancellationToken ct)
         {
             var sameNameCategories = await _repository
-                .GetByParameter(ct,
-                    x => x.Name.Equals(category.Name, StringComparison.OrdinalIgnoreCase));
+                                     .GetByParameter(ct,x => x.Name.ToLower().Equals(category.Name.ToLower()));
 
-            if (sameNameCategories.Count() != 0)
+            if (sameNameCategories.Any())
                 throw new CategoryAlreadyRegisteredException();
 
             return await _repository.AddAsync(category, ct);

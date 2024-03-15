@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Infra.Data.Context;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,19 +16,26 @@ namespace Model.Infra.Data.Repositories
     public class RefundRepository : IRepository<Refund>
     {
         private readonly DataContext _context;
-        private readonly ILogger _logger;
 
-        public RefundRepository(DataContext context, ILogger logger)
+        public RefundRepository(DataContext context)
         {
             _context = context;
-            _logger = logger;
         }
 
         public async Task<Refund> AddAsync(Refund refund, CancellationToken ct)
         {
-            await _context.Refunds.AddAsync(refund);
-            await _context.SaveChangesAsync();
-            return refund;
+            try
+            {
+                await _context.Refunds.AddAsync(refund);
+                await _context.SaveChangesAsync();
+                return refund;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An error occurred while trying to add a new Refund to the Database.");
+                throw;
+            }
+
         }
 
         public async Task UpdateAsync(Refund refund, CancellationToken ct)
@@ -39,8 +47,8 @@ namespace Model.Infra.Data.Repositories
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError(ex, "An error occurred while updating the refund. Details: {ErrorMessage}", ex.Message);
-                throw new DbUpdateException("Error updating refund. See inner exception for details.", ex);
+                Log.Error(ex, "An error occurred while updating Refund with ID {@RefundID} in the Database", refund.Id);
+                throw;
             }
         }
 
@@ -61,12 +69,23 @@ namespace Model.Infra.Data.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while trying to fetch Refunds with filter: {FilterExpression}", filter?.ToString() ?? "No filter applied");
+                Log.Error(ex, "An error occurred while trying to fetch Refunds with filter in the Database: {@Filter}", filter?.ToString() ?? "No filter applied");
                 throw;
             }
         }
 
-        public async Task<Refund?> GetById(uint Id, CancellationToken ct) => await _context.Refunds.FirstOrDefaultAsync(x => x.Id == Id);
+        public async Task<Refund?> GetById(uint Id, CancellationToken ct)
+        {
+            try
+            {
+                return await _context.Refunds.FirstOrDefaultAsync(x => x.Id == Id);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An error occurred while trying to fetch Refund with ID {@RefundId} in the Database.", Id);
+                throw;
+            }
+        }
 
     }
 }

@@ -27,7 +27,7 @@ namespace Model.Application.API.Controllers
 
         [HttpPost]
         //[Idempotent(ExpiresInMilliseconds = 10000)]
-        public async Task<IActionResult> CreateRefund([FromBody] RefundRequestDto request)
+        public async Task<IActionResult> CreateRefund([FromBody] RefundRequestDto request, CancellationToken ct)
         {
             if (!ModelState.IsValid)
             {
@@ -43,7 +43,7 @@ namespace Model.Application.API.Controllers
                 Total = request.Total
             };
 
-            var createdRefund = await _service.CreateRefund(refund, HttpContext.RequestAborted);
+            var createdRefund = await _service.CreateRefund(refund, ct);
             Log.Information("New Refund Submitted and {@Status} by rule with ID {@RuleId}", createdRefund.Status, createdRefund.Operations.First().ApprovalRule.Id);
 
             return Ok(createdRefund);
@@ -51,11 +51,11 @@ namespace Model.Application.API.Controllers
 
         [HttpGet]
         [Route("{status}")]
-        public async Task<ActionResult<IEnumerable<Refund?>>> GetAllByStatus([ValidateStatus] string status)
+        public async Task<ActionResult<IEnumerable<Refund?>>> GetAllByStatus([ValidateStatus] string status, CancellationToken ct)
         {
             var parsedStatus = EnumParser.ParseStatus(status);
 
-            var refunds = await _service.GetAllByStatus(parsedStatus, HttpContext.RequestAborted);
+            var refunds = await _service.GetAllByStatus(parsedStatus, ct);
 
             return Ok(refunds);
         }
@@ -63,18 +63,18 @@ namespace Model.Application.API.Controllers
         [HttpPost]
         [Route("/approve/{id}/{userId}")]
         [Authorize(Roles = Roles.Manager)]
-        public async Task<IActionResult> ApproveRefund([FromRoute] uint id, [FromRoute] uint userId)
+        public async Task<IActionResult> ApproveRefund([FromRoute] uint id, [FromRoute] uint userId, CancellationToken ct)
         {
-            var refund = await _service.ApproveRefund(id, userId, HttpContext.RequestAborted);
+            var refund = await _service.ApproveRefund(id, userId, ct);
             return Ok(refund);
         }
 
         [HttpPost]
         [Route("/reject/{id}/{userId}")]
         [Authorize(Roles = Roles.Manager + "," + Roles.Supervisor)]
-        public async Task<IActionResult> RejectRefund([FromRoute] uint id, [FromRoute] uint userId)
+        public async Task<IActionResult> RejectRefund([FromRoute] uint id, [FromRoute] uint userId, CancellationToken ct)
         {
-            var refund = await _service.RejectRefund(id, userId, HttpContext.RequestAborted);
+            var refund = await _service.RejectRefund(id, userId, ct);
             return Ok(refund);
         }
 

@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Model.Service.Services.Util;
 using Serilog;
+using System.Collections;
 
 namespace Model.Service.Services
 {
@@ -112,6 +113,18 @@ namespace Model.Service.Services
         {
             var list = await _ruleRepository.GetByParameter(ct, x => x.Category.Id == 0 && !x.Action && x.IsActive);
             return list;
+        }
+        
+        public async Task<IEnumerable<uint>> GetACategorysActiveRulesId(uint categoryId, CancellationToken ct)
+        {
+            var list = await _ruleRepository.GetByParameter(ct, x => x.Category.Id == categoryId && x.IsActive);
+
+            IEnumerable<uint> ids = new List<uint>();
+
+            for (var i = 0; i < list.Count(); i++)
+                ids.Append(list.ElementAt(i)!.Id);
+
+            return ids;
         }
     }
 }

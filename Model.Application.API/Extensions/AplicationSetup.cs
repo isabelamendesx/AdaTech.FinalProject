@@ -4,6 +4,7 @@ using Identity.Interfaces;
 using Identity.Services;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Model.Application.API.Filters;
 using Model.Domain.Entities;
@@ -23,15 +24,18 @@ namespace Model.Application.API.Extensions
             services.AddControllers(options =>
             {
                 options.Filters.Add<ExceptionFilter>();
-            });     
-            
+            })
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });   
             services.AddSwagger();
             services.AddAuthorizationPolicies();
             services.AddAuthentication(config);
             services.AddProblemDetails();
 
-            services.AddDistributedMemoryCache();
-            services.AddIdempotentAPIUsingDistributedCache();
+            //services.AddDistributedMemoryCache();
+            //services.AddIdempotentAPIUsingDistributedCache();
 
             services.AddCors(options =>
             {

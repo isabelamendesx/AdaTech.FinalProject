@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Infra.Data.Context;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -16,21 +17,39 @@ namespace Model.Infra.Data.Repositories
     public class RuleRepository : IRepository<Rule>
     {
         private readonly DataContext _context;
-        private readonly ILogger _logger;
 
-        public RuleRepository(ILogger logger, DataContext context)
+        public RuleRepository(DataContext context)
         {
-            _logger = logger;
             _context = context;
         }
 
         public async Task<Rule> AddAsync(Rule rule, CancellationToken ct)
         {
-            await _context.Rules.AddAsync(rule);
-            await _context.SaveChangesAsync();
-            return rule;
+            try
+            {
+                await _context.Rules.AddAsync(rule);
+                await _context.SaveChangesAsync();
+                return rule;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An error occurred while trying to add a new Rule to the Database.");
+                throw;
+            }
+
         }
-        public async Task<Rule?> GetById(uint Id, CancellationToken ct) => await _context.Rules.FindAsync(Id);
+        public async Task<Rule?> GetById(uint Id, CancellationToken ct)
+        {
+            try
+            {
+                return await _context.Rules.FindAsync(Id);
+            } 
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An error occurred while trying to fetch Rule with ID {@RefundOpId} in the Database.", Id);
+                throw;
+            }
+        } 
 
         public async Task<IEnumerable<Rule?>> GetByParameter(CancellationToken ct, Expression<Func<Rule, bool>> filter = null)
         {
@@ -49,7 +68,7 @@ namespace Model.Infra.Data.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while trying to fetch Rules with filter: {FilterExpression}", filter?.ToString());
+                Log.Error(ex, "An error occurred while trying to fetch Rules with filter in the Database: {@Filter}", filter?.ToString() ?? "No filter applied");
                 throw;
             }
         }
@@ -61,10 +80,10 @@ namespace Model.Infra.Data.Repositories
                 _context.Rules.Update(rule);
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while updating Rule. Details: {ErrorMessage}", ex.Message);
-                throw new DbUpdateException("Error updating Rule. See inner exception for details.", ex);
+                Log.Error(ex, "An error occurred while updating Rule with ID {@RefundOpID} in the Database", rule.Id);
+                throw;
             }
         }
     }

@@ -14,6 +14,7 @@ using Model.Domain.Interfaces;
 using Model.Infra.Data.Context;
 using Model.Infra.Data.Repositories;
 using Model.Service.Services;
+using Serilog;
 using System.Net;
 using Way2Commerce.Api.Extensions;
 
@@ -24,6 +25,9 @@ namespace Model.Application.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Host.UseSerilog((context, loggerConfig) =>
+            loggerConfig.ReadFrom.Configuration(context.Configuration));
 
             builder.Services
                 .AddConfig(builder.Configuration)
@@ -42,6 +46,8 @@ namespace Model.Application.API
             app.UseCors("AllowOrigin");
 
             app.UseHttpsRedirection();
+
+            app.UseSerilogRequestLogging();
 
             app.UseRequestTimeouts();
 

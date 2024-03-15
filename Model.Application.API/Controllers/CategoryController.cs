@@ -30,7 +30,7 @@ namespace Model.Application.API.Controllers
 
         [HttpPost]
         [Authorize(Roles = Roles.Manager)]
-        public async Task<IActionResult> CreateCategory([FromBody] CategoryRequestDTO request)
+        public async Task<IActionResult> CreateCategory([FromBody] CategoryRequestDTO request, CancellationToken ct)
         {
             if (!ModelState.IsValid)
             {
@@ -43,7 +43,7 @@ namespace Model.Application.API.Controllers
                 Name = request.Name
             };
 
-            var createdCategory = await _service.CreateCategory(category, HttpContext.RequestAborted);
+            var createdCategory = await _service.CreateCategory(category, ct);
 
             Log.Information("New category created: {@Category}", createdCategory);
 
@@ -52,16 +52,16 @@ namespace Model.Application.API.Controllers
 
         [HttpGet]
         [Route("/category/{id}")]
-        public async Task<IActionResult> GetById([FromRoute] uint id)
+        public async Task<IActionResult> GetById([FromRoute] uint id, CancellationToken ct)
         {
-            var category = await _service.GetById(id, HttpContext.RequestAborted);      
+            var category = await _service.GetById(id, ct);      
             return Ok(category);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(CancellationToken ct)
         {
-            var categories = await _service.GetAll(HttpContext.RequestAborted);           
+            var categories = await _service.GetAll(ct);           
             return Ok(categories);
         }
 

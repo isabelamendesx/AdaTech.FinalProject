@@ -65,12 +65,14 @@ namespace Model.Application.API.Controllers
 
             var action = request.Action.Equals("Approve", StringComparison.OrdinalIgnoreCase) ? true : false;
 
+            var maxValue = request.MaxValue == 0 ? decimal.MaxValue : request.MaxValue;
+
             var category = await _categoryService.GetById(request.CategoryId, ct);
 
             Rule rule = new Rule()
             {
                 MinValue = request.MinValue,
-                MaxValue = request.MaxValue,
+                MaxValue = maxValue,
                 Action = action,
                 Category = category,
                 IsActive = true

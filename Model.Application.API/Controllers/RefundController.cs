@@ -64,10 +64,7 @@ namespace Model.Application.API.Controllers
                 return Ok(refunds);
 
 
-            var paginatedRefunds = refunds
-                                    .Skip((paginationParameters.PageNumber - 1) * paginationParameters.PageSize)
-                                    .Take(paginationParameters.PageSize)
-                                    .ToList();
+            var paginatedRefunds = PaginationGenerator.GetPaginatedResponse(paginationParameters, refunds);
 
 
             return Ok(paginatedRefunds);

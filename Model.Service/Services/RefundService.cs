@@ -11,6 +11,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Serilog;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Model.Service.Services
 {
@@ -35,7 +37,10 @@ namespace Model.Service.Services
             refund.Category = await _categoryService.GetById(refund.Category.Id, ct);
 
             if (refund.Category is null)
+            {
+                Log.Warning("Attempted to create a refund with an invalid category.");
                 throw new ResourceNotFoundException("category");
+            }
 
             var processResult = await ProcessRefund(refund.Category.Id, refund.Total, ct);
 
@@ -71,7 +76,10 @@ namespace Model.Service.Services
             var refund = await _repository.GetById(Id, ct);
 
             if (refund is null)
+            {
+                Log.Warning("Attempted to approve a refund with an invalid ID.");
                 throw new ResourceNotFoundException("Refund");
+            }
 
             refund.Status = EStatus.Approved;
             RefundOperation op = new RefundOperation()
@@ -92,7 +100,10 @@ namespace Model.Service.Services
             var refund = await _repository.GetById(Id, ct);
 
             if (refund is null)
+            {
+                Log.Warning("Attempted to reject a refund with an invalid ID.");
                 throw new ResourceNotFoundException("Refund");
+            }
 
             refund.Status = EStatus.Rejected;
 
@@ -156,9 +167,7 @@ namespace Model.Service.Services
                 {
                     Status = EStatus.Approved,
                     Rule = approveByCategoryResult
-                };
-
-           
+                };       
 
             return new ProcessRefundResult() { Status = EStatus.UnderEvaluation, Rule = null };
         }

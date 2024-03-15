@@ -29,6 +29,10 @@ namespace Model.Application.API.Filters
                    .WithConflictingRuleId(ruleEx.ConflictingRuleId)
                    .WithDetails(ruleEx.Details);
 
+            if (context.Exception is CategoryAlreadyRegisteredException categoryEx)
+                errorResultBuilder
+                   .WithConflictingCategoryId(categoryEx.ConflictingCategoryId);
+
             var errorResult = errorResultBuilder.Build();
             var ignoreNullFields = new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
 

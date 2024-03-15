@@ -8,6 +8,7 @@
         public DateTime TimeStamp { get; set; }
         public string RequestPath { get; set; }
         public uint? ConflictingRuleId { get; set; }
+        public uint? ConflictingCategoryId { get; set; }
         public int StatusCode { get; set; }
 
     }

@@ -5,12 +5,11 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Model.Application.API.DTO
 {
+    [MinValueOrMaxValueValidatorAttibute]
     public class RuleRequestDTO {
 
-        [NotNull]
         [Range(0, double.MaxValue, ErrorMessage = "MinValue must be a positive number")]
         public decimal MinValue { get; set; }
-        [NotNull]
         [Range(0, double.MaxValue, ErrorMessage = "MaxValue must be a positive number")]
         public decimal MaxValue { get; set; }
 

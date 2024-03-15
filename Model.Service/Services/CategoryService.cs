@@ -30,7 +30,7 @@ namespace Model.Service.Services
             if (sameNameCategories.Any())
             {
                 Log.Warning("Attempted to create category '{@CategoryName}' which already exists.", category.Name);
-                throw new CategoryAlreadyRegisteredException();
+                throw new CategoryAlreadyRegisteredException(sameNameCategories.First().Id);
             }
 
             return await _repository.AddAsync(category, ct);

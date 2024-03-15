@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Identity.Constants;
 using Model.Domain.Interfaces;
 using Microsoft.AspNetCore.Http.Timeouts;
+using Serilog;
 
 namespace Model.Application.API.Controllers
 {
@@ -25,21 +26,25 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpPost]
-        [Idempotent(ExpiresInMilliseconds = 10000)]
+        //[Idempotent(ExpiresInMilliseconds = 10000)]
         public async Task<IActionResult> CreateRefund([FromBody] RefundRequestDto request)
         {
             if (!ModelState.IsValid)
-                return BadRequest();
+            {
+                Log.Warning("Invalid Refund model state: {@ModelState}", ModelState.Values);
+                return UnprocessableEntity(ModelState);
+            }
 
             var refund = new Refund()
             {
                 Description = request.Description,
-                Category = new Category { Name = request.Category},
+                Category = new Category { Id = request.CategoryId},
                 Status = EnumParser.ParseStatus(request.Status),
                 Total = request.Total
             };
 
             var createdRefund = await _service.CreateRefund(refund, HttpContext.RequestAborted);
+            Log.Information("New Refund Submitted and {@Status} by rule with ID {@RuleId}", createdRefund.Status, createdRefund.Operations.First().ApprovalRule.Id);
 
             return Ok(createdRefund);
         }

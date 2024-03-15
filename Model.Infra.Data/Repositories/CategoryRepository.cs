@@ -3,36 +3,48 @@ using Microsoft.Extensions.Logging;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Infra.Data.Context;
-using System;
-using System.Collections.Generic;
+using Serilog;
 using System.Data;
-using System.Data.Common;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Model.Infra.Data.Repositories
 {
     public class CategoryRepository : IRepository<Category>
     {
         private readonly DataContext _context;
-        private readonly ILogger _logger;
 
-        public CategoryRepository(ILogger logger, DataContext context)
+        public CategoryRepository(DataContext context)
         {
-            _logger = logger;
             _context = context;
         }
 
         public async Task<Category> AddAsync(Category category, CancellationToken ct)
         {
-            await _context.Categories.AddAsync(category);
-            await _context.SaveChangesAsync();
-            return category;
+            try
+            {
+                await _context.Categories.AddAsync(category);
+                await _context.SaveChangesAsync();
+                return category;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An error occurred while trying to add category '{@CategoryName}' to the Database.", category.Name);
+                throw;
+            }
         }
 
-        public async Task<Category?> GetById(uint Id, CancellationToken ct) => await _context.Categories.FindAsync(Id);
+        public async Task<Category?> GetById(uint Id, CancellationToken ct)
+        {
+            try
+            {
+                return await _context.Categories.FindAsync(Id);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An error occurred while trying to fetch Category with ID {@CategoryId} in the Database.", Id);
+                throw;
+            }
+        } 
 
         public async Task<IEnumerable<Category?>> GetByParameter(CancellationToken ct, Expression<Func<Category, bool>> filter = null)
         {
@@ -51,7 +63,7 @@ namespace Model.Infra.Data.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while trying to fetch Rules with filter: {FilterExpression}", filter?.ToString());
+                Log.Error(ex, "An error occurred while trying to fetch Categories with filter in the Database: {@Filter}", filter?.ToString() ?? "No filter applied");
                 throw;
             }
         }
@@ -63,10 +75,10 @@ namespace Model.Infra.Data.Repositories
                 _context.Categories.Update(category);
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while updating Category. Details: {ErrorMessage}", ex.Message);
-                throw new DbUpdateException("Error updating Category. See inner exception for details.", ex);
+                Log.Error(ex, "An error occurred while updating Category with ID {@CategoryID} in the Database", category.Id);
+                throw;
             }
         }
     }

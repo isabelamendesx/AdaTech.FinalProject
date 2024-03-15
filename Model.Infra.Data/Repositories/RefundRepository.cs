@@ -24,38 +24,19 @@ namespace Model.Infra.Data.Repositories
 
         public async Task<Refund> AddAsync(Refund refund, CancellationToken ct)
         {
-            try
-            {
-                await _context.Refunds.AddAsync(refund);
-                await _context.SaveChangesAsync();
-                return refund;
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "An error occurred while trying to add a new Refund to the Database.");
-                throw;
-            }
-
+            await _context.Refunds.AddAsync(refund);
+            await _context.SaveChangesAsync();
+            return refund;
         }
 
         public async Task UpdateAsync(Refund refund, CancellationToken ct)
         {
-            try
-            {
-                _context.Refunds.Update(refund);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                Log.Error(ex, "An error occurred while updating Refund with ID {@RefundID} in the Database", refund.Id);
-                throw;
-            }
+            _context.Refunds.Update(refund);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<Refund?>> GetByParameter(CancellationToken ct, Expression<Func<Refund, bool>> filter = null)
         {
-            try
-            {
                 var query = _context.Refunds.AsQueryable();
 
                 if (filter != null)
@@ -70,26 +51,11 @@ namespace Model.Infra.Data.Repositories
                     .ThenInclude(x => x.ApprovalRule)
                     .ThenInclude(x => x.Category)
                     .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "An error occurred while trying to fetch Refunds with filter in the Database: {@Filter}", filter?.ToString() ?? "No filter applied");
-                throw;
-            }
         }
 
         public async Task<Refund?> GetById(uint Id, CancellationToken ct)
-        {
-            try
-            {
-                return await _context.Refunds.FirstOrDefaultAsync(x => x.Id == Id);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "An error occurred while trying to fetch Refund with ID {@RefundId} in the Database.", Id);
-                throw;
-            }
-        }
+               => await _context.Refunds.FirstOrDefaultAsync(x => x.Id == Id);
+
 
     }
 }

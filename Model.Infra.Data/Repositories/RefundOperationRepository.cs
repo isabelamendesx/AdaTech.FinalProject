@@ -18,38 +18,16 @@ namespace Model.Infra.Data.Repositories
         }
         public async Task<RefundOperation> AddAsync(RefundOperation operation, CancellationToken ct)
         {
-            try
-            {
-                await _context.RefundOperations.AddAsync(operation);
-                await _context.SaveChangesAsync();
-                return operation;
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "An error occurred while trying to add a new Refund Operation to the Database.");
-                throw;
-            }
-
+            await _context.RefundOperations.AddAsync(operation);
+            await _context.SaveChangesAsync();
+            return operation;
         }
 
         public async Task<RefundOperation?> GetById(uint Id, CancellationToken ct)
-        {
-            try
-            {
-                return await _context.RefundOperations.FindAsync(Id);
-            } 
-            catch (Exception ex)
-            {
-                Log.Error(ex, "An error occurred while trying to fetch Refund Operation with ID {@RefundOpId} in the Database.", Id);
-                throw;
-            }
-            
-        }
+            => await _context.RefundOperations.FindAsync(Id);
 
         public async Task<IEnumerable<RefundOperation?>> GetByParameter(CancellationToken ct, Expression<Func<RefundOperation, bool>> filter = null)
         {
-            try
-            {
                 var query = _context.RefundOperations.AsQueryable();
 
                 if (filter != null)
@@ -60,26 +38,12 @@ namespace Model.Infra.Data.Repositories
                 }
 
                 return await query.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "An error occurred while trying to fetch Refund Operations with filter in the Database: {@Filter}", filter?.ToString() ?? "No filter applied");
-                throw;
-            }
         }
 
         public async Task UpdateAsync(RefundOperation operation, CancellationToken ct)
         {
-            try
-            {
-                _context.RefundOperations.Update(operation);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "An error occurred while updating Refund Operation with ID {@RefundOpID} in the Database", operation.Id);
-                throw;
-            }
+            _context.RefundOperations.Update(operation);
+             await _context.SaveChangesAsync();
         }
     }
 }

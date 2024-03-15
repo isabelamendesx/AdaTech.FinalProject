@@ -64,7 +64,9 @@ namespace Model.Infra.Data.Repositories
                          .AsNoTrackingWithIdentityResolution();
                 }
 
-                return await query.Include(x => x.Category).ToListAsync();
+                return await query
+                    .Include(x => x.Category)
+                    .ToListAsync();
                    
             }
             catch (Exception ex)

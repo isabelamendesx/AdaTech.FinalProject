@@ -12,6 +12,7 @@ using Rule = Model.Domain.Entities.Rule;
 using ICategoryService = Model.Domain.Interfaces.ICategoryService;
 using IRuleService = Model.Domain.Interfaces.IRuleService;
 using Serilog;
+using Model.Application.API.Util;
 
 
 namespace Model.Application.API.Controllers
@@ -48,10 +49,7 @@ namespace Model.Application.API.Controllers
                 return Ok(rules);
 
 
-            var paginatedRules = rules
-                                    .Skip((paginationParameters.PageNumber - 1) * paginationParameters.PageSize)
-                                    .Take(paginationParameters.PageSize)
-                                    .ToList();
+            var paginatedRules = PaginationGenerator.GetPaginatedResponse(paginationParameters, rules);
 
             return Ok(paginatedRules);
         }

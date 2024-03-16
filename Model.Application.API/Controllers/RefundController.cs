@@ -73,7 +73,7 @@ namespace Model.Application.API.Controllers
                     paginationParameters.PageSize
                 );
 
-            var response = PaginationGenerator.GetPaginatedResponse
+            var response = PaginationResponseGenerator.GetPaginatedResponse
                                     (paginatedCategories, paginationParameters);
 
             return Ok(response);

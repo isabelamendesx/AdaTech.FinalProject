@@ -15,11 +15,21 @@ namespace Model.Application.API.Filters.Model
 
         public ErrorResponseBuilder WithDefaultProperties(ExceptionContext context)
         {
-            _errorResponse.Title = GetTitle(context.Exception);
             _errorResponse.Message = context.Exception.Message;
             _errorResponse.TimeStamp = DateTime.UtcNow;
             _errorResponse.RequestPath = context.HttpContext.Request.Path;
-            _errorResponse.StatusCode = GetStatusCode(context.Exception);
+            return this;
+        }
+
+        public ErrorResponseBuilder WithTitle(string title)
+        {
+            _errorResponse.Title = title;
+            return this;
+        }
+
+        public ErrorResponseBuilder WithStatusCode(int statusCode)
+        {
+            _errorResponse.StatusCode = statusCode;
             return this;
         }
 
@@ -44,31 +54,6 @@ namespace Model.Application.API.Filters.Model
             return _errorResponse;
         }
 
-        private int GetStatusCode<T>(T ex) where T : Exception
-        {
-            var statusCodeMap = new Dictionary<Type, Func<int>>
-            {
-                { typeof(RuleException), () => (ex as RuleException)!.StatusCode },
-                { typeof(ResourceNotFoundException), () => (ex as ResourceNotFoundException)!.StatusCode},
-                { typeof(InternalErrorException), () => (ex as InternalErrorException)!.StatusCode },
-                { typeof(CategoryAlreadyRegisteredException), () => (ex as CategoryAlreadyRegisteredException)!.StatusCode},
-            };
-
-            return statusCodeMap.TryGetValue(ex.GetType(), out var statusCodeFunc) ? statusCodeFunc() : (int)HttpStatusCode.InternalServerError;
-        }
-
-        private string GetTitle<T>(T ex) where T : Exception
-        {
-            var titleMap = new Dictionary<Type, string>
-            {
-                { typeof(RuleException), "Rule Operation Error" },
-                { typeof(ResourceNotFoundException), "Resource Error" },
-                { typeof(InternalErrorException), "Internal Error" },
-                { typeof(CategoryAlreadyRegisteredException), "Category Operation Error" },
-            };
-
-            return titleMap.TryGetValue(ex.GetType(), out var title) ? title : "Internal Server Error";
-        }
-
+       
     }
 }

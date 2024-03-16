@@ -36,9 +36,16 @@ Nossa missão foi criar uma API(**Motor de aprovação**) para automatizar o pro
 - [Licença](#licença)
 
 ## Descrição do projeto
+Para solucionar o desafio do controle de pagamento de reembolsos, desenvolvemos um motor de aprovação que automatiza o processo de decisão sobre a aprovação ou recusa de documentos de reembolso. Este motor é ativado automaticamente ao criar um novo documento de reembolso e segue uma tabela de decisão com critérios que podem ser pré-definidos e alterados de acordo com a necessidade da gestão financeira responsável, como por exemplo:
 
-O objetivo deste projeto é a criação de uma Web API Rest que auxilie de maneira automatizada o processo de aprovação de pedidos de reembolso recebidos em uma empresa,
-agilizando este processo e 'desafogando' o fluxo de atividades do departamento financeiro.
+* Para valores de reembolso até R$100, todas as categorias são automaticamente aprovadas.
+* Para valores entre R$101 e R$500, as categorias de alimentação e transporte são automaticamente aprovadas.
+* Para valores acima de R$1.000, todas as categorias são automaticamente recusadas.
+* Caso nenhuma dessas regras seja atendida, o status do documento é definido como "EM APROVAÇÃO", exigindo uma intervenção manual do departamento financeiro para decidir sobre a aprovação ou recusa.
+
+**IMPORTANTE:** As regras de aprovação são facilmente alteradas por uma pessoa **autorizada**.
+
+Para armazenar os dados relacionados aos documentos de reembolso e às regras de aprovação, utilizamos um banco de dados PostgreSQL hospedado no ElephantSQL, que oferece uma solução de banco de dados na nuvem confiável e escalável. Essa escolha permite o armazenamento seguro e eficiente dos dados, garantindo alta disponibilidade e performance para a nossa aplicação.
 
 ## Funcionalidades
 

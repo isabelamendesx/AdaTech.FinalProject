@@ -36,6 +36,7 @@ namespace Model.Application.API.Controllers
         [Idempotent(ExpiresInMilliseconds = 10000)]
         public async Task<IActionResult> CreateRefund([FromHeader] string IdempotencyKey, [FromBody] RefundRequestDto request, CancellationToken ct)            
         {
+
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("Invalid Refund model state: {@ModelState}", ModelState.Values);
@@ -47,8 +48,9 @@ namespace Model.Application.API.Controllers
                 Description = request.Description,
                 Category = new Category { Id = request.CategoryId},
                 Status = EnumParser.ParseStatus(request.Status),
-                Total = request.Total
-            };
+                Total = request.Total,
+                OwnerID = HttpContext.Items["UserId"] as string
+        };
 
             var createdRefund = await _service.CreateRefund(refund, ct);
             _logger.LogInformation("New Refund Submitted and {@Status} by rule with ID {@RuleId}", createdRefund.Status, createdRefund.Operations.First().ApprovalRule.Id);
@@ -82,19 +84,21 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpPost]
-        [Route("/approve/{id}/{userId}")]
+        [Route("/approve/{id}")]
         [Authorize(Roles = Roles.Manager)]
-        public async Task<IActionResult> ApproveRefund([FromRoute] uint id, [FromRoute] uint userId, CancellationToken ct)
+        public async Task<IActionResult> ApproveRefund([FromRoute] uint id, CancellationToken ct)
         {
+            var userId = HttpContext.Items["UserId"] as string;
             var refund = await _service.ApproveRefund(id, userId, ct);
             return Ok(refund);
         }
 
         [HttpPost]
-        [Route("/reject/{id}/{userId}")]
+        [Route("/reject/{id}")]
         [Authorize(Roles = Roles.Manager + "," + Roles.Supervisor)]
-        public async Task<IActionResult> RejectRefund([FromRoute] uint id, [FromRoute] uint userId, CancellationToken ct)
+        public async Task<IActionResult> RejectRefund([FromRoute] uint id, CancellationToken ct)
         {
+            var userId = HttpContext.Items["UserId"] as string;
             var refund = await _service.RejectRefund(id, userId, ct);
             return Ok(refund);
         }

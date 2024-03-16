@@ -3,6 +3,7 @@ using Identity.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
+using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
 using Serilog;
 using System.Security.Claims;
@@ -21,7 +22,6 @@ namespace Model.Application.API.Controllers
             _identityService = identityService;
             _logger = logger;
         }
-   
 
         [HttpPost("register")] 
         public async Task<ActionResult<UserRegisterResponse>> Register(UserRegisterRequest userRegister)
@@ -74,8 +74,7 @@ namespace Model.Application.API.Controllers
         [HttpPost("refresh-login")]
         public async Task<ActionResult<UserRegisterResponse>> RefreshLogin()
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            var userId = identity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = HttpContext.Items["UserId"] as string;
 
             if (userId == null)
             {

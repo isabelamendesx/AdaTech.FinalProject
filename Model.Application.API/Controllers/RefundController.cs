@@ -23,10 +23,12 @@ namespace Model.Application.API.Controllers
     public class RefundController : ControllerBase
     {
         private readonly IRefundService _service;
-
-        public RefundController(IRefundService service)
+        private readonly ILogger<RefundController> _logger;
+        
+        public RefundController(IRefundService service, ILogger<RefundController> logger)
         {
             _service = service;
+            _logger = logger;   
         }
 
         
@@ -36,7 +38,7 @@ namespace Model.Application.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                Log.Warning("Invalid Refund model state: {@ModelState}", ModelState.Values);
+                _logger.LogWarning("Invalid Refund model state: {@ModelState}", ModelState.Values);
                 return UnprocessableEntity(ModelState);
             }
 
@@ -49,7 +51,7 @@ namespace Model.Application.API.Controllers
             };
 
             var createdRefund = await _service.CreateRefund(refund, ct);
-            Log.Information("New Refund Submitted and {@Status} by rule with ID {@RuleId}", createdRefund.Status, createdRefund.Operations.First().ApprovalRule.Id);
+            _logger.LogInformation("New Refund Submitted and {@Status} by rule with ID {@RuleId}", createdRefund.Status, createdRefund.Operations.First().ApprovalRule.Id);
 
             return Ok(createdRefund);
         }

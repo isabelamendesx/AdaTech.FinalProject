@@ -23,10 +23,12 @@ namespace Model.Application.API.Controllers
     public class RefundController : ControllerBase
     {
         private readonly IRefundService _service;
+        private readonly IUserAccessor _userAccessor;
 
-        public RefundController(IRefundService service)
+        public RefundController(IRefundService service, IUserAccessor userAccessor)
         {
             _service = service;
+            _userAccessor = userAccessor;
         }
 
         
@@ -34,6 +36,8 @@ namespace Model.Application.API.Controllers
         [Idempotent(ExpiresInMilliseconds = 10000)]
         public async Task<IActionResult> CreateRefund([FromHeader] string IdempotencyKey, [FromBody] RefundRequestDto request, CancellationToken ct)            
         {
+            var userId = _userAccessor.GetCurrentUserId();
+
             if (!ModelState.IsValid)
             {
                 Log.Warning("Invalid Refund model state: {@ModelState}", ModelState.Values);
@@ -82,8 +86,9 @@ namespace Model.Application.API.Controllers
         [HttpPost]
         [Route("/approve/{id}/{userId}")]
         [Authorize(Roles = Roles.Manager)]
-        public async Task<IActionResult> ApproveRefund([FromRoute] uint id, [FromRoute] string userId, CancellationToken ct)
+        public async Task<IActionResult> ApproveRefund([FromRoute] uint id, CancellationToken ct)
         {
+            var userId = _userAccessor.GetCurrentUserId();
             var refund = await _service.ApproveRefund(id, userId, ct);
             return Ok(refund);
         }
@@ -91,8 +96,9 @@ namespace Model.Application.API.Controllers
         [HttpPost]
         [Route("/reject/{id}/{userId}")]
         [Authorize(Roles = Roles.Manager + "," + Roles.Supervisor)]
-        public async Task<IActionResult> RejectRefund([FromRoute] uint id, [FromRoute] string userId, CancellationToken ct)
+        public async Task<IActionResult> RejectRefund([FromRoute] uint id, CancellationToken ct)
         {
+            var userId = _userAccessor.GetCurrentUserId();
             var refund = await _service.RejectRefund(id, userId, ct);
             return Ok(refund);
         }

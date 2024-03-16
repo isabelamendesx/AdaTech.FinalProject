@@ -10,28 +10,21 @@ namespace Model.Service.Services.Util
 {
     internal static class RuleToFuncConverter
     {
-        internal static IEnumerable<Func<decimal, RuleFuncResult>> ConvertListOfRules(
-            IEnumerable<Rule?> rules)
+        internal static Func<decimal, RuleFuncResult> ConvertRuleToFunc(
+            Rule rule)
         {
-            List<Func<decimal, RuleFuncResult>> funcs = new List<Func<decimal, RuleFuncResult>>();
+            Func<decimal, RuleFuncResult> func;
 
-            foreach (var rule in rules)
+            func = (x) =>
             {
-                Func<decimal, RuleFuncResult> ruleFunc;
-
-                ruleFunc = (x) =>
+                return new RuleFuncResult
                 {
-                    return new RuleFuncResult
-                    {
-                        FuncResult = x >= rule.MinValue && x <= rule.MaxValue,
-                        Rule = rule
-                    };
+                    FuncResult = x >= rule.MinValue && x <= rule.MaxValue,
+                    Rule = rule
                 };
+            };
 
-                funcs.Add(ruleFunc);
-            }
-
-            return funcs;
+            return func;
         }
     }
 }

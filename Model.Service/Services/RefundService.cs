@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Serilog;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Model.Service.Services.Handlers;
 
 namespace Model.Service.Services
 {
@@ -122,70 +123,12 @@ namespace Model.Service.Services
 
         private async Task<ProcessRefundResult> ProcessRefund(uint categoryId, decimal value, CancellationToken ct)
         {
-            var rulesThatRejectAny = await _ruleService.GetRulesToRejectAny(ct);
+            var rules = await _ruleService.GetRulesThatApplyToCategory(categoryId, ct);
 
-            Rule? rejectAnyResult = GetFirstMatchingRule(rulesThatRejectAny, value);
+            ApprovalMotorHandler handler = ApprovalMotorHandler.CreateChain(rules);
 
-            if (rejectAnyResult is not null)
-                return new ProcessRefundResult() { 
-                    Status = EStatus.Rejected, 
-                    Rule = rejectAnyResult
-                };
-
-
-            var rulesThatApproveAny = await _ruleService.GetRulesToApproveAny(ct);
-
-            Rule? approveAnyResult = GetFirstMatchingRule(rulesThatApproveAny, value);
-
-            if (approveAnyResult is not null)
-                return new ProcessRefundResult()
-                {
-                    Status = EStatus.Approved,
-                    Rule = approveAnyResult
-                };
-
-            var rulesThatRejectByCategory = await _ruleService
-               .GetRulesToRejectByCategoryId(categoryId, ct);
-
-            Rule? rejectByCategoryResult = GetFirstMatchingRule(rulesThatRejectByCategory, value);
-
-            if (rejectByCategoryResult is not null)
-                return new ProcessRefundResult()
-                {
-                    Status = EStatus.Approved,
-                    Rule = rejectByCategoryResult
-                };
-
-
-            var rulesThatApproveByCategory = await _ruleService
-                .GetRulesToApproveByCategoryId(categoryId, ct);
-
-            Rule? approveByCategoryResult = GetFirstMatchingRule(rulesThatApproveByCategory, value);
-
-            if (approveByCategoryResult is not null)
-                return new ProcessRefundResult()
-                {
-                    Status = EStatus.Approved,
-                    Rule = approveByCategoryResult
-                };       
-
-            return new ProcessRefundResult() { Status = EStatus.UnderEvaluation, Rule = null };
+            return handler.Handle(value);
         }
-
-        private Rule? GetFirstMatchingRule(IEnumerable<Rule?> rules, decimal value)
-        {
-            var rulesFuncs = RuleToFuncConverter.ConvertListOfRules(rules);
-
-            var rulesFuncsResult = rulesFuncs
-                .Select(rule => rule(value))
-                .FirstOrDefault(result => result.FuncResult);
-
-            if (rulesFuncsResult is not null)
-                return rulesFuncsResult.Rule;
-            
-
-            return null;
-        }   
 
     }
 }

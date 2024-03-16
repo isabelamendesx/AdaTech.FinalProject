@@ -4,6 +4,7 @@ using Model.Service.Exceptions;
 using Model.Service.Services.DTO;
 using Model.Service.Services.Util;
 using Rule = Model.Domain.Entities.Rule;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -22,14 +23,17 @@ namespace Model.Service.Services
         private IRepository<RefundOperation> _operationRepository;
         private IRuleService _ruleService;
         private ICategoryService _categoryService;
+        private readonly ILogger<RefundService> _logger;
 
         public RefundService(IRepository<Refund> repository, 
-            IRepository<RefundOperation> operationRepository, IRuleService ruleService, ICategoryService categoryService)
+            IRepository<RefundOperation> operationRepository, IRuleService ruleService, 
+            ICategoryService categoryService, ILogger<RefundService> logger)
         {
             _repository = repository;
             _operationRepository = operationRepository;
             _ruleService = ruleService;
             _categoryService = categoryService;
+            _logger = logger;
         }
 
         public async Task<Refund> CreateRefund(Refund refund, CancellationToken ct)
@@ -38,7 +42,7 @@ namespace Model.Service.Services
 
             if (refund.Category is null)
             {
-                Log.Warning("Attempted to create a refund with an invalid category.");
+                _logger.LogWarning("Attempted to create a refund with an invalid category.");
                 throw new ResourceNotFoundException("category");
             }
 
@@ -77,7 +81,7 @@ namespace Model.Service.Services
 
             if (refund is null)
             {
-                Log.Warning("Attempted to approve a refund with an invalid ID.");
+                _logger.LogWarning("Attempted to approve a refund with an invalid ID.");
                 throw new ResourceNotFoundException("Refund");
             }
 
@@ -101,7 +105,7 @@ namespace Model.Service.Services
 
             if (refund is null)
             {
-                Log.Warning("Attempted to reject a refund with an invalid ID.");
+                _logger.LogWarning("Attempted to reject a refund with an invalid ID.");
                 throw new ResourceNotFoundException("Refund");
             }
 

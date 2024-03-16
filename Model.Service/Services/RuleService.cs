@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Model.Service.Services.Util;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using System.Collections;
 
@@ -17,10 +18,12 @@ namespace Model.Service.Services
     public class RuleService : IRuleService
     {
         private readonly IRepository<Rule> _ruleRepository;
+        private readonly ILogger<RuleService> _logger;
 
-        public RuleService(IRepository<Rule> repository)
+        public RuleService(IRepository<Rule> repository, ILogger<RuleService> logger)
         {
             _ruleRepository = repository;
+            _logger = logger;
         }
         public async Task<Rule?> GetById(uint id, CancellationToken ct)
         {
@@ -28,7 +31,7 @@ namespace Model.Service.Services
 
             if (rule is null)
             {
-                Log.Information("Rule with ID {@RuleId} not found", id);
+                _logger.LogInformation("Rule with ID {@RuleId} not found", id);
                 throw new ResourceNotFoundException("Rule");
             }
 
@@ -59,7 +62,7 @@ namespace Model.Service.Services
 
             if (rulesToDeactivate is null)
             {
-                Log.Information("Attempt to deactived Rules for Category with ID {@RuleId} not found", categoryId);
+                _logger.LogInformation("Attempt to deactived Rules for Category with ID {@RuleId} not found", categoryId);
                 throw new ResourceNotFoundException("Rules");
             }
 
@@ -78,7 +81,7 @@ namespace Model.Service.Services
 
             if (rule is null)
             {
-                Log.Information("Attempt to deactivate Rule with ID {@RuleId} not found", Id);
+                _logger.LogInformation("Attempt to deactivate Rule with ID {@RuleId} not found", Id);
                 throw new ResourceNotFoundException("Rule");
             }
 

@@ -15,10 +15,12 @@ namespace Model.Service.Services
     public class CategoryService : ICategoryService
     {
         private IRepository<Category> _repository;
+        private readonly ILogger<CategoryService> _logger;
 
-        public CategoryService(IRepository<Category> repository)
+        public CategoryService(IRepository<Category> repository, ILogger<CategoryService> logger)
         {
             _repository = repository;
+            _logger = logger;
         }
 
         public async Task<Category> CreateCategory(Category category, CancellationToken ct)
@@ -29,7 +31,7 @@ namespace Model.Service.Services
 
             if (sameNameCategories.Any())
             {
-                Log.Warning("Attempted to create category '{@CategoryName}' which already exists.", category.Name);
+                _logger.LogWarning("Attempted to create category '{@CategoryName}' which already exists.", category.Name);
                 throw new CategoryAlreadyRegisteredException(sameNameCategories.First().Id);
             }
 
@@ -38,7 +40,7 @@ namespace Model.Service.Services
 
         public async Task<IEnumerable<Category?>> GetAll(CancellationToken ct)
         {
-            //Log.Information("Fetching all categories");
+            //_logger.LogInformation("Fetching all categories");
             return await _repository.GetByParameter(ct);
         }
 
@@ -48,11 +50,11 @@ namespace Model.Service.Services
 
             if (category is null)
             {
-                Log.Information("Category with ID {@CategoryId} not found", id);
+                _logger.LogInformation("Category with ID {@CategoryId} not found", id);
                 throw new ResourceNotFoundException("Category");
             }
 
-            //Log.Information("Category fetched: {@Category}", category);
+            //_logger.LogInformation("Category fetched: {@Category}", category);
             return category;
         }
     }

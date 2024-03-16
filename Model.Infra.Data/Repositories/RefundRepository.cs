@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Model.Domain.Common;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Infra.Data.Context;
@@ -56,6 +57,28 @@ namespace Model.Infra.Data.Repositories
         public async Task<Refund?> GetById(uint Id, CancellationToken ct)
                => await _context.Refunds.FirstOrDefaultAsync(x => x.Id == Id);
 
+        public async Task<PagedResult<Refund>> GetPagedByParameter(CancellationToken ct, int skip, int take, Expression<Func<Refund, bool>> filter = null)
+        {
+            var query = _context.Refunds.AsQueryable();
 
+            int totalCount = 0;
+
+            if (filter != null)
+            {
+                query = query
+                     .Where(filter)
+                     .AsNoTrackingWithIdentityResolution();
+
+            }
+
+            var items = await query
+                        .Skip(skip)
+                        .Take(take)
+                        .ToListAsync(ct);
+
+            totalCount = await query.CountAsync(ct);
+
+            return new PagedResult<Refund> { TotalCount = totalCount, Items = items };
+        }
     }
 }

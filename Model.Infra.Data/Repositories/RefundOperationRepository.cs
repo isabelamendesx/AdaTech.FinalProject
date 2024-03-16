@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Model.Domain.Common;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Infra.Data.Context;
 using Serilog;
 using System.Data;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace Model.Infra.Data.Repositories
@@ -38,6 +40,30 @@ namespace Model.Infra.Data.Repositories
                 }
 
                 return await query.ToListAsync();
+        }
+
+        public async Task<PagedResult<RefundOperation>> GetPagedByParameter(CancellationToken ct, int skip, int take, Expression<Func<RefundOperation, bool>> filter = null)
+        {
+            var query = _context.RefundOperations.AsQueryable();
+
+            int totalCount = 0;
+
+            if (filter != null)
+            {
+                query = query
+                     .Where(filter)
+                     .AsNoTrackingWithIdentityResolution();
+
+            }
+
+            var items = await query
+                        .Skip(skip)
+                        .Take(take)
+                        .ToListAsync(ct);
+
+            totalCount = await query.CountAsync(ct);
+
+            return new PagedResult<RefundOperation> { TotalCount = totalCount, Items = items };
         }
 
         public async Task UpdateAsync(RefundOperation operation, CancellationToken ct)

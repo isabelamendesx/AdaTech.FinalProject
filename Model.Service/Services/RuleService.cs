@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Model.Service.Services.Util;
 using Serilog;
 using System.Collections;
+using Model.Domain.Common;
 
 namespace Model.Service.Services
 {
@@ -113,6 +114,11 @@ namespace Model.Service.Services
                 .ThenBy(rule => rule.Category.Id);
 
             return rules;
+        }
+
+        public async Task<PaginatedResult<Rule>> GetAllPaginated(CancellationToken ct, int skip, int take)
+        {
+            return await _ruleRepository.GetPaginatedByParameter(ct, skip, take);
         }
     }
 }

@@ -62,7 +62,7 @@ namespace Model.Application.API.Controllers
 
             if (result.Success)
             {
-                _logger.LogInformation("User logged in successfully");
+                _logger.LogInformation("User with id {@UserId} logged in successfully", HttpContext.Items["UserId"] as string);
                 return Ok(result);
             }
 
@@ -85,11 +85,11 @@ namespace Model.Application.API.Controllers
             var result = await _identityService.LoginWithoutPassword(userId);
             if (result.Success)
             {
-                _logger.LogInformation("User login refreshed successfully");
+                _logger.LogInformation("User with ID {@UserId} login refreshed successfully", userId);
                 return Ok(result);
             }
 
-            _logger.LogWarning("Failed to refresh user login: {@UserRegisterResponse}", result);
+            _logger.LogWarning("Failed to refresh User with Id {@UserId} login: {@UserRegisterResponse}", result, userId);
             return Unauthorized();
         }
     }

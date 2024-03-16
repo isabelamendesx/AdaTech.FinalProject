@@ -48,6 +48,26 @@ Para solucionar o desafio do controle de pagamento de reembolsos, desenvolvemos 
 Para armazenar os dados relacionados aos documentos de reembolso e às regras de aprovação, utilizamos um banco de dados PostgreSQL hospedado no ElephantSQL, que oferece uma solução de banco de dados na nuvem confiável e escalável. Essa escolha permite o armazenamento seguro e eficiente dos dados, garantindo disponibilidade e performance para a nossa aplicação.
 
 ## Funcionalidades
+* **Refund**:
+  * Criar solicitação de reembolso
+  * Ver todas solicitações por status
+  * Aprovar solicitação
+  * Reprovar solicitação
+* **Category**:
+  * Criar nova categoria
+  * Ver todas as categorias
+  * Procurar categoria por Id
+* **Rule**:
+  * Criar nova regra
+  * Ver todas as regras
+  * Procurar regra por Id
+  * Desativar regra
+  * Desativar regra de uma categoria
+* **User**:
+  * Registrar novo usuário
+  * Fazer Login de Usuário
+  * Atualizar Login
+  
 
 ## Pré-requisitos
 

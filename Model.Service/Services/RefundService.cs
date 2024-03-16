@@ -51,7 +51,7 @@ namespace Model.Service.Services
             RefundOperation op = new RefundOperation()
             {
                 UpdateDate = DateTime.UtcNow,
-                ApprovedBy = 0
+                ApprovedBy = "0"
             };
 
             if (processResult.Rule is not null)
@@ -72,7 +72,7 @@ namespace Model.Service.Services
             return await _repository.GetByParameter(ct, (x => x.Status == status));
         }
 
-        public async Task<Refund> ApproveRefund(uint Id, uint userId, CancellationToken ct)
+        public async Task<Refund> ApproveRefund(uint Id, string userId, CancellationToken ct)
         {
             var refund = await _repository.GetById(Id, ct);
 
@@ -96,7 +96,7 @@ namespace Model.Service.Services
             return refund;
         }
 
-        public async Task<Refund> RejectRefund(uint Id, uint userId, CancellationToken ct)
+        public async Task<Refund> RejectRefund(uint Id, string userId, CancellationToken ct)
         {
             var refund = await _repository.GetById(Id, ct);
 

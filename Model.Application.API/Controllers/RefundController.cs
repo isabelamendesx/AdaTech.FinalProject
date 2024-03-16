@@ -61,14 +61,22 @@ namespace Model.Application.API.Controllers
         {
             var parsedStatus = EnumParser.ParseStatus(status);
 
-            var refunds = await _service.GetAllByStatus(parsedStatus, ct);
-
             if (paginationParameters.PageNumber == 0 || paginationParameters.PageSize == 0)
-                return Ok(refunds);
+                return Ok(await _service.GetAllByStatus(parsedStatus, ct));
 
-            var paginatedRefunds = PaginationGenerator.GetPaginatedResponse(paginationParameters, refunds);
+            var skip = paginationParameters.PageSize * (paginationParameters.PageNumber - 1);
 
-            return Ok(paginatedRefunds);
+            var paginatedCategories = await _service.GetAllByStatusPaginated(
+                    parsedStatus,
+                    ct,
+                    skip,
+                    paginationParameters.PageSize
+                );
+
+            var response = PaginationResponseGenerator.GetPaginatedResponse
+                                    (paginatedCategories, paginationParameters);
+
+            return Ok(response);
         }
 
         [HttpPost]

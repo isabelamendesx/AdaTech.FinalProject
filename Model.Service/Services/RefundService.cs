@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Serilog;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Model.Service.Services.Handlers;
+using Model.Domain.Common;
 
 namespace Model.Service.Services
 {
@@ -130,5 +131,9 @@ namespace Model.Service.Services
             return handler.Handle(value);
         }
 
+        public async Task<PagedResult<Refund>> GetAllByStatusPaged(EStatus status, CancellationToken ct, int skip, int take)
+        {
+            return await _repository.GetPagedByParameter(ct, skip, take);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Model.Domain.Common;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
@@ -40,6 +41,11 @@ namespace Model.Service.Services
         {
             //Log.Information("Fetching all categories");
             return await _repository.GetByParameter(ct);
+        }
+
+        public async Task<PagedResult<Category>> GetAllPaged(CancellationToken ct, int skip, int take)
+        {
+            return await _repository.GetPagedByParameter(ct, skip, take);
         }
 
         public async Task<Category?> GetById(uint id, CancellationToken ct)

@@ -43,14 +43,22 @@ namespace Model.Application.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] PaginationParametersDTO paginationParameters, CancellationToken ct)
         {
-            var rules = await _service.GetAll(ct);
 
             if (paginationParameters.PageNumber == 0 || paginationParameters.PageSize == 0)
-                return Ok(rules);
+                return Ok(await _service.GetAll(ct));
 
-            var paginatedRules = PaginationGenerator.GetPaginatedResponse(paginationParameters, rules);
+            var skip = paginationParameters.PageSize * (paginationParameters.PageNumber - 1);
 
-            return Ok(paginatedRules);
+            var paginatedCategories = await _service.GetAllPaged(
+                    ct,
+                    skip,
+                    paginationParameters.PageSize
+                );
+
+            var response = PaginationGenerator.GetPaginatedResponse
+                                    (paginatedCategories, paginationParameters);
+
+            return Ok(response);
         }
 
         [Authorize(Roles = Roles.Manager)]

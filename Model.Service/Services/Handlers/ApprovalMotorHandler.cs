@@ -34,7 +34,7 @@ namespace Model.Service.Services.Handlers
 
             if(_nextHandler != null) return _nextHandler.Handle(value);
 
-            return new ProcessRefundResult() { Status = EStatus.UnderEvaluation, Rule = null }; ;
+            return new ProcessRefundResult() { Status = EStatus.UnderEvaluation, Rule = null };
         }
 
         public static ApprovalMotorHandler CreateChain(IEnumerable<Rule> rules)

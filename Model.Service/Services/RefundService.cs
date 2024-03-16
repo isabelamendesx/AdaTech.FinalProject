@@ -71,7 +71,7 @@ namespace Model.Service.Services
             return await _repository.GetByParameter(ct, (x => x.Status == status));
         }
 
-        public async Task<Refund> ApproveRefund(uint Id, uint userId, CancellationToken ct)
+        public async Task<Refund> ApproveRefund(uint Id, uint userId, CancellationToken ct) //tem teste
         {
             var refund = await _repository.GetById(Id, ct);
 

@@ -4,7 +4,7 @@ using Model.Domain.Entities;
 
 namespace Model.Application.API.Util
 {
-    public static class PaginationGenerator
+    public static class PaginationResponseGenerator
     {
         public static PaginatedResponseDTO<T> GetPaginatedResponse<T>(PagedResult<T> paginationResult, 
             PaginationParametersDTO parameters) where T : class

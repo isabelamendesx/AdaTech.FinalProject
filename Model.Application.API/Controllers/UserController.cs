@@ -3,6 +3,7 @@ using Identity.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
+using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
 using Serilog;
 using System.Security.Claims;
@@ -14,9 +15,13 @@ namespace Model.Application.API.Controllers
     public class UserController : Controller
     {
         private IIdentityService _identityService;
+        private readonly IUserAccessor _userAccessor;
 
-        public UserController(IIdentityService identityService) 
-            => _identityService = identityService;
+        public UserController(IIdentityService identityService, IUserAccessor userAccessor)
+        {
+            _identityService = identityService;
+            _userAccessor = userAccessor;
+        }
 
         [HttpPost("register")] 
         public async Task<ActionResult<UserRegisterResponse>> Register(UserRegisterRequest userRegister)
@@ -69,8 +74,10 @@ namespace Model.Application.API.Controllers
         [HttpPost("refresh-login")]
         public async Task<ActionResult<UserRegisterResponse>> RefreshLogin()
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            var userId = identity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            //var identity = HttpContext.User.Identity as ClaimsIdentity;
+            //var userId = identity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var userId = _userAccessor.GetCurrentUserId();
 
             if (userId == null)
             {

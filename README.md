@@ -1,8 +1,10 @@
 # Nome do projeto aqui
 
-Este projeto foi desenvolvido como projeto de conclusão do curso de Backend C# do programa DiverseDEV.
+(add logo ou Banner)
 
-## Tabela de conteúdos
+Este projeto foi desenvolvido como projeto de conclusÃ£o do curso de Backend C# do programa DiverseDEV.
+
+## Tabela de conteÃºdos
 
 - [Requisitos](#requisitos)
 - [Clonar](#clonar)
@@ -17,9 +19,9 @@ Este projeto foi desenvolvido por:
 [![author](https://img.shields.io/badge/author-vitorialira92-purple.svg)](https://github.com/vitorialira92)
 [![author](https://img.shields.io/badge/author-suellensr-cyan.svg)](https://github.com/suellensr)
 
-## Descrição do projeto
+## DescriÃ§Ã£o do projeto
 
-O objetivo deste projeto é a criação de uma Web API Rest que auxilie de maneira automatizada o processo de aprovação de pedidos de reembolso recebidos em uma empresa,
+O objetivo deste projeto Ã© a criaÃ§Ã£o de uma Web API Rest que auxilie de maneira automatizada o processo de aprovaÃ§Ã£o de pedidos de reembolso recebidos em uma empresa,
 agilizando este processo e 'desafogando' o fluxo de atividades do departamento financeiro.
 
 ## Requisitos
@@ -37,6 +39,6 @@ Mostrar e explicar o que cada endpoint faz
 
 
 
-## Vídeo demonstração
-Colocar um vídeo ou imagem do sweagger em funcionamento
+## VÃ­deo demonstraÃ§Ã£o
+Colocar um vÃ­deo ou imagem do sweagger em funcionamento
 

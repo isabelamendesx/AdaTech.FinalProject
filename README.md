@@ -73,7 +73,7 @@ Para armazenar os dados relacionados aos documentos de reembolso e às regras de
 add pré requisitos da aplicação
 
 ## Como Iniciar
-tutorial de como clocar e usar
+tutorial de como clonar e usar
 
 ## Segurança
 

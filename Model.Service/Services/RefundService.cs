@@ -11,6 +11,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Serilog;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Model.Service.Services
 {
@@ -19,33 +21,42 @@ namespace Model.Service.Services
         private IRepository<Refund> _repository;
         private IRepository<RefundOperation> _operationRepository;
         private IRuleService _ruleService;
+        private ICategoryService _categoryService;
 
         public RefundService(IRepository<Refund> repository, 
-            IRepository<RefundOperation> operationRepository, IRuleService ruleService)
+            IRepository<RefundOperation> operationRepository, IRuleService ruleService, ICategoryService categoryService)
         {
             _repository = repository;
             _operationRepository = operationRepository;
             _ruleService = ruleService;
+            _categoryService = categoryService;
         }
 
         public async Task<Refund> CreateRefund(Refund refund, CancellationToken ct)
         {
+            refund.Category = await _categoryService.GetById(refund.Category.Id, ct);
+
+            if (refund.Category is null)
+            {
+                Log.Warning("Attempted to create a refund with an invalid category.");
+                throw new ResourceNotFoundException("category");
+            }
+
             var processResult = await ProcessRefund(refund.Category.Id, refund.Total, ct);
+
             refund.Status = processResult.Status;
-            refund.CreateDate = DateTime.Now;
+            refund.CreateDate = DateTime.UtcNow;
 
             RefundOperation op = new RefundOperation()
             {
-                UpdateDate = DateTime.Now,
-                ApprovalRule = processResult.Rule,
-                ApprovedBy = 0,
-                Refund = refund
+                UpdateDate = DateTime.UtcNow,
+                ApprovedBy = 0
             };
 
-            refund.Operations.Add(op);
+            if (processResult.Rule is not null)
+                op.ApprovalRule = await _ruleService.GetById(processResult.Rule.Id, ct);
 
-            await _repository.UpdateAsync(refund, ct);
-            await _operationRepository.AddAsync(op, ct);
+            refund.Operations.Add(op);
 
             return await _repository.AddAsync(refund, ct);
         }
@@ -65,58 +76,60 @@ namespace Model.Service.Services
             var refund = await _repository.GetById(Id, ct);
 
             if (refund is null)
+            {
+                Log.Warning("Attempted to approve a refund with an invalid ID.");
                 throw new ResourceNotFoundException("Refund");
+            }
 
             refund.Status = EStatus.Approved;
             RefundOperation op = new RefundOperation()
             {
-                UpdateDate = DateTime.Now,
+                UpdateDate = DateTime.UtcNow,
                 ApprovalRule = null,
-                ApprovedBy = userId,
-                Refund = refund
-
+                ApprovedBy = userId
             };
             refund.Operations.Add(op);
 
-            await _repository.UpdateAsync(refund, ct);
-            await _operationRepository.AddAsync(op, ct);
+            await _repository.AddAsync(refund, ct);
+
             return refund;
         }
 
-        public async Task<Refund> RefuseRefund(uint Id, uint userId, CancellationToken ct)
+        public async Task<Refund> RejectRefund(uint Id, uint userId, CancellationToken ct)
         {
             var refund = await _repository.GetById(Id, ct);
 
             if (refund is null)
+            {
+                Log.Warning("Attempted to reject a refund with an invalid ID.");
                 throw new ResourceNotFoundException("Refund");
+            }
 
             refund.Status = EStatus.Rejected;
 
             RefundOperation op = new RefundOperation()
             {
-                UpdateDate = DateTime.Now,
+                UpdateDate = DateTime.UtcNow,
                 ApprovalRule = null,
-                ApprovedBy = userId,
-                Refund = refund
+                ApprovedBy = userId
             };
             refund.Operations.Add(op);
 
-            await _repository.UpdateAsync(refund, ct);
-            await _operationRepository.AddAsync(op, ct);
+            await _repository.AddAsync(refund, ct);
 
             return refund;
         }
 
         private async Task<ProcessRefundResult> ProcessRefund(uint categoryId, decimal value, CancellationToken ct)
         {
-            var rulesThatReproveAny = await _ruleService.GetRulesToReproveAny(ct);
+            var rulesThatRejectAny = await _ruleService.GetRulesToRejectAny(ct);
 
-            Rule? reproveAnyResult = GetFirstMatchingRule(rulesThatReproveAny, value);
+            Rule? rejectAnyResult = GetFirstMatchingRule(rulesThatRejectAny, value);
 
-            if (reproveAnyResult is not null)
+            if (rejectAnyResult is not null)
                 return new ProcessRefundResult() { 
                     Status = EStatus.Rejected, 
-                    Rule = reproveAnyResult
+                    Rule = rejectAnyResult
                 };
 
 
@@ -131,16 +144,16 @@ namespace Model.Service.Services
                     Rule = approveAnyResult
                 };
 
-            var rulesThatReproveByCategory = await _ruleService
-               .GetRulesToReproveByCategoryId(categoryId, ct);
+            var rulesThatRejectByCategory = await _ruleService
+               .GetRulesToRejectByCategoryId(categoryId, ct);
 
-            Rule? reproveByCategoryResult = GetFirstMatchingRule(rulesThatReproveByCategory, value);
+            Rule? rejectByCategoryResult = GetFirstMatchingRule(rulesThatRejectByCategory, value);
 
-            if (reproveByCategoryResult is not null)
+            if (rejectByCategoryResult is not null)
                 return new ProcessRefundResult()
                 {
                     Status = EStatus.Approved,
-                    Rule = reproveByCategoryResult
+                    Rule = rejectByCategoryResult
                 };
 
 
@@ -154,9 +167,7 @@ namespace Model.Service.Services
                 {
                     Status = EStatus.Approved,
                     Rule = approveByCategoryResult
-                };
-
-           
+                };       
 
             return new ProcessRefundResult() { Status = EStatus.UnderEvaluation, Rule = null };
         }

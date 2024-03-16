@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Infra.Data.Context;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,10 @@ namespace Model.Infra.Data.Repositories
     public class RefundRepository : IRepository<Refund>
     {
         private readonly DataContext _context;
-        private readonly ILogger _logger;
 
-        public RefundRepository(DataContext context, ILogger logger)
+        public RefundRepository(DataContext context)
         {
             _context = context;
-            _logger = logger;
         }
 
         public async Task<Refund> AddAsync(Refund refund, CancellationToken ct)
@@ -32,22 +31,12 @@ namespace Model.Infra.Data.Repositories
 
         public async Task UpdateAsync(Refund refund, CancellationToken ct)
         {
-            try
-            {
-                _context.Refunds.Update(refund);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(ex, "An error occurred while updating the refund. Details: {ErrorMessage}", ex.Message);
-                throw new DbUpdateException("Error updating refund. See inner exception for details.", ex);
-            }
+            _context.Refunds.Update(refund);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<Refund?>> GetByParameter(CancellationToken ct, Expression<Func<Refund, bool>> filter = null)
         {
-            try
-            {
                 var query = _context.Refunds.AsQueryable();
 
                 if (filter != null)
@@ -57,16 +46,16 @@ namespace Model.Infra.Data.Repositories
                          .AsNoTrackingWithIdentityResolution();
                 }
 
-                return await query.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while trying to fetch Refunds with filter: {FilterExpression}", filter?.ToString() ?? "No filter applied");
-                throw;
-            }
+                return await query.Include(x => x.Category)
+                    .Include(x => x.Operations)
+                    .ThenInclude(x => x.ApprovalRule)
+                    .ThenInclude(x => x.Category)
+                    .ToListAsync();
         }
 
-        public async Task<Refund?> GetById(uint Id, CancellationToken ct) => await _context.Refunds.FirstOrDefaultAsync(x => x.Id == Id);
+        public async Task<Refund?> GetById(uint Id, CancellationToken ct)
+               => await _context.Refunds.FirstOrDefaultAsync(x => x.Id == Id);
+
 
     }
 }

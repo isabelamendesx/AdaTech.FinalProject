@@ -21,6 +21,7 @@ namespace ServicesTests
         private IRepository<Refund> repository;
         private IRepository<RefundOperation> operationRepository;
         private IRuleService ruleService;
+        private ICategoryService categoryService;
         private CancellationToken ct;
 
         public RefundServiceTests()
@@ -29,8 +30,9 @@ namespace ServicesTests
             repository = Substitute.For<IRepository<Refund>>();
             operationRepository = Substitute.For<IRepository<RefundOperation>>();
             ruleService = Substitute.For<IRuleService>();
+            categoryService = Substitute.For<ICategoryService>();
 
-            _sut = new RefundService(repository, operationRepository, ruleService);
+            _sut = new RefundService(repository, operationRepository, ruleService, categoryService);
         }
 
         [Fact]
@@ -43,11 +45,11 @@ namespace ServicesTests
         }
         
         [Fact]
-        public async Task refuse_refund_must_throw_an_exception_when_refund_could_not_be_found()
+        public async Task reject_refund_must_throw_an_exception_when_refund_could_not_be_found()
         {
             repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Refund?>(null));
 
-            await _sut.Invoking(x => x.RefuseRefund(3, 9, ct))
+            await _sut.Invoking(x => x.RejectRefund(3, 9, ct))
                 .Should().ThrowAsync<ResourceNotFoundException>();            
         }
         [Theory]
@@ -60,7 +62,7 @@ namespace ServicesTests
                     MinValue = 0, MaxValue = 1000, Action = false,
                 }
             };
-            ruleService.GetRulesToReproveAny(ct).Returns(rules);
+            ruleService.GetRulesToRejectAny(ct).Returns(rules);
 
             await _sut.CreateRefund(refund, ct);
 
@@ -111,7 +113,7 @@ namespace ServicesTests
         [MemberData(nameof(AllRefundsAndExpectedStatus))]
         public async Task status_should_be_correct(Refund refund, EStatus expectedStatus)
         {
-            ruleService.GetRulesToReproveAny(ct).Returns(ListOfRuleToRejectAny());
+            ruleService.GetRulesToRejectAny(ct).Returns(ListOfRuleToRejectAny());
 
             ruleService.GetRulesToApproveAny(ct).Returns(ListOfRuleToApproveAny());
 
@@ -132,6 +134,27 @@ namespace ServicesTests
                 new object[]{ new Refund ()
                 {Total = 100,
                     Category = new Category() { Id = 4 } } },
+                new object[]{ new Refund ()
+                {Total = 500,
+                    Category = new Category() { Id = 5 } } },
+                new object[]{ new Refund ()
+                {Total = 300,
+                    Category = new Category() { Id = 3 } } },
+                new object[]{ new Refund ()
+                {Total = 600,
+                    Category = new Category() { Id =4 } } },
+                new object[]{ new Refund ()
+                {Total = 700,
+                    Category = new Category() { Id = 5 } } },
+                new object[]{ new Refund ()
+                {Total = 850,
+                    Category = new Category() { Id = 3 } } },
+                new object[]{ new Refund ()
+                {Total = 1000,
+                    Category = new Category() { Id = 4 } } },
+                new object[]{ new Refund ()
+                {Total = 50,
+                    Category = new Category() { Id = 5 } } },
             };
         }
 
@@ -140,7 +163,7 @@ namespace ServicesTests
             return new List<Rule>(){
                      new Rule() {
                         MinValue = 1000, Action = false,
-                    }
+                    },
             };
         }
         
@@ -157,7 +180,7 @@ namespace ServicesTests
         {
             return new List<Rule>{
                      new Rule() {
-                        MinValue = 101, MaxValue = 500, Action = true,
+                        MinValue = 100.01M, MaxValue = 500, Action = true,
                     }
             };
         }
@@ -172,20 +195,36 @@ namespace ServicesTests
                     Total = 100,
                     Category = new Category() { Id = 3 } }, EStatus.Approved },
                 new object[]{ new Refund ()
-                {Total = 200,
-                    Category = new Category() { Id = 4 } }, EStatus.UnderEvaluation },
+                {
+                    Total = 300,
+                    Category = new Category() { Id = 3 } }, EStatus.Approved },
                 new object[]{ new Refund ()
                 {
-                    Total = 100,
-                    Category = new Category() { Id = 2 } }, EStatus.Approved },
-                new object[]{ new Refund ()
-                {
-                    Total = 1005,
+                    Total = 1001,
                     Category = new Category() { Id = 3 } }, EStatus.Rejected },
                 new object[]{ new Refund ()
                 {
-                    Total = 200,
-                    Category = new Category() { Id = 5 } }, EStatus.UnderEvaluation},
+                    Total = 1005,
+                    Category = new Category() { Id = 4 } }, EStatus.Rejected },
+                new object[]{ new Refund ()
+                {
+                    Total = 800,
+                    Category = new Category() { Id = 4 } }, EStatus.UnderEvaluation},
+                new object[]{ new Refund ()
+                {
+                    Total = 80,
+                    Category = new Category() { Id = 4 } }, EStatus.Approved },
+                new object[]{ new Refund ()
+                {Total = 300,
+                    Category = new Category() { Id = 5 } }, EStatus.UnderEvaluation },
+                new object[]{ new Refund ()
+                {
+                    Total = 50,
+                    Category = new Category() { Id = 5 } }, EStatus.Approved },
+                new object[]{ new Refund ()
+                {
+                    Total = 1000,
+                    Category = new Category() { Id = 5 } }, EStatus.Rejected },
             };
         }
     }

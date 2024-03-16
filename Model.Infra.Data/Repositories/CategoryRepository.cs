@@ -3,41 +3,33 @@ using Microsoft.Extensions.Logging;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Infra.Data.Context;
-using System;
-using System.Collections.Generic;
+using Serilog;
 using System.Data;
-using System.Data.Common;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Model.Infra.Data.Repositories
 {
     public class CategoryRepository : IRepository<Category>
     {
         private readonly DataContext _context;
-        private readonly ILogger _logger;
 
-        public CategoryRepository(ILogger logger, DataContext context)
+        public CategoryRepository(DataContext context)
         {
-            _logger = logger;
             _context = context;
         }
 
         public async Task<Category> AddAsync(Category category, CancellationToken ct)
         {
-            await _context.Categories.AddAsync(category);
-            await _context.SaveChangesAsync();
-            return category;
+             await _context.Categories.AddAsync(category);
+             await _context.SaveChangesAsync();
+             return category;
         }
 
-        public async Task<Category?> GetById(uint Id, CancellationToken ct) => await _context.Categories.FindAsync(Id);
+        public async Task<Category?> GetById(uint Id, CancellationToken ct)
+                => await _context.Categories.FindAsync(Id);
 
         public async Task<IEnumerable<Category?>> GetByParameter(CancellationToken ct, Expression<Func<Category, bool>> filter = null)
         {
-            try
-            {
                 var query = _context.Categories.AsQueryable();
 
                 if (filter != null)
@@ -48,26 +40,12 @@ namespace Model.Infra.Data.Repositories
                 }
 
                 return await query.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while trying to fetch Rules with filter: {FilterExpression}", filter?.ToString());
-                throw;
-            }
         }
 
         public async Task UpdateAsync(Category category, CancellationToken ct)
         {
-            try
-            {
-                _context.Categories.Update(category);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(ex, "An error occurred while updating Category. Details: {ErrorMessage}", ex.Message);
-                throw new DbUpdateException("Error updating Category. See inner exception for details.", ex);
-            }
+             _context.Categories.Update(category);
+              await _context.SaveChangesAsync();
         }
     }
 }

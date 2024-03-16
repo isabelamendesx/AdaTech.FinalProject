@@ -11,6 +11,8 @@ using System.Data;
 using Rule = Model.Domain.Entities.Rule;
 using ICategoryService = Model.Domain.Interfaces.ICategoryService;
 using IRuleService = Model.Domain.Interfaces.IRuleService;
+using Serilog;
+using Model.Application.API.Util;
 
 
 namespace Model.Application.API.Controllers
@@ -32,67 +34,98 @@ namespace Model.Application.API.Controllers
 
         [HttpGet]
         [Route("rule/{id}")]
-        public async Task<IActionResult> GetById([FromRoute] uint id)
+        public async Task<IActionResult> GetById([FromRoute] uint id, CancellationToken ct)
         {
-            var rule = await _service.GetById(id, HttpContext.RequestAborted);
+            var rule = await _service.GetById(id, ct);
             return Ok(rule);
         }
         
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] PaginationParametersDTO paginationParameters, CancellationToken ct)
         {
-            var rules = await _service.GetAll(HttpContext.RequestAborted);
-            return Ok(rules);
+            var rules = await _service.GetAll(ct);
+
+            if (paginationParameters.PageNumber == 0 || paginationParameters.PageSize == 0)
+                return Ok(rules);
+
+            var paginatedRules = PaginationGenerator.GetPaginatedResponse(paginationParameters, rules);
+
+            return Ok(paginatedRules);
         }
 
         [Authorize(Roles = Roles.Manager)]
-        [ClaimsAuthorize(ClaimTypes.Rule, "Create")]
         [HttpPost]
-        public async Task<IActionResult> CreateRule(RuleRequestDTO request)
+        public async Task<IActionResult> CreateRule([FromBody] RuleRequestDTO request, CancellationToken ct)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            {
+                Log.Warning("Invalid Rule model state: {@ModelState}", ModelState.Values);
+                return UnprocessableEntity(ModelState);
+            }
 
             var action = request.Action.Equals("Approve", StringComparison.OrdinalIgnoreCase) ? true : false;
 
-            var category = await _categoryService.GetById(request.CategoryId, HttpContext.RequestAborted);
+            var maxValue = request.MaxValue == 0 ? decimal.MaxValue : request.MaxValue;
 
-            if (category is null) 
-                return BadRequest("Category not found");
+            var category = await _categoryService.GetById(request.CategoryId, ct);
 
             Rule rule = new Rule()
             {
                 MinValue = request.MinValue,
-                MaxValue = request.MaxValue,
+                MaxValue = maxValue,
                 Action = action,
                 Category = category,
                 IsActive = true
             };
 
-            var createdRule = await _service.CreateRule(rule, HttpContext.RequestAborted);
+            var createdRule = await _service.CreateRule(rule, ct);
+            Log.Information("New Rule for Category {@Category} created", createdRule.Category);
 
             return Ok(createdRule);
         }
 
         [Authorize(Roles = Roles.Manager)]
         [HttpPost]
-        [Route("/deactivate/{id}")]
-        public async Task<IActionResult> DeactivateRule([FromRoute] uint Id)
+        [Route("/deactivate/{ruleId}")]
+        public async Task<IActionResult> DeactivateRule([FromRoute] uint ruleId, CancellationToken ct)
         {
-            var deactivate = await _service.DeactivateRule(Id, HttpContext.RequestAborted);
+            var deactivate = await _service.DeactivateRule(ruleId, ct);
+
             if (deactivate)
-                return Ok();
+            {
+                Log.Warning("Rule with id {@Ruleid} was deactived", ruleId);
+                var response = new DeactivateRuleResponseDTO();
+
+                response.DeactivatedRules.Append(ruleId);
+
+                return Ok(response);
+            }
+
             return BadRequest();
         }
+       
+
 
         [Authorize(Roles = Roles.Manager)]
         [HttpPost]
         [Route("/deactivate/category/{categoryId}")]
-        public async Task<IActionResult> DeactivateACategorysRules([FromRoute] uint categoryId)
+        public async Task<IActionResult> DeactivateACategorysRules([FromRoute] uint categoryId, CancellationToken ct)
         {
-            var deactivate = await _service.DeactivateACategorysRules(categoryId, HttpContext.RequestAborted);
+            var rulesIds = await _service.GetACategorysActiveRulesId(categoryId, ct);
+
+            var deactivate = await _service.DeactivateACategorysRules(categoryId, ct);
+
             if (deactivate)
-                return Ok();
+            {
+                Log.Warning("Rules for Category with id {@CategoryId} were deactived", categoryId);
+
+                var response = new DeactivateRuleResponseDTO();
+
+                response.DeactivatedRules = rulesIds;
+
+                return Ok(response);
+            }
+
             return BadRequest();
         }
     }

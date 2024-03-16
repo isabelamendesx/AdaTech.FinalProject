@@ -1,9 +1,11 @@
 ﻿using IdempotentAPI.Cache.DistributedCache.Extensions.DependencyInjection;
+using IdempotentAPI.Extensions.DependencyInjection;
 using Identity;
 using Identity.Interfaces;
 using Identity.Services;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Model.Application.API.Filters;
 using Model.Domain.Entities;
@@ -20,13 +22,20 @@ namespace Model.Application.API.Extensions
     {
         public static IServiceCollection AddConfig(this IServiceCollection services, IConfiguration config) 
         {
-            services.AddControllers();           
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<ExceptionFilter>();
+            })
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });   
             services.AddSwagger();
             services.AddAuthorizationPolicies();
             services.AddAuthentication(config);
-            services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddProblemDetails();
 
+            services.AddIdempotentAPI();
             services.AddDistributedMemoryCache();
             services.AddIdempotentAPIUsingDistributedCache();
 

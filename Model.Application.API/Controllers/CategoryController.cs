@@ -22,10 +22,12 @@ namespace Model.Application.API.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _service;
+        private readonly ILogger<CategoryController> _logger;
 
-        public CategoryController(ICategoryService service)
+        public CategoryController(ICategoryService service, ILogger<CategoryController> logger)
         {
             _service = service;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -34,7 +36,7 @@ namespace Model.Application.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                Log.Warning("Invalid Category model state: {@ModelState}", ModelState.Values);
+                _logger.LogWarning("Invalid Category model state: {@ModelState}", ModelState.Values);
                 return UnprocessableEntity(ModelState);
             }
 
@@ -45,7 +47,7 @@ namespace Model.Application.API.Controllers
 
             var createdCategory = await _service.CreateCategory(category, ct);
 
-            Log.Information("New category created: {@Category}", createdCategory);
+            _logger.LogInformation("New category created: {@Category}", createdCategory);
 
             return Ok(createdCategory);
         }

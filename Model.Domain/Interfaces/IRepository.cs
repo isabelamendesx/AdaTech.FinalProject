@@ -1,4 +1,5 @@
-﻿using Model.Domain.Entities;
+﻿using Model.Domain.Common;
+using Model.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,11 @@ using System.Threading.Tasks;
 
 namespace Model.Domain.Interfaces
 {
-    public interface IRepository<T> 
+    public interface IRepository<T> where T : class
     {
         Task<IEnumerable<T?>> GetByParameter(CancellationToken ct, Expression<Func<T, bool>> filter = null);
+        Task<PagedResult<T>> GetPagedByParameter(CancellationToken ct, int skip, int take,
+            Expression<Func<T, bool>> filter = null);
         Task<T> AddAsync(T entity, CancellationToken ct);
         Task<T?> GetById(uint Id, CancellationToken ct);
         Task UpdateAsync(T entity, CancellationToken ct);

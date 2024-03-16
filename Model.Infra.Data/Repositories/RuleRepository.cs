@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Model.Domain.Common;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Infra.Data.Context;
@@ -46,6 +47,30 @@ namespace Model.Infra.Data.Repositories
                 return await query
                     .Include(x => x.Category)
                     .ToListAsync();
+        }
+
+        public async Task<PaginatedResult<Rule>> GetPaginatedByParameter(CancellationToken ct, int skip, int take, Expression<Func<Rule, bool>> filter = null)
+        {
+            var query = _context.Rules.AsQueryable();
+
+            int totalCount = 0;
+
+            if (filter != null)
+            {
+                query = query
+                     .Where(filter)
+                     .AsNoTrackingWithIdentityResolution();
+
+            }
+
+            var items = await query
+                        .Skip(skip)
+                        .Take(take)
+                        .ToListAsync(ct);
+
+            totalCount = await query.CountAsync(ct);
+
+            return new PaginatedResult<Rule> { TotalCount = totalCount, Items = items };
         }
 
         public async Task UpdateAsync(Rule rule, CancellationToken ct)

@@ -1,4 +1,5 @@
-﻿using Model.Domain.Entities;
+﻿using Model.Domain.Common;
+using Model.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +12,11 @@ namespace Model.Domain.Interfaces
     {
         Task<Rule?> GetById(uint id, CancellationToken ct);
         Task<IEnumerable<Rule?>> GetAll(CancellationToken ct);
+        Task<PaginatedResult<Rule>> GetAllPaginated(CancellationToken ct, int skip, int take);
         Task<Rule> CreateRule(Rule rule, CancellationToken ct);
-        Task<IEnumerable<Rule?>> GetRulesToRejectAny(CancellationToken ct);
-        Task<IEnumerable<Rule?>> GetRulesToApproveAny(CancellationToken ct);
-        Task<IEnumerable<Rule?>> GetRulesToRejectByCategoryId(uint categoryId, CancellationToken ct);
-        Task<IEnumerable<Rule?>> GetRulesToApproveByCategoryId(uint categoryId, CancellationToken ct);
         Task<bool> DeactivateRule(uint Id, CancellationToken ct);
         Task<bool> DeactivateACategorysRules(uint categoryId, CancellationToken ct);
         Task<IEnumerable<uint>> GetACategorysActiveRulesId(uint categoryId, CancellationToken ct);
+        Task<IEnumerable<Rule>> GetRulesThatApplyToCategory(uint categoryId, CancellationToken ct);
     }
 }

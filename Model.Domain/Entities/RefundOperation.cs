@@ -10,6 +10,6 @@ namespace Model.Domain.Entities
     {
         public DateTime UpdateDate { get; set; }
         public Rule? ApprovalRule { get; set; }
-        public uint ApprovedBy { get; set; }
+        public string ApprovedBy { get; set; }
     }
 }

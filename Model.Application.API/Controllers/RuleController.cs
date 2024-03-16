@@ -25,11 +25,13 @@ namespace Model.Application.API.Controllers
     {
         private readonly IRuleService _service;
         private readonly ICategoryService _categoryService;
+        private readonly ILogger<RuleController> _logger;
 
-        public RuleController(IRuleService service, ICategoryService categoryService)
+        public RuleController(IRuleService service, ICategoryService categoryService, ILogger<RuleController> logger)
         {
             _service = service;
             _categoryService = categoryService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -43,14 +45,22 @@ namespace Model.Application.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] PaginationParametersDTO paginationParameters, CancellationToken ct)
         {
-            var rules = await _service.GetAll(ct);
 
             if (paginationParameters.PageNumber == 0 || paginationParameters.PageSize == 0)
-                return Ok(rules);
+                return Ok(await _service.GetAll(ct));
 
-            var paginatedRules = PaginationGenerator.GetPaginatedResponse(paginationParameters, rules);
+            var skip = paginationParameters.PageSize * (paginationParameters.PageNumber - 1);
 
-            return Ok(paginatedRules);
+            var paginatedCategories = await _service.GetAllPaginated(
+                    ct,
+                    skip,
+                    paginationParameters.PageSize
+                );
+
+            var response = PaginationResponseGenerator.GetPaginatedResponse
+                                    (paginatedCategories, paginationParameters);
+
+            return Ok(response);
         }
 
         [Authorize(Roles = Roles.Manager)]
@@ -59,7 +69,7 @@ namespace Model.Application.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                Log.Warning("Invalid Rule model state: {@ModelState}", ModelState.Values);
+                _logger.LogWarning("Invalid Rule model state: {@ModelState}", ModelState.Values);
                 return UnprocessableEntity(ModelState);
             }
 
@@ -79,7 +89,7 @@ namespace Model.Application.API.Controllers
             };
 
             var createdRule = await _service.CreateRule(rule, ct);
-            Log.Information("New Rule for Category {@Category} created", createdRule.Category);
+            _logger.LogInformation("New Rule for Category {@Category} created", createdRule.Category);
 
             return Ok(createdRule);
         }
@@ -93,7 +103,7 @@ namespace Model.Application.API.Controllers
 
             if (deactivate)
             {
-                Log.Warning("Rule with id {@Ruleid} was deactived", ruleId);
+                _logger.LogWarning("Rule with id {@Ruleid} was deactived", ruleId);        
                 var response = new DeactivateRuleResponseDTO();
 
                 response.DeactivatedRules.Append(ruleId);
@@ -117,7 +127,7 @@ namespace Model.Application.API.Controllers
 
             if (deactivate)
             {
-                Log.Warning("Rules for Category with id {@CategoryId} were deactived", categoryId);
+                _logger.LogWarning("Rules for Category with id {@CategoryId} were deactived", categoryId);
 
                 var response = new DeactivateRuleResponseDTO();
 

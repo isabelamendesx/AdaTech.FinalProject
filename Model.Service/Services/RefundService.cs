@@ -4,6 +4,7 @@ using Model.Service.Exceptions;
 using Model.Service.Services.DTO;
 using Model.Service.Services.Util;
 using Rule = Model.Domain.Entities.Rule;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -13,6 +14,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Serilog;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Model.Service.Services.Handlers;
+using Model.Domain.Common;
 
 namespace Model.Service.Services
 {
@@ -22,14 +25,17 @@ namespace Model.Service.Services
         private IRepository<RefundOperation> _operationRepository;
         private IRuleService _ruleService;
         private ICategoryService _categoryService;
+        private readonly ILogger<RefundService> _logger;
 
         public RefundService(IRepository<Refund> repository, 
-            IRepository<RefundOperation> operationRepository, IRuleService ruleService, ICategoryService categoryService)
+            IRepository<RefundOperation> operationRepository, IRuleService ruleService, 
+            ICategoryService categoryService, ILogger<RefundService> logger)
         {
             _repository = repository;
             _operationRepository = operationRepository;
             _ruleService = ruleService;
             _categoryService = categoryService;
+            _logger = logger;
         }
 
         public async Task<Refund> CreateRefund(Refund refund, CancellationToken ct)
@@ -38,7 +44,7 @@ namespace Model.Service.Services
 
             if (refund.Category is null)
             {
-                Log.Warning("Attempted to create a refund with an invalid category.");
+                _logger.LogWarning("Attempted to create a refund with an invalid category.");
                 throw new ResourceNotFoundException("category");
             }
 
@@ -50,7 +56,7 @@ namespace Model.Service.Services
             RefundOperation op = new RefundOperation()
             {
                 UpdateDate = DateTime.UtcNow,
-                ApprovedBy = 0
+                ApprovedBy = "0"
             };
 
             if (processResult.Rule is not null)
@@ -71,13 +77,13 @@ namespace Model.Service.Services
             return await _repository.GetByParameter(ct, (x => x.Status == status));
         }
 
-        public async Task<Refund> ApproveRefund(uint Id, uint userId, CancellationToken ct) //tem teste
+        public async Task<Refund> ApproveRefund(uint Id, string userId, CancellationToken ct)
         {
             var refund = await _repository.GetById(Id, ct);
 
             if (refund is null)
             {
-                Log.Warning("Attempted to approve a refund with an invalid ID.");
+                _logger.LogWarning("Attempted to approve a refund with an invalid ID.");
                 throw new ResourceNotFoundException("Refund");
             }
 
@@ -95,13 +101,13 @@ namespace Model.Service.Services
             return refund;
         }
 
-        public async Task<Refund> RejectRefund(uint Id, uint userId, CancellationToken ct)
+        public async Task<Refund> RejectRefund(uint Id, string userId, CancellationToken ct)
         {
             var refund = await _repository.GetById(Id, ct);
 
             if (refund is null)
             {
-                Log.Warning("Attempted to reject a refund with an invalid ID.");
+                _logger.LogWarning("Attempted to reject a refund with an invalid ID.");
                 throw new ResourceNotFoundException("Refund");
             }
 
@@ -122,70 +128,16 @@ namespace Model.Service.Services
 
         private async Task<ProcessRefundResult> ProcessRefund(uint categoryId, decimal value, CancellationToken ct)
         {
-            var rulesThatRejectAny = await _ruleService.GetRulesToRejectAny(ct);
+            var rules = await _ruleService.GetRulesThatApplyToCategory(categoryId, ct);
 
-            Rule? rejectAnyResult = GetFirstMatchingRule(rulesThatRejectAny, value);
+            ApprovalMotorHandler handler = ApprovalMotorHandler.CreateChain(rules);
 
-            if (rejectAnyResult is not null)
-                return new ProcessRefundResult() { 
-                    Status = EStatus.Rejected, 
-                    Rule = rejectAnyResult
-                };
-
-
-            var rulesThatApproveAny = await _ruleService.GetRulesToApproveAny(ct);
-
-            Rule? approveAnyResult = GetFirstMatchingRule(rulesThatApproveAny, value);
-
-            if (approveAnyResult is not null)
-                return new ProcessRefundResult()
-                {
-                    Status = EStatus.Approved,
-                    Rule = approveAnyResult
-                };
-
-            var rulesThatRejectByCategory = await _ruleService
-               .GetRulesToRejectByCategoryId(categoryId, ct);
-
-            Rule? rejectByCategoryResult = GetFirstMatchingRule(rulesThatRejectByCategory, value);
-
-            if (rejectByCategoryResult is not null)
-                return new ProcessRefundResult()
-                {
-                    Status = EStatus.Approved,
-                    Rule = rejectByCategoryResult
-                };
-
-
-            var rulesThatApproveByCategory = await _ruleService
-                .GetRulesToApproveByCategoryId(categoryId, ct);
-
-            Rule? approveByCategoryResult = GetFirstMatchingRule(rulesThatApproveByCategory, value);
-
-            if (approveByCategoryResult is not null)
-                return new ProcessRefundResult()
-                {
-                    Status = EStatus.Approved,
-                    Rule = approveByCategoryResult
-                };       
-
-            return new ProcessRefundResult() { Status = EStatus.UnderEvaluation, Rule = null };
+            return handler.Handle(value);
         }
 
-        private Rule? GetFirstMatchingRule(IEnumerable<Rule?> rules, decimal value)
+        public async Task<PaginatedResult<Refund>> GetAllByStatusPaginated(EStatus status, CancellationToken ct, int skip, int take)
         {
-            var rulesFuncs = RuleToFuncConverter.ConvertListOfRules(rules);
-
-            var rulesFuncsResult = rulesFuncs
-                .Select(rule => rule(value))
-                .FirstOrDefault(result => result.FuncResult);
-
-            if (rulesFuncsResult is not null)
-                return rulesFuncsResult.Rule;
-            
-
-            return null;
-        }   
-
+            return await _repository.GetPaginatedByParameter(ct, skip, take);
+        }
     }
 }

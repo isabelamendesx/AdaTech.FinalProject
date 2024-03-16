@@ -22,10 +22,12 @@ namespace Model.Application.API.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _service;
+        private readonly ILogger<CategoryController> _logger;
 
-        public CategoryController(ICategoryService service)
+        public CategoryController(ICategoryService service, ILogger<CategoryController> logger)
         {
             _service = service;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -34,7 +36,7 @@ namespace Model.Application.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                Log.Warning("Invalid Category model state: {@ModelState}", ModelState.Values);
+                _logger.LogWarning("Invalid Category model state: {@ModelState}", ModelState.Values);
                 return UnprocessableEntity(ModelState);
             }
 
@@ -45,7 +47,7 @@ namespace Model.Application.API.Controllers
 
             var createdCategory = await _service.CreateCategory(category, ct);
 
-            Log.Information("New category created: {@Category}", createdCategory);
+            _logger.LogInformation("New category created: {@Category}", createdCategory);
 
             return Ok(createdCategory);
         }
@@ -61,14 +63,20 @@ namespace Model.Application.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] PaginationParametersDTO paginationParameters, CancellationToken ct)
         {
-            var categories = await _service.GetAll(ct);
-
             if (paginationParameters.PageNumber == 0 || paginationParameters.PageSize == 0)
-                return Ok(categories);
+                return Ok(await _service.GetAll(ct));
 
-            var paginatedCategories = PaginationGenerator.GetPaginatedResponse(paginationParameters, categories);
+            var skip = paginationParameters.PageSize * (paginationParameters.PageNumber - 1);
 
-            return Ok(paginatedCategories);
+            var paginatedCategories = await _service.GetAllPaginated(
+                    ct,
+                    skip,
+                    paginationParameters.PageSize    
+                );
+
+            var response = PaginationResponseGenerator.GetPaginatedResponse(paginatedCategories, paginationParameters);
+
+            return Ok(response);
         }
 
     }

@@ -23,10 +23,12 @@ namespace Model.Application.API.Controllers
     public class RefundController : ControllerBase
     {
         private readonly IRefundService _service;
-
-        public RefundController(IRefundService service)
+        private readonly ILogger<RefundController> _logger;
+        
+        public RefundController(IRefundService service, ILogger<RefundController> logger)
         {
             _service = service;
+            _logger = logger;   
         }
 
         
@@ -34,9 +36,10 @@ namespace Model.Application.API.Controllers
         [Idempotent(ExpiresInMilliseconds = 10000)]
         public async Task<IActionResult> CreateRefund([FromHeader] string IdempotencyKey, [FromBody] RefundRequestDto request, CancellationToken ct)            
         {
+
             if (!ModelState.IsValid)
             {
-                Log.Warning("Invalid Refund model state: {@ModelState}", ModelState.Values);
+                _logger.LogWarning("Invalid Refund model state: {@ModelState}", ModelState.Values);
                 return UnprocessableEntity(ModelState);
             }
 
@@ -45,11 +48,12 @@ namespace Model.Application.API.Controllers
                 Description = request.Description,
                 Category = new Category { Id = request.CategoryId},
                 Status = EnumParser.ParseStatus(request.Status),
-                Total = request.Total
-            };
+                Total = request.Total,
+                OwnerID = HttpContext.Items["UserId"] as string
+        };
 
             var createdRefund = await _service.CreateRefund(refund, ct);
-            Log.Information("New Refund Submitted and {@Status} by rule with ID {@RuleId}", createdRefund.Status, createdRefund.Operations.First().ApprovalRule.Id);
+            _logger.LogInformation("New Refund Submitted and {@Status} by rule with ID {@RuleId}", createdRefund.Status, createdRefund.Operations.First().ApprovalRule.Id);
 
             return Ok(createdRefund);
         }
@@ -61,30 +65,40 @@ namespace Model.Application.API.Controllers
         {
             var parsedStatus = EnumParser.ParseStatus(status);
 
-            var refunds = await _service.GetAllByStatus(parsedStatus, ct);
-
             if (paginationParameters.PageNumber == 0 || paginationParameters.PageSize == 0)
-                return Ok(refunds);
+                return Ok(await _service.GetAllByStatus(parsedStatus, ct));
 
-            var paginatedRefunds = PaginationGenerator.GetPaginatedResponse(paginationParameters, refunds);
+            var skip = paginationParameters.PageSize * (paginationParameters.PageNumber - 1);
 
-            return Ok(paginatedRefunds);
+            var paginatedCategories = await _service.GetAllByStatusPaginated(
+                    parsedStatus,
+                    ct,
+                    skip,
+                    paginationParameters.PageSize
+                );
+
+            var response = PaginationResponseGenerator.GetPaginatedResponse
+                                    (paginatedCategories, paginationParameters);
+
+            return Ok(response);
         }
 
         [HttpPost]
-        [Route("/approve/{id}/{userId}")]
+        [Route("/approve/{id}")]
         [Authorize(Roles = Roles.Manager)]
-        public async Task<IActionResult> ApproveRefund([FromRoute] uint id, [FromRoute] uint userId, CancellationToken ct)
+        public async Task<IActionResult> ApproveRefund([FromRoute] uint id, CancellationToken ct)
         {
+            var userId = HttpContext.Items["UserId"] as string;
             var refund = await _service.ApproveRefund(id, userId, ct);
             return Ok(refund);
         }
 
         [HttpPost]
-        [Route("/reject/{id}/{userId}")]
+        [Route("/reject/{id}")]
         [Authorize(Roles = Roles.Manager + "," + Roles.Supervisor)]
-        public async Task<IActionResult> RejectRefund([FromRoute] uint id, [FromRoute] uint userId, CancellationToken ct)
+        public async Task<IActionResult> RejectRefund([FromRoute] uint id, CancellationToken ct)
         {
+            var userId = HttpContext.Items["UserId"] as string;
             var refund = await _service.RejectRefund(id, userId, ct);
             return Ok(refund);
         }

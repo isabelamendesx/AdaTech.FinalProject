@@ -9,18 +9,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Model.Service.Services.Util;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using System.Collections;
+using Model.Domain.Common;
 
 namespace Model.Service.Services
 {
     public class RuleService : IRuleService
     {
         private readonly IRepository<Rule> _ruleRepository;
+        private readonly ILogger<RuleService> _logger;
 
-        public RuleService(IRepository<Rule> repository)
+        public RuleService(IRepository<Rule> repository, ILogger<RuleService> logger)
         {
             _ruleRepository = repository;
+            _logger = logger;
         }
         public async Task<Rule?> GetById(uint id, CancellationToken ct)
         {
@@ -28,7 +32,7 @@ namespace Model.Service.Services
 
             if (rule is null)
             {
-                Log.Information("Rule with ID {@RuleId} not found", id);
+                _logger.LogInformation("Rule with ID {@RuleId} not found", id);
                 throw new ResourceNotFoundException("Rule");
             }
 
@@ -59,7 +63,7 @@ namespace Model.Service.Services
 
             if (rulesToDeactivate is null)
             {
-                Log.Information("Attempt to deactived Rules for Category with ID {@RuleId} not found", categoryId);
+                _logger.LogInformation("Attempt to deactived Rules for Category with ID {@RuleId} not found", categoryId);
                 throw new ResourceNotFoundException("Rules");
             }
 
@@ -78,7 +82,7 @@ namespace Model.Service.Services
 
             if (rule is null)
             {
-                Log.Information("Attempt to deactivate Rule with ID {@RuleId} not found", Id);
+                _logger.LogInformation("Attempt to deactivate Rule with ID {@RuleId} not found", Id);
                 throw new ResourceNotFoundException("Rule");
             }
 
@@ -89,32 +93,6 @@ namespace Model.Service.Services
             return true;
         }
 
-        public async Task<IEnumerable<Rule?>> GetRulesToApproveAny(CancellationToken ct)
-        {
-            var list = await _ruleRepository.GetByParameter(ct, x => x.Category.Id == 0 && x.Action && x.IsActive);
-            return list;
-        }
-
-        public async Task<IEnumerable<Rule?>> GetRulesToRejectByCategoryId(uint categoryId, CancellationToken ct)
-        {
-            var list = await _ruleRepository.GetByParameter(ct, x => x.Category.Id == categoryId 
-                && x.IsActive && !x.Action);
-            return list;
-        }
-
-        public async Task<IEnumerable<Rule?>> GetRulesToApproveByCategoryId(uint categoryId, CancellationToken ct)
-        {
-            var list = await _ruleRepository.GetByParameter(ct, x => x.Category.Id == categoryId 
-                && x.IsActive && x.Action);
-            return list;
-        }
-
-        public async Task<IEnumerable<Rule?>> GetRulesToRejectAny(CancellationToken ct)
-        {
-            var list = await _ruleRepository.GetByParameter(ct, x => x.Category.Id == 0 && !x.Action && x.IsActive);
-            return list;
-        }
-        
         public async Task<IEnumerable<uint>> GetACategorysActiveRulesId(uint categoryId, CancellationToken ct)
         {
             var list = await _ruleRepository.GetByParameter(ct, x => x.Category.Id == categoryId && x.IsActive);
@@ -125,6 +103,25 @@ namespace Model.Service.Services
                 ids.Append(list.ElementAt(i)!.Id);
 
             return ids;
+        }
+
+        public async Task<IEnumerable<Rule>> GetRulesThatApplyToCategory(uint categoryId, CancellationToken ct)
+        {
+            var list = await _ruleRepository.GetByParameter(ct, 
+                x => (x.Category.Id == 0  || x.Category.Id == categoryId) && x.IsActive);
+
+            list = list.Where(rule => rule is not null);
+
+            var rules = list
+                .OrderBy(rule => rule.Action)
+                .ThenBy(rule => rule.Category.Id);
+
+            return rules;
+        }
+
+        public async Task<PaginatedResult<Rule>> GetAllPaginated(CancellationToken ct, int skip, int take)
+        {
+            return await _ruleRepository.GetPaginatedByParameter(ct, skip, take);
         }
     }
 }

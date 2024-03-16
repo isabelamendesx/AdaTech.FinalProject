@@ -3,6 +3,7 @@ using Identity.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
+using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
 using Serilog;
 using System.Security.Claims;
@@ -14,16 +15,20 @@ namespace Model.Application.API.Controllers
     public class UserController : Controller
     {
         private IIdentityService _identityService;
+        private ILogger<UserController> _logger;
 
-        public UserController(IIdentityService identityService) 
-            => _identityService = identityService;
+        public UserController(IIdentityService identityService, ILogger<UserController> logger)
+        {
+            _identityService = identityService;
+            _logger = logger;
+        }
 
         [HttpPost("register")] 
         public async Task<ActionResult<UserRegisterResponse>> Register(UserRegisterRequest userRegister)
         {
             if (!ModelState.IsValid)
             {
-                Log.Warning("Invalid User model state: {@ModelState}", ModelState.Values);
+                _logger.LogWarning("Invalid User model state: {@ModelState}", ModelState.Values);
                 return UnprocessableEntity(ModelState);
             }
 
@@ -31,13 +36,13 @@ namespace Model.Application.API.Controllers
 
             if (result.Success)
             {
-                Log.Information("New User registered successfully");
+                _logger.LogInformation("New User registered successfully");
                 return Ok(result);
             }
 
             else if (result.Errors.Count > 0)
             {
-                Log.Warning("User registration failed with errors: {@Errors}", result.Errors);
+                _logger.LogWarning("User registration failed with errors: {@Errors}", result.Errors);
                 return BadRequest(result);
             }
 
@@ -49,7 +54,7 @@ namespace Model.Application.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                Log.Warning("Invalid User model state: {@ModelState}", ModelState.Values);
+                _logger.LogWarning("Invalid User model state: {@ModelState}", ModelState.Values);
                 return UnprocessableEntity(ModelState);
             }
 
@@ -57,11 +62,11 @@ namespace Model.Application.API.Controllers
 
             if (result.Success)
             {
-                Log.Information("User logged in successfully");
+                _logger.LogInformation("User with id {@UserId} logged in successfully", HttpContext.Items["UserId"] as string);
                 return Ok(result);
             }
 
-            Log.Warning("User login failed: {@UserRegisterResponse}", result);
+            _logger.LogWarning("User login failed: {@UserRegisterResponse}", result);
             return Unauthorized(result);
         }
 
@@ -69,23 +74,22 @@ namespace Model.Application.API.Controllers
         [HttpPost("refresh-login")]
         public async Task<ActionResult<UserRegisterResponse>> RefreshLogin()
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            var userId = identity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = HttpContext.Items["UserId"] as string;
 
             if (userId == null)
             {
-                Log.Warning("User with ID not found in claims during refreshing login");
+                _logger.LogWarning("User with ID not found in claims during refreshing login");
                 throw new ResourceNotFoundException("User ID");
             }
 
             var result = await _identityService.LoginWithoutPassword(userId);
             if (result.Success)
             {
-                Log.Information("User login refreshed successfully");
+                _logger.LogInformation("User with ID {@UserId} login refreshed successfully", userId);
                 return Ok(result);
             }
 
-            Log.Warning("Failed to refresh user login: {@UserRegisterResponse}", result);
+            _logger.LogWarning("Failed to refresh User with Id {@UserId} login: {@UserRegisterResponse}", result, userId);
             return Unauthorized();
         }
     }

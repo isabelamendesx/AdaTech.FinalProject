@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Model.Application.API.Filters;
+using Model.Application.API.Util;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Infra.Data.Context;
@@ -38,6 +39,8 @@ namespace Model.Application.API.Extensions
             services.AddIdempotentAPI();
             services.AddDistributedMemoryCache();
             services.AddIdempotentAPIUsingDistributedCache();
+
+            services.AddHttpContextAccessor();
 
             services.AddCors(options =>
             {
@@ -84,6 +87,7 @@ namespace Model.Application.API.Extensions
             services.AddScoped<IRepository<Category>, CategoryRepository>();
             services.AddScoped<IRepository<Rule>, RuleRepository>();
             services.AddScoped<ILogger, Logger<Refund>>();
+            services.AddScoped<IUserAccessor, UserAccessor>();
 
             return services;
         }

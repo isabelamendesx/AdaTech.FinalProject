@@ -1,30 +1,25 @@
 ﻿using Model.Application.API.DTO;
+using Model.Domain.Common;
 using Model.Domain.Entities;
 
 namespace Model.Application.API.Util
 {
     public static class PaginationGenerator
     {
-        public static PaginatedResponseDTO<T> GetPaginatedResponse<T>(PaginationParametersDTO paginationParameters, 
-                        IEnumerable<T?> originalList) where T : class
+        public static PaginatedResponseDTO<T> GetPaginatedResponse<T>(PagedResult<T> paginationResult, 
+            PaginationParametersDTO parameters) where T : class
         {
-            var paginatedList = originalList
-                                    .Skip((paginationParameters.PageNumber - 1) * paginationParameters.PageSize)
-                                    .Take(paginationParameters.PageSize)
-                                    .ToList();
-
-            bool hasNextPage = paginatedList.Count() * paginationParameters.PageNumber < originalList.Count();
-            int totalCount = originalList.Count();
+            bool hasNextPage = paginationResult.Items.Count() * parameters.PageNumber < paginationResult.TotalCount;
 
             var response = new PaginatedResponseDTO<T>()
             {
-                PageCount = (int)Math.Ceiling((double)totalCount / paginationParameters.PageSize),
-                TotalCount = totalCount,
-                PageNumber = paginationParameters.PageNumber,
-                PageSize = paginationParameters.PageSize,
-                HasPreviousPage = paginationParameters.PageNumber > 1,
+                PageCount = (int)Math.Ceiling((double)paginationResult.TotalCount / parameters.PageSize),
+                TotalCount = paginationResult.TotalCount,
+                PageNumber = parameters.PageNumber,
+                PageSize = parameters.PageSize,
+                HasPreviousPage = parameters.PageNumber > 1,
                 HasNextPage = hasNextPage,
-                Items = paginatedList
+                Items = paginationResult.Items.ToList()
             };
 
             return response;

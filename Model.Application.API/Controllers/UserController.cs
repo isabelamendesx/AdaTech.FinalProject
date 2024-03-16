@@ -15,12 +15,10 @@ namespace Model.Application.API.Controllers
     public class UserController : Controller
     {
         private IIdentityService _identityService;
-        private readonly IUserAccessor _userAccessor;
 
-        public UserController(IIdentityService identityService, IUserAccessor userAccessor)
+        public UserController(IIdentityService identityService)
         {
             _identityService = identityService;
-            _userAccessor = userAccessor;
         }
 
         [HttpPost("register")] 
@@ -74,10 +72,7 @@ namespace Model.Application.API.Controllers
         [HttpPost("refresh-login")]
         public async Task<ActionResult<UserRegisterResponse>> RefreshLogin()
         {
-            //var identity = HttpContext.User.Identity as ClaimsIdentity;
-            //var userId = identity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            var userId = _userAccessor.GetCurrentUserId();
+            var userId = HttpContext.Items["UserId"] as string;
 
             if (userId == null)
             {

@@ -23,12 +23,10 @@ namespace Model.Application.API.Controllers
     public class RefundController : ControllerBase
     {
         private readonly IRefundService _service;
-        private readonly IUserAccessor _userAccessor;
 
-        public RefundController(IRefundService service, IUserAccessor userAccessor)
+        public RefundController(IRefundService service)
         {
             _service = service;
-            _userAccessor = userAccessor;
         }
 
         
@@ -36,7 +34,6 @@ namespace Model.Application.API.Controllers
         [Idempotent(ExpiresInMilliseconds = 10000)]
         public async Task<IActionResult> CreateRefund([FromHeader] string IdempotencyKey, [FromBody] RefundRequestDto request, CancellationToken ct)            
         {
-            var userId = _userAccessor.GetCurrentUserId();
 
             if (!ModelState.IsValid)
             {
@@ -49,8 +46,9 @@ namespace Model.Application.API.Controllers
                 Description = request.Description,
                 Category = new Category { Id = request.CategoryId},
                 Status = EnumParser.ParseStatus(request.Status),
-                Total = request.Total
-            };
+                Total = request.Total,
+                OwnerID = HttpContext.Items["UserId"] as string
+        };
 
             var createdRefund = await _service.CreateRefund(refund, ct);
             Log.Information("New Refund Submitted and {@Status} by rule with ID {@RuleId}", createdRefund.Status, createdRefund.Operations.First().ApprovalRule.Id);
@@ -84,21 +82,21 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpPost]
-        [Route("/approve/{id}/{userId}")]
+        [Route("/approve/{id}")]
         [Authorize(Roles = Roles.Manager)]
         public async Task<IActionResult> ApproveRefund([FromRoute] uint id, CancellationToken ct)
         {
-            var userId = _userAccessor.GetCurrentUserId();
+            var userId = HttpContext.Items["UserId"] as string;
             var refund = await _service.ApproveRefund(id, userId, ct);
             return Ok(refund);
         }
 
         [HttpPost]
-        [Route("/reject/{id}/{userId}")]
+        [Route("/reject/{id}")]
         [Authorize(Roles = Roles.Manager + "," + Roles.Supervisor)]
         public async Task<IActionResult> RejectRefund([FromRoute] uint id, CancellationToken ct)
         {
-            var userId = _userAccessor.GetCurrentUserId();
+            var userId = HttpContext.Items["UserId"] as string;
             var refund = await _service.RejectRefund(id, userId, ct);
             return Ok(refund);
         }

@@ -23,15 +23,14 @@ namespace Model.Service.Services.Handlers
 
         public ProcessRefundResult Handle(decimal value)
         {
-            EStatus possibleStatus = _rule.Action ? EStatus.Approved : EStatus.Rejected;
-            Log.Information($"Iniciando com refund de categorya {_rule.Category.Id} e action {_rule.Action}");
+            EStatus resultingStatus = _rule.Action ? EStatus.Approved : EStatus.Rejected;
 
             var func = RuleToFuncConverter.ConvertRuleToFunc(_rule);
 
             var result = func(value);
 
             if(result.FuncResult)
-                return new ProcessRefundResult() { Status = possibleStatus, Rule = result.Rule };
+                return new ProcessRefundResult() { Status = resultingStatus, Rule = result.Rule };
 
             if(_nextHandler != null) return _nextHandler.Handle(value);
 

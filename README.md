@@ -1,10 +1,24 @@
-# Nome do projeto aqui
+# Motor de Aprovação - DiverseDev
 
 (add logo ou Banner)
 
-Este projeto foi desenvolvido como projeto de conclusão do curso de Backend C# do programa DiverseDEV.
-
 ## Sobre
+
+Este projeto foi desenvolvido como trabalho de conclusão do curso de back-end em c# DiverseDev da empresa Mecado Eletrônico em parceria com a Edtech ADA.
+
+### Contexto do Desafio
+Dentro do contexto de reembolso, parte crucial do controle de pagamento de reembolsos é o seu processo de aprovação. Essa etapa muitas vezes se revela trabalhosa, pois demanda que o departamento financeiro envie manualmente esse documento para o gestor, que em muitos casos essa informação não está clara e pode impactar negativamente na eficiência operacional.
+
+Nossa missão foi criar uma API(**Motor de aprovação**) para automatizar o proceso de reembolso levando em conta os seguintes critérios:
+
+1. Funcionalidade e efetividade da solução
+2. Modelagem e estrutura de dados
+3. Desenvolvimento e boas práticas
+4. Segurança
+5. Usabilidade e experiência do Usuário(UX)
+6. Escalabilidade e Peformance
+7. Manutenibilidade e Extensibilidade
+
 
 ## Tabela de Conteúdo
 

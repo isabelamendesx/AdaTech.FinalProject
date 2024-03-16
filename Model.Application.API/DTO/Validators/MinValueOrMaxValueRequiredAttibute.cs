@@ -14,8 +14,8 @@ namespace Model.Application.API.DTO.Validators
                 return new ValidationResult("You must specify at least one of the range limits and it must be a valid decimal.");
             }
 
-            var minValue = minValueProperty == null ? 0 : (decimal)minValueProperty.GetValue(validationContext.ObjectInstance, null);
-            var maxValue = maxValueProperty == null ? 0 : (decimal)maxValueProperty.GetValue(validationContext.ObjectInstance, null);
+            var minValue = minValueProperty == null ? 0 : (decimal?)minValueProperty.GetValue(validationContext.ObjectInstance, null);
+            var maxValue = maxValueProperty == null ? 0 : (decimal?)maxValueProperty.GetValue(validationContext.ObjectInstance, null);
 
            
 

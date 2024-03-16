@@ -8,7 +8,7 @@ namespace Model.Domain.Common
 {
     public class PagedResult<T> where T : class
     {
-        public int TotalCount { get; set; }
-        public IEnumerable<T> Items { get; set; }
+        public required int TotalCount { get; set; }
+        public required IEnumerable<T> Items { get; set; }
     }
 }

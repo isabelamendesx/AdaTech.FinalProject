@@ -45,7 +45,7 @@ Para solucionar o desafio do controle de pagamento de reembolsos, desenvolvemos 
 
 **IMPORTANTE:** As regras de aprovação são facilmente alteradas por uma pessoa **autorizada**.
 
-Para armazenar os dados relacionados aos documentos de reembolso e às regras de aprovação, utilizamos um banco de dados PostgreSQL hospedado no ElephantSQL, que oferece uma solução de banco de dados na nuvem confiável e escalável. Essa escolha permite o armazenamento seguro e eficiente dos dados, garantindo alta disponibilidade e performance para a nossa aplicação.
+Para armazenar os dados relacionados aos documentos de reembolso e às regras de aprovação, utilizamos um banco de dados PostgreSQL hospedado no ElephantSQL, que oferece uma solução de banco de dados na nuvem confiável e escalável. Essa escolha permite o armazenamento seguro e eficiente dos dados, garantindo disponibilidade e performance para a nossa aplicação.
 
 ## Funcionalidades
 

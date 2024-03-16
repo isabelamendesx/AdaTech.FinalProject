@@ -74,7 +74,7 @@ namespace Model.Application.API.Controllers
         [HttpPost]
         [Route("/approve/{id}/{userId}")]
         [Authorize(Roles = Roles.Manager)]
-        public async Task<IActionResult> ApproveRefund([FromRoute] uint id, [FromRoute] uint userId, CancellationToken ct)
+        public async Task<IActionResult> ApproveRefund([FromRoute] uint id, [FromRoute] string userId, CancellationToken ct)
         {
             var refund = await _service.ApproveRefund(id, userId, ct);
             return Ok(refund);
@@ -83,7 +83,7 @@ namespace Model.Application.API.Controllers
         [HttpPost]
         [Route("/reject/{id}/{userId}")]
         [Authorize(Roles = Roles.Manager + "," + Roles.Supervisor)]
-        public async Task<IActionResult> RejectRefund([FromRoute] uint id, [FromRoute] uint userId, CancellationToken ct)
+        public async Task<IActionResult> RejectRefund([FromRoute] uint id, [FromRoute] string userId, CancellationToken ct)
         {
             var refund = await _service.RejectRefund(id, userId, ct);
             return Ok(refund);

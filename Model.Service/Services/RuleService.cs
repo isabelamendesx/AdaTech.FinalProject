@@ -106,6 +106,8 @@ namespace Model.Service.Services
             var list = await _ruleRepository.GetByParameter(ct, 
                 x => (x.Category.Id == 0  || x.Category.Id == categoryId) && x.IsActive);
 
+            list = list.Where(rule => rule is not null);
+
             var rules = list
                 .OrderBy(rule => rule.Action)
                 .ThenBy(rule => rule.Category.Id);

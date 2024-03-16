@@ -40,8 +40,6 @@ namespace Model.Application.API.Extensions
             services.AddDistributedMemoryCache();
             services.AddIdempotentAPIUsingDistributedCache();
 
-            services.AddHttpContextAccessor();
-
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowOrigin",
@@ -87,7 +85,6 @@ namespace Model.Application.API.Extensions
             services.AddScoped<IRepository<Category>, CategoryRepository>();
             services.AddScoped<IRepository<Rule>, RuleRepository>();
             services.AddScoped<ILogger, Logger<Refund>>();
-            services.AddScoped<IUserAccessor, UserAccessor>();
 
             return services;
         }

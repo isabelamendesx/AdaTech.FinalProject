@@ -49,7 +49,7 @@ namespace Model.Infra.Data.Repositories
                     .ToListAsync();
         }
 
-        public async Task<PagedResult<Rule>> GetPagedByParameter(CancellationToken ct, int skip, int take, Expression<Func<Rule, bool>> filter = null)
+        public async Task<PaginatedResult<Rule>> GetPaginatedByParameter(CancellationToken ct, int skip, int take, Expression<Func<Rule, bool>> filter = null)
         {
             var query = _context.Rules.AsQueryable();
 
@@ -70,7 +70,7 @@ namespace Model.Infra.Data.Repositories
 
             totalCount = await query.CountAsync(ct);
 
-            return new PagedResult<Rule> { TotalCount = totalCount, Items = items };
+            return new PaginatedResult<Rule> { TotalCount = totalCount, Items = items };
         }
 
         public async Task UpdateAsync(Rule rule, CancellationToken ct)

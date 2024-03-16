@@ -43,7 +43,7 @@ namespace Model.Infra.Data.Repositories
                 return await query.ToListAsync();
         }
 
-        public async Task<PagedResult<Category>> GetPagedByParameter(CancellationToken ct, int skip, int take, Expression<Func<Category, bool>> filter = null)
+        public async Task<PaginatedResult<Category>> GetPaginatedByParameter(CancellationToken ct, int skip, int take, Expression<Func<Category, bool>> filter = null)
         {
             var query = _context.Categories.AsQueryable();
 
@@ -64,7 +64,7 @@ namespace Model.Infra.Data.Repositories
 
             totalCount = await query.CountAsync(ct);
 
-            return new PagedResult<Category> { TotalCount = totalCount, Items = items };
+            return new PaginatedResult<Category> { TotalCount = totalCount, Items = items };
         }
 
         public async Task UpdateAsync(Category category, CancellationToken ct)

@@ -12,7 +12,7 @@ namespace Model.Domain.Interfaces
     {
         Task<Rule?> GetById(uint id, CancellationToken ct);
         Task<IEnumerable<Rule?>> GetAll(CancellationToken ct);
-        Task<PagedResult<Rule>> GetAllPaged(CancellationToken ct, int skip, int take);
+        Task<PaginatedResult<Rule>> GetAllPaginated(CancellationToken ct, int skip, int take);
         Task<Rule> CreateRule(Rule rule, CancellationToken ct);
         Task<bool> DeactivateRule(uint Id, CancellationToken ct);
         Task<bool> DeactivateACategorysRules(uint categoryId, CancellationToken ct);

@@ -6,7 +6,7 @@ namespace Model.Application.API.Util
 {
     public static class PaginationResponseGenerator
     {
-        public static PaginatedResponseDTO<T> GetPaginatedResponse<T>(PagedResult<T> paginationResult, 
+        public static PaginatedResponseDTO<T> GetPaginatedResponse<T>(PaginatedResult<T> paginationResult, 
             PaginationParametersDTO parameters) where T : class
         {
             bool hasNextPage = paginationResult.Items.Count() * parameters.PageNumber < paginationResult.TotalCount;

@@ -42,7 +42,7 @@ namespace Model.Infra.Data.Repositories
                 return await query.ToListAsync();
         }
 
-        public async Task<PagedResult<RefundOperation>> GetPagedByParameter(CancellationToken ct, int skip, int take, Expression<Func<RefundOperation, bool>> filter = null)
+        public async Task<PaginatedResult<RefundOperation>> GetPaginatedByParameter(CancellationToken ct, int skip, int take, Expression<Func<RefundOperation, bool>> filter = null)
         {
             var query = _context.RefundOperations.AsQueryable();
 
@@ -63,7 +63,7 @@ namespace Model.Infra.Data.Repositories
 
             totalCount = await query.CountAsync(ct);
 
-            return new PagedResult<RefundOperation> { TotalCount = totalCount, Items = items };
+            return new PaginatedResult<RefundOperation> { TotalCount = totalCount, Items = items };
         }
 
         public async Task UpdateAsync(RefundOperation operation, CancellationToken ct)

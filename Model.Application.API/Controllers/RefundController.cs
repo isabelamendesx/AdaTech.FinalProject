@@ -66,7 +66,7 @@ namespace Model.Application.API.Controllers
 
             var skip = paginationParameters.PageSize * (paginationParameters.PageNumber - 1);
 
-            var paginatedCategories = await _service.GetAllByStatusPaged(
+            var paginatedCategories = await _service.GetAllByStatusPaginated(
                     parsedStatus,
                     ct,
                     skip,

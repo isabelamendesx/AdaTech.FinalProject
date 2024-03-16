@@ -131,9 +131,9 @@ namespace Model.Service.Services
             return handler.Handle(value);
         }
 
-        public async Task<PagedResult<Refund>> GetAllByStatusPaged(EStatus status, CancellationToken ct, int skip, int take)
+        public async Task<PaginatedResult<Refund>> GetAllByStatusPaginated(EStatus status, CancellationToken ct, int skip, int take)
         {
-            return await _repository.GetPagedByParameter(ct, skip, take);
+            return await _repository.GetPaginatedByParameter(ct, skip, take);
         }
     }
 }

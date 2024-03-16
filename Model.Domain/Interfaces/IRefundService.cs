@@ -12,7 +12,7 @@ namespace Model.Domain.Interfaces
     {
         Task<Refund> CreateRefund(Refund refund, CancellationToken ct);
         Task<IEnumerable<Refund?>> GetAllByStatus(EStatus status, CancellationToken ct);
-        Task<PagedResult<Refund>> GetAllByStatusPaged(EStatus status, CancellationToken ct, int skip, int take);
+        Task<PaginatedResult<Refund>> GetAllByStatusPaginated(EStatus status, CancellationToken ct, int skip, int take);
         Task<Refund> ApproveRefund(uint Id, uint userId, CancellationToken ct);
         Task<Refund> RejectRefund(uint Id, uint userId, CancellationToken ct);
     }

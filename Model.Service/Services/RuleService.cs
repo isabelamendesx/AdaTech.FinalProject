@@ -116,9 +116,9 @@ namespace Model.Service.Services
             return rules;
         }
 
-        public async Task<PagedResult<Rule>> GetAllPaged(CancellationToken ct, int skip, int take)
+        public async Task<PaginatedResult<Rule>> GetAllPaginated(CancellationToken ct, int skip, int take)
         {
-            return await _ruleRepository.GetPagedByParameter(ct, skip, take);
+            return await _ruleRepository.GetPaginatedByParameter(ct, skip, take);
         }
     }
 }

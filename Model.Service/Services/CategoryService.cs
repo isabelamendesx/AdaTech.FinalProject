@@ -43,9 +43,9 @@ namespace Model.Service.Services
             return await _repository.GetByParameter(ct);
         }
 
-        public async Task<PagedResult<Category>> GetAllPaged(CancellationToken ct, int skip, int take)
+        public async Task<PaginatedResult<Category>> GetAllPaginated(CancellationToken ct, int skip, int take)
         {
-            return await _repository.GetPagedByParameter(ct, skip, take);
+            return await _repository.GetPaginatedByParameter(ct, skip, take);
         }
 
         public async Task<Category?> GetById(uint id, CancellationToken ct)

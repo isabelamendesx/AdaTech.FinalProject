@@ -12,7 +12,7 @@ namespace Model.Domain.Entities
         public string Description {  get; set; }
         public EStatus Status { get; set; }
         public DateTime CreateDate { get; set; }
-        public uint OwnerID { get; set; }
+        public string OwnerID { get; set; }
         public Category Category { get; set; }
         public List<RefundOperation> Operations { get; set; }
 

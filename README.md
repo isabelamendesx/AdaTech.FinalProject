@@ -30,7 +30,6 @@ Nossa missão foi criar uma API(**Motor de aprovação**) para automatizar o pro
 - [Como Iniciar](#como-iniciar)
 - [Segurança](#segurança)
 - [Filtros](#filtros)
-- [Endpoints](#endpoints)
 - [Documentação](#documentação)
 - [Autoras](#autoras)
 - [Licença](#licença)
@@ -71,15 +70,21 @@ Para armazenar os dados relacionados aos documentos de reembolso e às regras de
 
 ## Pré-requisitos
 
+add pré requisitos da aplicação
+
 ## Como Iniciar
+tutorial de como clocar e usar
 
 ## Segurança
 
+detalhes do que usamos na segurança da API
+
 ## Filtros
 
-## Endpoints
+filtros que usamos (verificar se é necessário adicionar essa parte)
 
 ## Documentação
+Adicionar prints do swagger e/ou vídeo dos endpoints funcionando
 
 ## Autoras
 
@@ -92,4 +97,7 @@ Este projeto foi desenvolvido por:
 [![author](https://img.shields.io/badge/author-suellensr-cyan.svg)](https://github.com/suellensr)
 
 ## Licença
+
+MIT - deve ser add na main http://escolhaumalicenca.com.br/licencas/mit/
+"Permite as pessoas baixarem o projeto e modificar e autor não será responsabilizado por nada."
 

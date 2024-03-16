@@ -8,7 +8,7 @@
         public int PageSize { get; set; }
         public bool HasPreviousPage { get; set; }
         public bool HasNextPage { get; set; }
-        public List<T?> Items { get; set; }
+        public required List<T> Items { get; set; }
 
     }
 }

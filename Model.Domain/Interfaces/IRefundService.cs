@@ -11,7 +11,7 @@ namespace Model.Domain.Interfaces
     {
         Task<Refund> CreateRefund(Refund refund, CancellationToken ct);
         Task<IEnumerable<Refund?>> GetAllByStatus(EStatus status, CancellationToken ct);
-        Task<Refund> ApproveRefund(uint Id, uint userId, CancellationToken ct);
-        Task<Refund> RejectRefund(uint Id, uint userId, CancellationToken ct);
+        Task<Refund> ApproveRefund(uint Id, string userId, CancellationToken ct);
+        Task<Refund> RejectRefund(uint Id, string userId, CancellationToken ct);
     }
 }

@@ -89,32 +89,6 @@ namespace Model.Service.Services
             return true;
         }
 
-        public async Task<IEnumerable<Rule?>> GetRulesToApproveAny(CancellationToken ct)
-        {
-            var list = await _ruleRepository.GetByParameter(ct, x => x.Category.Id == 0 && x.Action && x.IsActive);
-            return list;
-        }
-
-        public async Task<IEnumerable<Rule?>> GetRulesToRejectByCategoryId(uint categoryId, CancellationToken ct)
-        {
-            var list = await _ruleRepository.GetByParameter(ct, x => x.Category.Id == categoryId 
-                && x.IsActive && !x.Action);
-            return list;
-        }
-
-        public async Task<IEnumerable<Rule?>> GetRulesToApproveByCategoryId(uint categoryId, CancellationToken ct)
-        {
-            var list = await _ruleRepository.GetByParameter(ct, x => x.Category.Id == categoryId 
-                && x.IsActive && x.Action);
-            return list;
-        }
-
-        public async Task<IEnumerable<Rule?>> GetRulesToRejectAny(CancellationToken ct)
-        {
-            var list = await _ruleRepository.GetByParameter(ct, x => x.Category.Id == 0 && !x.Action && x.IsActive);
-            return list;
-        }
-        
         public async Task<IEnumerable<uint>> GetACategorysActiveRulesId(uint categoryId, CancellationToken ct)
         {
             var list = await _ruleRepository.GetByParameter(ct, x => x.Category.Id == categoryId && x.IsActive);
@@ -125,6 +99,18 @@ namespace Model.Service.Services
                 ids.Append(list.ElementAt(i)!.Id);
 
             return ids;
+        }
+
+        public async Task<IEnumerable<Rule>> GetRulesThatApplyToCategory(uint categoryId, CancellationToken ct)
+        {
+            var list = await _ruleRepository.GetByParameter(ct, 
+                x => (x.Category.Id == 0  || x.Category.Id == categoryId) && x.IsActive);
+
+            var rules = list
+                .OrderBy(rule => rule.Action)
+                .ThenBy(rule => rule.Category.Id);
+
+            return rules;
         }
     }
 }

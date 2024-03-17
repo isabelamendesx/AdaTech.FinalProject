@@ -56,8 +56,6 @@ namespace Model.Application.API
 
             app.UseAuthorization();
 
-            app.UseMiddleware<UserIdMiddleware>();
-
             app.MapControllers();
 
             app.Run();

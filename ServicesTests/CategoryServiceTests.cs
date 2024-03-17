@@ -1,17 +1,12 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Model.Domain.Common;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
 using Model.Service.Services;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace ServicesTests
 {
@@ -20,14 +15,17 @@ namespace ServicesTests
         private CategoryService _sut;
 
         private IRepository<Category> repository;
+        private ILogger<CategoryService> logger;
         private CancellationToken ct;
-        
+
         public CategoryServiceTests()
         {
-            ct = CancellationToken.None;
+
+            ct = new CancellationToken();
             repository = Substitute.For<IRepository<Category>>();
-           
-            _sut = new CategoryService(repository);
+            logger = Substitute.For<ILogger<CategoryService>>();
+
+            _sut = new CategoryService(repository, logger);
         }
 
         [Fact]
@@ -35,7 +33,7 @@ namespace ServicesTests
         {
             var newCategory = new Category { Id = 5, Name = "Food" };
             repository.GetByParameter(ct, Arg.Any<Expression<Func<Category, bool>>>())
-                .Returns(IEnumerableOfCategory().Where(x => x.Name.ToLower().Equals(newCategory.Name.ToLower())));
+                .Returns(ListOfCategory().Where(x => x.Name.ToLower().Equals(newCategory.Name.ToLower())));
 
             await _sut.Invoking(x => x.CreateCategory(newCategory, ct))
                    .Should().ThrowAsync<CategoryAlreadyRegisteredException>();
@@ -46,7 +44,7 @@ namespace ServicesTests
         {
             var newCategory = new Category { Id = 5, Name = "Eletronics" };
             repository.GetByParameter(ct, Arg.Any<Expression<Func<Category, bool>>>())
-                .Returns(IEnumerableOfCategory().Where(x => x.Name.ToLower().Equals(newCategory.Name.ToLower())));
+                .Returns(ListOfCategory().Where(x => x.Name.ToLower().Equals(newCategory.Name.ToLower())));
 
             await _sut.Invoking(x => x.CreateCategory(newCategory, ct))
                    .Should().NotThrowAsync<CategoryAlreadyRegisteredException>();
@@ -56,13 +54,32 @@ namespace ServicesTests
         [Fact]
         public async Task get_all_should_return_all_categories()
         {
-            
-            repository.GetByParameter(ct).Returns(Task.FromResult<IEnumerable<Category?>>(IEnumerableOfCategory()));
+
+            repository.GetByParameter(ct).Returns(Task.FromResult<IEnumerable<Category?>>(ListOfCategory()));
 
             var result = await _sut.GetAll(ct);
 
-            result.Should().BeEquivalentTo(IEnumerableOfCategory());
+            result.Should().BeEquivalentTo(ListOfCategory());
         }
+
+        [Fact]
+        public async Task get_all_paginated_should_return_paginated_result_with_correct_values()
+        {
+            var expectedTotalCount = 3;
+            var expectedCategories = ListOfCategory();
+
+            var expextedPaginatedResult = new PaginatedResult<Category> { TotalCount = expectedTotalCount, Items = ListOfCategory() };
+
+
+            repository.GetPaginatedByParameter(ct, Arg.Any<int>(), Arg.Any<int>(), Arg.Any<Expression<Func<Category, bool>>>())
+                      .Returns(Task.FromResult<PaginatedResult<Category>>(expextedPaginatedResult));
+
+            var result = await _sut.GetAllPaginated(ct, skip: 0, take: 10);
+
+            result.TotalCount.Should().Be(expectedTotalCount);
+            result.Items.Should().BeEquivalentTo(expectedCategories);
+        }
+
 
         [Fact]
         public async Task get_by_id_must_throw_an_exception_when_category_could_not_be_found()
@@ -85,7 +102,7 @@ namespace ServicesTests
         }
 
 
-        public static IEnumerable<Category> IEnumerableOfCategory()
+        public static IEnumerable<Category> ListOfCategory()
         {
             return new List<Category>{
                      new Category() {
@@ -99,8 +116,5 @@ namespace ServicesTests
                     },
             };
         }
-
-
-
     }
 }

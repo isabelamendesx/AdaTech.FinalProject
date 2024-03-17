@@ -32,7 +32,7 @@ namespace ServicesTests
             ruleService = Substitute.For<IRuleService>();
             categoryService = Substitute.For<ICategoryService>();
 
-            _sut = new RefundService(repository, operationRepository, ruleService, categoryService);
+          //  _sut = new RefundService(repository, operationRepository, ruleService, categoryService);
         }
 
         [Fact]

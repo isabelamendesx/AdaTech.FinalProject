@@ -20,7 +20,7 @@ namespace Model.Application.API.DTO.Request
 
 
         [Required(ErrorMessage = "Status is required.")]
-        [ValidateStatus]
+        [ValidateSubmittedStatus]
         public string Status { get; set; }
     }
 }

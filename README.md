@@ -76,8 +76,18 @@ add pré requisitos da aplicação
 tutorial de como clonar e usar
 
 ## Segurança
+**JWT (*JSON Web Token*)**
 
-detalhes do que usamos na segurança da API
+Para a segurança no processo de autenticação e autorização, utilizamos o JWT.
+
+Tal ferramenta proporciona maior confiabilidade nas informações trafegadas pois, após o login correto de um usuário, mais uma etapa de segurança é adicionada ao processo conforme um token único é retornado e solicitado em todas as requisições de recurso da aplicação. Dessa forma, o servidor sempre poderá identificar o usuário.
+
+Por ser um serviço stateless, diversas vantagens podem ser apontadas em seu uso:
+* Segurança: Ele usa criptografia para garantir que apenas as partes autorizadas possam acessar as informações transmitidas no token.
+* Escalabilidade: Não é relevante para qual servidor da aplicação chegará a requisição, ela será atendida! Isso ocorre porque todas as informações necessárias são armazenadas no próprio token e são enviadas ao servidor para autenticação. Isso reduz a carga no servidor e torna o JWT uma solução muito escalável.
+* Proteção a ataques Cross-site Request Forgery (CSRF): Não é necessário se preocupar com esse tipo de ataques, pois não existe uma sessão para ser falsificada. O JWT usa um sistema de assinatura digital para verificar a autenticidade dos dados. Isso significa que, se alguém tentar alterar os dados dentro do token, a assinatura se tornará inválida e o servidor saberá que os dados foram adulterados.
+* Alta performance: Devido a não existência de sessão, o servidor necessita apenas calcular o *hash*, evitando fazer qualquer tipo de busca em bases ou tabelas.
+* Multiservidores: É possível ter vários servidores rodando em domínios diferentes utilizando o mesmo token.
 
 ## Filtros
 

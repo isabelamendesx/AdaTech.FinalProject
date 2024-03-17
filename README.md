@@ -2,6 +2,14 @@
 
 (add logo ou Banner)
 
+![C#](https://img.shields.io/badge/c%23-%23239120.svg?style=for-the-badge&logo=csharp&logoColor=white)
+![.Net](https://img.shields.io/badge/.NET-5C2D91?style=for-the-badge&logo=.net&logoColor=white)
+![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)
+![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
+
+Esse projeto é uma API criada utilizando C#, .NET, PostgreSQL como banco de dados, Swagger para documentação e JWT para autorização e autenticação.
+
 ## Sobre
 
 Este projeto foi desenvolvido como trabalho de conclusão do curso de back-end em c# DiverseDev da empresa Mecado Eletrônico em parceria com a Edtech ADA.
@@ -78,21 +86,27 @@ tutorial de como clonar e usar
 
 ## Motor de aprovação
 
-explicação do motor de aprovação
+O cerne da aplicação é o motor de aprovação. 
+
+Ele consiste em um método `GetRulesThatApplyToCategory` que, através do [Chain Of Responsibility Pattern](https://mohamed-hendawy.medium.com/chain-of-responsibility-design-pattern-in-c-with-examples-d87da6e5ead), lista as regras aplicadas ao id de categoria requisitado e as organiza por ordem de ação. 
+
+Ou seja, inicialmente o programa buscará as **regras que rejeitam o pedido para todas as classes**, depois a **regra que rejeita o pedido para a categoria específica**. Caso nesse ponto a requisição ainda não tenha sido recusada, o programa continua buscando, agora nas **regras que aprovam todas as categorias** e em seguida, as **regras que aprovam da categoria específica**, abrangendo todas as possibilidades. Caso nenhuma regra aplicável seja encontrada no bando de dados, a aplicação irá configurar o status da requisição como “Em aprovação” e só poderá ser modificado manualmente por um usuário responsável.
+
+
 
 ## Segurança
 **JWT (*JSON Web Token*)**
 
-Para a segurança no processo de autenticação e autorização, utilizamos o JWT.
+Para a segurança no processo de autenticação e autorização, utilizamos o [JWT](https://jwt.io).
 
 Tal ferramenta proporciona maior confiabilidade nas informações trafegadas pois, após o login correto de um usuário, mais uma etapa de segurança é adicionada ao processo conforme um token único é retornado e solicitado em todas as requisições de recurso da aplicação. Dessa forma, o servidor sempre poderá identificar o usuário.
 
-Por ser um serviço stateless, diversas vantagens podem ser apontadas em seu uso:
-* Segurança: Ele usa criptografia para garantir que apenas as partes autorizadas possam acessar as informações transmitidas no token.
-* Escalabilidade: Não é relevante para qual servidor da aplicação chegará a requisição, ela será atendida! Isso ocorre porque todas as informações necessárias são armazenadas no próprio token e são enviadas ao servidor para autenticação. Isso reduz a carga no servidor e torna o JWT uma solução muito escalável.
-* Proteção a ataques Cross-site Request Forgery (CSRF): Não é necessário se preocupar com esse tipo de ataques, pois não existe uma sessão para ser falsificada. O JWT usa um sistema de assinatura digital para verificar a autenticidade dos dados. Isso significa que, se alguém tentar alterar os dados dentro do token, a assinatura se tornará inválida e o servidor saberá que os dados foram adulterados.
-* Alta performance: Devido a não existência de sessão, o servidor necessita apenas calcular o *hash*, evitando fazer qualquer tipo de busca em bases ou tabelas.
-* Multiservidores: É possível ter vários servidores rodando em domínios diferentes utilizando o mesmo token.
+Por ser um serviço `stateless`, diversas vantagens podem ser apontadas em seu uso:
+* **Segurança:** Ele usa criptografia para garantir que apenas as partes autorizadas possam acessar as informações transmitidas no token.
+* **Escalabilidade:** Não é relevante para qual servidor da aplicação chegará a requisição, ela será atendida! Isso ocorre porque todas as informações necessárias são armazenadas no próprio token e são enviadas ao servidor para autenticação. Isso reduz a carga no servidor e torna o JWT uma solução muito escalável.
+* **Proteção a ataques Cross-site Request Forgery [(CSRF)](https://security.stackexchange.com/questions/166724/should-i-use-csrf-protection-on-rest-api-endpoints/166798#166798):** Não é necessário se preocupar com esse tipo de ataques, pois não existe uma sessão para ser falsificada. O JWT usa um sistema de assinatura digital para verificar a autenticidade dos dados. Isso significa que, se alguém tentar alterar os dados dentro do token, a assinatura se tornará inválida e o servidor saberá que os dados foram adulterados.
+* **Alta performance:** Devido a não existência de sessão, o servidor necessita apenas calcular o [hash](https://www.voitto.com.br/blog/artigo/o-que-e-hash-e-como-funciona#:~:text=A%20criptografia%20hash%20é%20utilizada,ser%20um%20registro%20alfanumérico%20complexo.), evitando fazer qualquer tipo de busca em bases ou tabelas.
+* **Multiservidores:** É possível ter vários servidores rodando em domínios diferentes utilizando o mesmo token.
 
 ## Filtros
 

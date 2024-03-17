@@ -9,7 +9,6 @@ using Identity.Constants;
 using Model.Domain.Interfaces;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Serilog;
-using Model.Application.API.DTO;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Model.Application.API.DTO.Request;
 using Model.Application.API.DTO.Response;
@@ -56,7 +55,15 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpGet]
-        [Route("{status}")]
+        [Route("{id}")]
+        public async Task<IActionResult> GetById([FromRoute] uint id, CancellationToken ct)
+        {
+            var refund = await _service.GetById(id, ct);
+            return Ok(refund!.ToDetailResponse());
+        }
+
+        [HttpGet]
+        [Route("/status/{status}")]
         public async Task<ActionResult<IEnumerable<Refund?>>> GetAllByStatus([ValidateStatus] string status,
                                                     [FromQuery] PaginationParametersDTO paginationParameters, CancellationToken ct)
         {

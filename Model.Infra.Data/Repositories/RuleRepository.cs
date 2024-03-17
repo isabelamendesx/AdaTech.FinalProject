@@ -31,7 +31,9 @@ namespace Model.Infra.Data.Repositories
               return rule;
         }
         public async Task<Rule?> GetById(uint Id, CancellationToken ct)
-                    => await _context.Rules.FindAsync(Id);
+                    => await _context.Rules
+                                    .Include(x => x.Category)
+                                    .FirstOrDefaultAsync(x => x.Id == Id);
 
         public async Task<IEnumerable<Rule?>> GetByParameter(CancellationToken ct, Expression<Func<Rule, bool>> filter = null)
         {

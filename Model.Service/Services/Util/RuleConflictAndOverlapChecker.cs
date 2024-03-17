@@ -36,15 +36,9 @@ namespace Model.Service.Services.Util
 
         private static bool HasConflictingIntervals(Rule rule, Rule newRule)
         {
-            if (IsIntervalOverlappingOrContained(rule, newRule))
-                return true;
-
-            return false;
-        }
-
-        private static bool IsIntervalOverlappingOrContained(Rule rule, Rule newRule)
-        {
             return rule.MinValue <= newRule.MaxValue && newRule.MinValue <= rule.MaxValue;
+
         }
+
     }
 }

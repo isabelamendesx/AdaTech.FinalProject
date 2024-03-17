@@ -44,103 +44,162 @@ namespace ServicesTests
                 new object[]{
                     new Rule()
                         {
+                            Id = 98,
                             MinValue = 1400,
                             MaxValue = decimal.MaxValue,
-                            Action = true
+                            Action = true,
+                            Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                         },
                      new List<Rule?>()
                         {
                             new Rule()
                             {
+                                Id = 99,
                                 MinValue = 1000,
                                 MaxValue = decimal.MaxValue,
-                                Action = true
+                                Action = true,
+                                Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                             }
                         }
                 } ,
                 new object[]{
                     new Rule()
                         {
+                            Id = 98,
                             MinValue = 1000,
                             MaxValue = decimal.MaxValue,
-                            Action = true
+                            Action = true,
+                            Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                         },
                      new List<Rule?>()
                         {
                             new Rule()
                             {
-
+                                Id = 99,
                                 MinValue = 1400,
                                 MaxValue = decimal.MaxValue,
-                                Action = true
+                                Action = true,
+                                Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                             }
                         }
                 },
                 new object[]{
                     new Rule()
                         {
+                            Id = 98,
                             MinValue = 500,
                             MaxValue = 1500,
-                            Action = true
+                            Action = true,
+                            Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                         },
                      new List<Rule?>()
                         {
                             new Rule()
                             {
+                                Id = 99,
                                 MinValue = 1000,
                                 MaxValue = 2000,
-                                Action = true
+                                Action = true,
+                                Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                             }
                         }
                 },
                 new object[]{
                     new Rule()
                         {
+                            Id = 98,
                             MinValue = 500,
                             MaxValue = 1500,
-                            Action = true
+                            Action = true,
+                            Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                         },
                      new List<Rule?>()
                         {
                             new Rule()
                             {
+                                Id = 99,
                                 MinValue = 100,
                                 MaxValue = 500,
-                                Action = true
+                                Action = true,
+                                Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                             }
                         }
                 },
                 new object[]{
                     new Rule()
                         {
+                            Id = 98,
                             MinValue = 100,
                             MaxValue = 500,
-                            Action = true
+                            Action = true,
+                            Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                         },
                      new List<Rule?>()
                         {
                             new Rule()
                             {
+                                Id = 99,
                                 MinValue = 500,
                                 MaxValue = 2000,
-                                Action = true
+                                Action = true,
+                                Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                             }
                         }
                 } ,
                  new object[]{
                     new Rule()
                         {
+                            Id = 98,
                             MinValue = 100,
                             MaxValue = 1500,
-                            Action = true
+                            Action = true,
+                            Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                         },
                      new List<Rule?>()
                         {
                             new Rule()
                             {
+                                Id = 99,
                                 MinValue = 500,
                                 MaxValue = 1000,
-                                Action = true
+                                Action = true,
+                                Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                             }
                         }
                 } ,
@@ -156,106 +215,162 @@ namespace ServicesTests
                 new object[]{
                     new Rule()
                         {
+                            Id = 1,
                             MinValue = 1400,
                             MaxValue = decimal.MaxValue,
-                            Action = false
+                            Action = false,
+                            Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                         },
                      new List<Rule?>()
                         {
                             new Rule()
                             {
+                                Id = 3,
                                 MinValue = 1000,
                                 MaxValue = decimal.MaxValue,
-                                Action = true
+                                Action = true,
+                                Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                             }
                         }
                 } ,
                 new object[]{
                     new Rule()
                         {
+                            Id = 2,
                             MinValue = 1000,
                             MaxValue = decimal.MaxValue,
-                            Action = true
+                            Action = true,
+                            Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                         },
                      new List<Rule?>()
                         {
                             new Rule()
                             {
-
+                                Id = 4,
                                 MinValue = 1400,
                                 MaxValue = decimal.MaxValue,
-                                Action = false
+                                Action = false,
+                                Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                             }
                         }
                 },
                 new object[]{
                     new Rule()
                         {
+                            Id = 6,
                             MinValue = 500,
                             MaxValue = 2000,
-                            Action = true
+                            Action = true,
+                            Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                         },
                      new List<Rule?>()
                         {
                             new Rule()
                             {
+                                Id = 7,
                                 MinValue = 1000,
                                 MaxValue = 1500,
-                                Action = false
+                                Action = false,
+                                Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                             }
                         }
                 } ,
                 new object[]{
                     new Rule()
                         {
+                            Id = 8,
                             MinValue = 1000,
                             MaxValue = 3000,
-                            Action = true
+                            Action = true,
+                            Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                         },
                      new List<Rule?>()
                         {
                             new Rule()
                             {
-
+                                Id = 9,
                                 MinValue = 2000,
                                 MaxValue = decimal.MaxValue,
-                                Action = false
+                                Action = false,
+                                Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                             }
                         }
                 },
                 new object[]{
                     new Rule()
                         {
+                            Id = 10,
                             MinValue = 500,
                             MaxValue = decimal.MaxValue,
-                            Action = false
+                            Action = false,
+                            Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                         },
                      new List<Rule?>()
                         {
                             new Rule()
                             {
-
+                                Id = 11,
                                 MinValue = 500,
                                 MaxValue = 1000,
-                                Action = true
+                                Action = true,
+                                Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                             }
                         }
                 },
                 new object[]{
                     new Rule()
                         {
+                            Id = 12,
                             MinValue = 500,
                             MaxValue = 1500,
-                            Action = true
+                            Action = true,
+                            Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                         },
                      new List<Rule?>()
                         {
                             new Rule()
                             {
-
+                                Id = 13,
                                 MinValue = 1000,
                                 MaxValue = 5000,
-                                Action = false
+                                Action = false,
+                                Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                             }
                         }
                 },
@@ -270,17 +385,27 @@ namespace ServicesTests
                 {
                     new Rule()
                     {
+                        Id = 12,
                         MinValue = 1400,
                         MaxValue = decimal.MaxValue,
-                        Action = false
+                        Action = false,
+                        Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                     },
                     new List<Rule?>()
                     {
                         new Rule()
                         {
+                            Id = 13,
                             MinValue = 0,
                             MaxValue = 100,
-                            Action = true
+                            Action = true,
+                            Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                         }
                     }
                 },
@@ -289,17 +414,27 @@ namespace ServicesTests
                 {
                     new Rule()
                     {
+                        Id = 14,
                         MinValue = 0,
                         MaxValue = 100,
-                        Action = true
+                        Action = true,
+                        Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                     },
                     new List<Rule?>()
                     {
                         new Rule()
                         {
+                            Id = 25,
                             MinValue = 1400,
                             MaxValue = decimal.MaxValue,
-                            Action = true
+                            Action = true,
+                            Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                         }
                     }
                 },
@@ -307,53 +442,81 @@ namespace ServicesTests
                 new object[]{
                     new Rule()
                         {
+                            Id = 12,
                             MinValue = 0,
                             MaxValue = 500,
-                            Action = true
+                            Action = true,
+                            Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                         },
                      new List<Rule?>()
                         {
                             new Rule()
                             {
+                                Id = 18,
                                 MinValue = 500.01M,
                                 MaxValue = 1000,
-                                Action = false
+                                Action = false,
+                                Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                             }
                         }
                 } ,
                 new object[]{
                     new Rule()
                         {
+                            Id = 12,
                             MinValue = 500,
                             MaxValue = 1000,
-                            Action = false
+                            Action = false,
+                            Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                         },
                      new List<Rule?>()
                         {
                             new Rule()
                             {
-
+                                Id = 34,
                                 MinValue = 1001,
                                 MaxValue = decimal.MaxValue,
-                                Action = false
+                                Action = false,
+                                Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                             }
                         }
                 },
                 new object[]{
                     new Rule()
                         {
+                            Id = 13,
                             MinValue = 0,
                             MaxValue = 100,
-                            Action = true
+                            Action = true,
+                            Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                         },
                      new List<Rule?>()
                         {
                             new Rule()
                             {
-
+                                Id = 89,
                                 MinValue = 500,
                                 MaxValue = 700,
-                                Action = true
+                                Action = true,
+                                Category = new Category
+                                {
+                                    Name = "Category name"
+                                }
                             }
                         }
                 },

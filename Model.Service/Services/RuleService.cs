@@ -1,17 +1,9 @@
-﻿using Model.Domain.Entities;
-using Rule = Model.Domain.Entities.Rule;
+﻿using Rule = Model.Domain.Entities.Rule;
 using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Model.Service.Services.Util;
 using Microsoft.Extensions.Logging;
-using Serilog;
-using System.Collections;
 using Model.Domain.Common;
 
 namespace Model.Service.Services

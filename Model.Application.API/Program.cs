@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Model.Application.API.Extensions;
 using Model.Application.API.Filters;
-using Model.Application.API.Middleware;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Infra.Data.Context;
@@ -55,8 +54,6 @@ namespace Model.Application.API
             app.UseAuthentication();
 
             app.UseAuthorization();
-
-            app.UseMiddleware<UserIdMiddleware>();
 
             app.MapControllers();
 

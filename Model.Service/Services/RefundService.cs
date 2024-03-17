@@ -81,11 +81,8 @@ namespace Model.Service.Services
         {
             var refund = await _repository.GetById(Id, ct);
 
-            if (refund is null)
-            {
-                _logger.LogWarning("Attempted to approve a refund with an invalid ID.");
-                throw new ResourceNotFoundException("Refund");
-            }
+            if(refund.Status != EStatus.UnderEvaluation)
+                throw new InvalidRefundException("The refund can only be approved if the status is UnderEvaluation.");
 
             refund.Status = EStatus.Approved;
             RefundOperation op = new RefundOperation()
@@ -94,22 +91,20 @@ namespace Model.Service.Services
                 ApprovalRule = null,
                 ApprovedBy = userId
             };
+
             refund.Operations.Add(op);
 
-            await _repository.AddAsync(refund, ct);
+            await _repository.UpdateAsync(refund, ct);
 
-            return refund;
+            return refund;      
         }
 
         public async Task<Refund> RejectRefund(uint Id, string userId, CancellationToken ct)
         {
             var refund = await _repository.GetById(Id, ct);
 
-            if (refund is null)
-            {
-                _logger.LogWarning("Attempted to reject a refund with an invalid ID.");
-                throw new ResourceNotFoundException("Refund");
-            }
+            if (refund.Status != EStatus.UnderEvaluation)
+                throw new InvalidRefundException("The refund can only be rejected if the status is UnderEvaluation.");
 
             refund.Status = EStatus.Rejected;
 
@@ -121,7 +116,27 @@ namespace Model.Service.Services
             };
             refund.Operations.Add(op);
 
-            await _repository.AddAsync(refund, ct);
+            await _repository.UpdateAsync(refund, ct);
+
+            return refund;
+        }
+
+        public async Task<Refund> ChangeRefundStatus(uint Id, EStatus status, string userId, CancellationToken ct)
+        {
+            var refund = await _repository.GetById(Id, ct);
+
+            refund.Status = status;
+
+            RefundOperation op = new RefundOperation()
+            {
+                UpdateDate = DateTime.UtcNow,
+                ApprovalRule = null,
+                ApprovedBy = userId
+            };
+
+            refund.Operations.Add(op);
+
+            await _repository.UpdateAsync(refund, ct);
 
             return refund;
         }
@@ -138,6 +153,19 @@ namespace Model.Service.Services
         public async Task<PaginatedResult<Refund>> GetAllByStatusPaginated(EStatus status, CancellationToken ct, int skip, int take)
         {
             return await _repository.GetPaginatedByParameter(ct, skip, take);
+        }
+
+        public async Task<Refund?> GetById(uint id, CancellationToken ct)
+        {
+            var refund = await _repository.GetById(id, ct);
+
+            if (refund is null)
+            {
+                _logger.LogInformation("Refund with ID {@CategoryId} not found", id);
+                throw new ResourceNotFoundException("Refund");
+            }
+
+            return refund;
         }
     }
 }

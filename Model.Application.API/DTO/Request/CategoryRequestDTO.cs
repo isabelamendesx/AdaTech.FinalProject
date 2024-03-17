@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Model.Application.API.DTO
+namespace Model.Application.API.DTO.Request
 {
     public class CategoryRequestDTO
     {

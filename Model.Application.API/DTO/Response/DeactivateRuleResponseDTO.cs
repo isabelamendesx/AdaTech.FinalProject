@@ -2,10 +2,10 @@
 {
     public class DeactivateRuleResponseDTO
     {
-        public IEnumerable<uint> DeactivatedRules { get; set; }
+        public IEnumerable<uint> DeactivatedRulesId { get; set; }
         public DeactivateRuleResponseDTO()
         {
-            DeactivatedRules = new List<uint>();
+            DeactivatedRulesId = new List<uint>();
         }
 
     }

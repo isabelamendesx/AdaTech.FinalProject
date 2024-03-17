@@ -16,5 +16,6 @@ namespace Model.Domain.Interfaces
         Task<PaginatedResult<Refund>> GetAllByStatusPaginated(EStatus status, CancellationToken ct, int skip, int take);
         Task<Refund> ApproveRefund(uint Id, string userId, CancellationToken ct);
         Task<Refund> RejectRefund(uint Id, string userId, CancellationToken ct);
+        Task<Refund> ChangeRefundStatus(uint Id, EStatus status, string userId, CancellationToken ct);
     }
 }

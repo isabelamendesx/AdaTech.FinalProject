@@ -91,9 +91,10 @@ namespace Model.Service.Services
                 ApprovalRule = null,
                 ApprovedBy = userId
             };
+
             refund.Operations.Add(op);
 
-            await _repository.AddAsync(refund, ct);
+            await _repository.UpdateAsync(refund, ct);
 
             return refund;      
         }
@@ -115,7 +116,27 @@ namespace Model.Service.Services
             };
             refund.Operations.Add(op);
 
-            await _repository.AddAsync(refund, ct);
+            await _repository.UpdateAsync(refund, ct);
+
+            return refund;
+        }
+
+        public async Task<Refund> ChangeRefundStatus(uint Id, EStatus status, string userId, CancellationToken ct)
+        {
+            var refund = await _repository.GetById(Id, ct);
+
+            refund.Status = status;
+
+            RefundOperation op = new RefundOperation()
+            {
+                UpdateDate = DateTime.UtcNow,
+                ApprovalRule = null,
+                ApprovedBy = userId
+            };
+
+            refund.Operations.Add(op);
+
+            await _repository.UpdateAsync(refund, ct);
 
             return refund;
         }

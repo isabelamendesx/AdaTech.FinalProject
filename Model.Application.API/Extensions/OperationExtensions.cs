@@ -11,7 +11,6 @@ namespace Model.Application.API.Extensions
 
             return new RefundOperationResponseDTO()
             {
-                OperationId = operation.Id,
                 Date = operation.UpdateDate.ToString("dd/MM/yyyy HH:mm:ss"),
                 Rule = operation.ApprovalRule?.ToResponse(),
                 ApprovedBy = approvedBy

@@ -1,18 +1,14 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using Model.Domain.Common;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
 using Model.Service.Services;
 using Model.Service.Services.DTO;
 using NSubstitute;
+using System.Linq.Expressions;
 
-using NSubstitute.ExceptionExtensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServicesTests
 {
@@ -84,13 +80,16 @@ namespace ServicesTests
             result.Should().BeEquivalentTo(ListOfRefunds());
         }
 
+        [Fact]
+        public async Task get_all_by_status_approved_should_return_all_approved_refunds()
+        {
+            _repository.GetByParameter(ct).
+                Returns(Task.FromResult<IEnumerable<Refund?>>(ListOfRefunds().Where(x =>x.Status == EStatus.Approved)));
+            
+            var result = await _sut.GetAll(ct);
 
-
-
-
-
-
-
+            result.Should().BeEquivalentTo(ListOfRefunds().Where(x => x.Status == EStatus.Approved));
+        }
 
         [Fact]
         public async Task approve_refund_must_throw_an_exception_when_refund_could_not_be_found()
@@ -98,14 +97,38 @@ namespace ServicesTests
             _repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Refund?>(null));
 
             await _sut.Invoking(x => x.ApproveRefund(3, "9", ct))
-                .Should().ThrowAsync<ResourceNotFoundException>();            
+                .Should().ThrowAsync<ResourceNotFoundException>();
         }
 
         [Fact]
-        public async Task approve_refund_should_return_a_refund_when_seccessed()
+        public async Task approve_refund_must_throw_an_exception_when_refund_status_is_not_under_evaluation()
         {
-            var approveRefund = new Refund { Id = 3, Status = EStatus.Submitted, Total = 100, OwnerID = "9",
-                                Category = new Category() { Id = 3 } };
+            var refund = new Refund
+            {
+                Id = 3,
+                Status = EStatus.Rejected,
+                Total = 800,
+                OwnerID = "9",
+                Category = new Category() { Id = 3 }
+            };
+
+            _repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Refund?>(refund));
+
+            await _sut.Invoking(x => x.ApproveRefund(3, "9", ct))
+                .Should().ThrowAsync<InvalidRefundException > ();            
+        }
+
+        [Fact]
+        public async Task approve_refund_should_succeed()
+        {
+            var approveRefund = new Refund
+            {
+                Id = 3,
+                Status = EStatus.UnderEvaluation,
+                Total = 100,
+                OwnerID = "9",
+                Category = new Category() { Id = 3 }
+            };
             
             _repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Refund?>(approveRefund));
 
@@ -122,13 +145,31 @@ namespace ServicesTests
         }
 
         [Fact]
-        public async Task reject_refund_should_return_a_refund_when_successed()
+        public async Task reject_refund_must_throw_an_exception_when_refund_status_is_not_under_evaluation()
+        {
+            var refund = new Refund
+            {
+                Id = 3,
+                Status = EStatus.Approved,
+                Total = 100,
+                OwnerID = "9",
+                Category = new Category() { Id = 3 }
+            };
+
+            _repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Refund?>(refund));
+
+            await _sut.Invoking(x => x.ApproveRefund(3, "9", ct))
+                .Should().ThrowAsync<InvalidRefundException>();
+        }
+
+        [Fact]
+        public async Task reject_refund_should_succeed()
         {
             var approveRefund = new Refund
             {
                 Id = 3,
-                Status = EStatus.Submitted,
-                Total = 100,
+                Status = EStatus.UnderEvaluation,
+                Total = 800,
                 OwnerID = "9",
                 Category = new Category() { Id = 3 }
             };
@@ -138,79 +179,87 @@ namespace ServicesTests
             await _sut.Invoking(x => x.ApproveRefund(3, "9", ct)).Should().NotThrowAsync();
         }
 
+        [Fact]
+        public async Task change_status_refund_must_throw_an_exception_when_refund_could_not_be_found()
+        {
+            _repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Refund?>(null));
 
-        //[Theory]
-        //[MemberData(nameof(ReturnsFrom0To1000))]
-        //public async Task should_reject_all_refunds(Refund refund)
-        //{
-        //    List<Rule?> rules = new List<Rule?>
-        //    {
-        //        new Rule() { 
-        //            MinValue = 0, MaxValue = 1000, Action = false,
-        //        }
-        //    };
-        //    //ruleService.GetRulesToRejectAny(ct).Returns(rules);
+            await _sut.Invoking(x => x.ChangeRefundStatus(3, EStatus.Approved, "9", ct))
+                .Should().ThrowAsync<ResourceNotFoundException>();
+        }
 
-        //    await _sut.CreateRefund(refund, ct);
+        [Fact]
+        public async Task change_status_refund_should_succeed()
+        {
+            var approveRefund = new Refund
+            {
+                Id = 3,
+                Status = EStatus.Rejected,
+                Total = 800,
+                OwnerID = "9",
+                Category = new Category() { Id = 3 }
+            };
 
-        //    refund.Status.Should().Be(EStatus.Rejected);
-        //}
+            _repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Refund?>(approveRefund));
 
-
-        //[Theory]
-        //[MemberData(nameof(ReturnsFrom0To1000))]
-        //public async Task should_approve_all_refunds(Refund refund)
-        //{
-        //    List<Rule?> rules = new List<Rule?>
-        //    {
-        //        new Rule() {
-        //            MinValue = 0, MaxValue = 1000, Action = true,
-        //        }
-        //    };
-        //    //ruleService.GetRulesToApproveAny(ct).Returns(rules);
-
-        //    await _sut.CreateRefund(refund, ct);
-
-        //    refund.Status.Should().Be(EStatus.Approved);
-        //}
-
-        //[Theory]
-        //[MemberData(nameof(ReturnsFrom0To1000))]
-        //public async Task should_approve_only_the_refund_with_category_3(Refund refund)
-        //{
-        //    List<Rule?> rules = new List<Rule?>
-        //    {
-        //        new Rule() {
-        //            MinValue = 0, MaxValue = 1000, Action = true,
-        //        }
-        //    };
-        //    //ruleService.GetRulesToApproveByCategoryId(3, ct).Returns(rules);
-
-        //    await _sut.CreateRefund(refund, ct);
-
-        //    if(refund.Category.Id == 3)
-        //        refund.Status.Should().Be(EStatus.Approved);
-        //    else
-        //        refund.Status.Should().Be(EStatus.UnderEvaluation);
-
-        //}
+            await _sut.Invoking(x => x.ChangeRefundStatus(3, EStatus.Approved, "9", ct))
+                .Should().NotThrowAsync();
+        }
 
 
-        //[Theory]
-        //[MemberData(nameof(AllRefundsAndExpectedStatus))]
-        //public async Task status_should_be_correct(Refund refund, EStatus expectedStatus)
-        //{
-        //    //ruleService.GetRulesToRejectAny(ct).Returns(ListOfRuleToRejectAny());
 
-        //    //ruleService.GetRulesToApproveAny(ct).Returns(ListOfRuleToApproveAny());
 
-        //    //ruleService.GetRulesToApproveByCategoryId(3, ct)
-        //    //    .Returns(ListOfRulesToApproveCategory3());
 
-        //    await _sut.CreateRefund(refund, ct);
 
-        //    refund.Status.Should().Be(expectedStatus);
-        //}
+        [Fact]
+        public async Task get_all_by_status_paginated_should_return_paginated_result_with_correct_values()
+        {
+            var expectedTotalCount = ListOfRefunds().Where(x => x.Status == EStatus.Approved).Count();
+            var expectedRefunds = ListOfRefunds().Where(x => x.Status == EStatus.Approved);
+
+            var expectedPaginatedResult = new PaginatedResult<Refund> { TotalCount = expectedTotalCount, Items = expectedRefunds};
+
+
+            _repository.GetPaginatedByParameter(ct, Arg.Any<int>(), Arg.Any<int>(), Arg.Any<Expression<Func<Refund, bool>>>())
+                      .Returns(Task.FromResult(expectedPaginatedResult));
+
+            var result = await _sut.GetAllByStatusPaginated(EStatus.Approved, ct, skip: 0, take: 10);
+
+            result.TotalCount.Should().Be(expectedTotalCount);
+            result.Items.Should().BeEquivalentTo(expectedRefunds);
+        }
+
+
+
+
+        [Fact]
+        public async Task get_by_if_must_throw_an_exception_when_refund_could_not_be_found()
+        {
+            _repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Refund?>(null));
+
+            await _sut.Invoking(x => x.GetById(3, ct))
+                  .Should().ThrowAsync<ResourceNotFoundException>();
+        }
+
+         [Fact]
+        public async Task get_by_if_should_return_a_refund_when_succeed()
+        {
+            var refund = new Refund
+            {
+                Id = 3,
+                Status = EStatus.UnderEvaluation,
+                Total = 100,
+                OwnerID = "9",
+                Category = new Category() { Id = 3 }
+            };
+
+            _repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Refund?>(refund));
+
+            var result = await _sut.GetById(3, ct);
+
+            result.Should().BeEquivalentTo(refund);
+        }
+
 
         public static IEnumerable<Rule> RulesValidToCategoryId1()
         {
@@ -261,108 +310,5 @@ namespace ServicesTests
 
 
 
-
-        //public static IEnumerable<object[]> ReturnsFrom0To1000()
-        //{
-        //    return new[]{
-        //        new object[]{ new Refund ()
-        //        {Total = 100,
-        //            Category = new Category() { Id = 3 } } },
-        //        new object[]{ new Refund ()
-        //        {Total = 100,
-        //            Category = new Category() { Id = 4 } } },
-        //        new object[]{ new Refund ()
-        //        {Total = 500,
-        //            Category = new Category() { Id = 5 } } },
-        //        new object[]{ new Refund ()
-        //        {Total = 300,
-        //            Category = new Category() { Id = 3 } } },
-        //        new object[]{ new Refund ()
-        //        {Total = 600,
-        //            Category = new Category() { Id =4 } } },
-        //        new object[]{ new Refund ()
-        //        {Total = 700,
-        //            Category = new Category() { Id = 5 } } },
-        //        new object[]{ new Refund ()
-        //        {Total = 850,
-        //            Category = new Category() { Id = 3 } } },
-        //        new object[]{ new Refund ()
-        //        {Total = 1000,
-        //            Category = new Category() { Id = 4 } } },
-        //        new object[]{ new Refund ()
-        //        {Total = 50,
-        //            Category = new Category() { Id = 5 } } },
-        //    };
-        //}
-
-        public static List<Rule> ListOfRuleToRejectAny()
-        {
-            return new List<Rule>(){
-                     new Rule() {
-                        MinValue = 1000, Action = false,
-                    },
-            };
-        }
-        
-        public static List<Rule> ListOfRuleToApproveAny()
-        {
-            return new List<Rule>{
-                     new Rule() {
-                        MinValue = 0, MaxValue = 100, Action = true,
-                    }
-            };
-        }
-
-        public static List<Rule> ListOfRulesToApproveCategory3()
-        {
-            return new List<Rule>{
-                     new Rule() {
-                        MinValue = 100.01M, MaxValue = 500, Action = true,
-                    }
-            };
-        }
-
-
-        public static IEnumerable<object[]> AllRefundsAndExpectedStatus()
-        {
-            return new[]
-            {
-                new object[]{ new Refund ()
-                {
-                    Total = 100,
-                    Category = new Category() { Id = 3 } }, EStatus.Approved },
-                new object[]{ new Refund ()
-                {
-                    Total = 300,
-                    Category = new Category() { Id = 3 } }, EStatus.Approved },
-                new object[]{ new Refund ()
-                {
-                    Total = 1001,
-                    Category = new Category() { Id = 3 } }, EStatus.Rejected },
-                new object[]{ new Refund ()
-                {
-                    Total = 1005,
-                    Category = new Category() { Id = 4 } }, EStatus.Rejected },
-                new object[]{ new Refund ()
-                {
-                    Total = 800,
-                    Category = new Category() { Id = 4 } }, EStatus.UnderEvaluation},
-                new object[]{ new Refund ()
-                {
-                    Total = 80,
-                    Category = new Category() { Id = 4 } }, EStatus.Approved },
-                new object[]{ new Refund ()
-                {Total = 300,
-                    Category = new Category() { Id = 5 } }, EStatus.UnderEvaluation },
-                new object[]{ new Refund ()
-                {
-                    Total = 50,
-                    Category = new Category() { Id = 5 } }, EStatus.Approved },
-                new object[]{ new Refund ()
-                {
-                    Total = 1000,
-                    Category = new Category() { Id = 5 } }, EStatus.Rejected },
-            };
-        }
     }
 }

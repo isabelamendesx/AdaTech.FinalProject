@@ -1,4 +1,4 @@
-﻿namespace Model.Application.API.DTO
+﻿namespace Model.Application.API.DTO.Response
 {
     public class PaginatedResponseDTO<T> where T : class
     {

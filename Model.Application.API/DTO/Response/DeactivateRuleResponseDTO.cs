@@ -1,9 +1,10 @@
-﻿namespace Model.Application.API.DTO
+﻿namespace Model.Application.API.DTO.Response
 {
     public class DeactivateRuleResponseDTO
     {
         public IEnumerable<uint> DeactivatedRules { get; set; }
-        public DeactivateRuleResponseDTO() {
+        public DeactivateRuleResponseDTO()
+        {
             DeactivatedRules = new List<uint>();
         }
 

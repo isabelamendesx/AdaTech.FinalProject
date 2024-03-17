@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
 using Model.Application.API.Attributes;
-using Model.Application.API.DTO;
 using Model.Application.API.Util;
 using Model.Application.DTO;
 using Model.Domain.Entities;
@@ -12,14 +11,16 @@ using ICategoryService = Model.Domain.Interfaces.ICategoryService;
 
 using Model.Service.Services;
 using Serilog;
+using Model.Service.Exceptions;
+using Model.Application.API.DTO.Request;
 
 namespace Model.Application.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-   // [Authorize(Policy = Policies.BusinessHour)]
-    public class CategoryController : ControllerBase
+    [Authorize(Policy = Policies.BusinessHour)]
+    public class CategoryController : BaseController
     {
         private readonly ICategoryService _service;
         private readonly ILogger<CategoryController> _logger;
@@ -34,11 +35,7 @@ namespace Model.Application.API.Controllers
         [Authorize(Roles = Roles.Manager)]
         public async Task<IActionResult> CreateCategory([FromBody] CategoryRequestDTO request, CancellationToken ct)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid Category model state: {@ModelState}", ModelState.Values);
-                return UnprocessableEntity(ModelState);
-            }
+            ValidateWithDataAnotation();
 
             var category = new Category()
             {

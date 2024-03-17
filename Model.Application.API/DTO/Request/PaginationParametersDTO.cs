@@ -1,4 +1,4 @@
-﻿namespace Model.Application.API.DTO
+﻿namespace Model.Application.API.DTO.Request
 {
     public class PaginationParametersDTO
     {
@@ -8,11 +8,13 @@
         public int PageNumber { get; set; }
         public int PageSize
         {
-            get { 
-                return _pageSize; 
+            get
+            {
+                return _pageSize;
             }
-            set { 
-                _pageSize = (value > MaxPageSize) ? MaxPageSize : value; 
+            set
+            {
+                _pageSize = value > MaxPageSize ? MaxPageSize : value;
             }
         }
     }

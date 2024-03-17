@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Model.Service.Exceptions;
 using System.Net;
 
@@ -54,6 +55,9 @@ namespace Model.Application.API.Filters.Model
             return _errorResponse;
         }
 
-       
+        public void WithErrors(IDictionary<string, string[]> Errors)
+        {
+            _errorResponse.Errors = Errors;
+        }
     }
 }

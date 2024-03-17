@@ -55,7 +55,13 @@ namespace Model.Infra.Data.Repositories
         }
 
         public async Task<Refund?> GetById(uint Id, CancellationToken ct)
-               => await _context.Refunds.FirstOrDefaultAsync(x => x.Id == Id);
+               => await _context.Refunds
+                                .Include(x => x.Category)
+                                .Include(x => x.Operations)
+                                .ThenInclude(x => x.ApprovalRule)
+                                .ThenInclude(x => x.Category)
+                                .FirstOrDefaultAsync(x => x.Id == Id);
+            
 
         public async Task<PaginatedResult<Refund>> GetPaginatedByParameter(CancellationToken ct, int skip, int take, Expression<Func<Refund, bool>> filter = null)
         {

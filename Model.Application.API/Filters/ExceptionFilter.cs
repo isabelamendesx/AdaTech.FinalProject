@@ -36,6 +36,10 @@ namespace Model.Application.API.Filters
                 errorResultBuilder
                    .WithConflictingCategoryId(categoryEx.ConflictingCategoryId);
 
+            if (context.Exception is ValidationException validationEx)
+                errorResultBuilder
+                    .WithErrors(validationEx.Errors);
+
             var errorResult = errorResultBuilder.Build();
             var ignoreNullFields = new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
 
@@ -55,6 +59,8 @@ namespace Model.Application.API.Filters
                 { typeof(ResourceNotFoundException), () => (ex as ResourceNotFoundException)!.StatusCode},
                 { typeof(InternalErrorException), () => (ex as InternalErrorException)!.StatusCode },
                 { typeof(CategoryAlreadyRegisteredException), () => (ex as CategoryAlreadyRegisteredException)!.StatusCode},
+                { typeof(ValidationException), () => (ex as ValidationException)!.StatusCode},
+                { typeof(InvalidRefundException), () => (ex as InvalidRefundException)!.StatusCode}
             };
 
             return statusCodeMap.TryGetValue(ex.GetType(), out var statusCodeFunc) ? statusCodeFunc() : (int)HttpStatusCode.InternalServerError;
@@ -68,6 +74,8 @@ namespace Model.Application.API.Filters
                 { typeof(ResourceNotFoundException), "Resource Error" },
                 { typeof(InternalErrorException), "Internal Error" },
                 { typeof(CategoryAlreadyRegisteredException), "Category Operation Error" },
+                { typeof(ValidationException), "Model Validation Error" },
+                { typeof(InvalidRefundException), "Invalid Refund Error" }
             };
 
             return titleMap.TryGetValue(ex.GetType(), out var title) ? title : "Internal Server Error";

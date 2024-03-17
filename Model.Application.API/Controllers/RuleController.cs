@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
 using Model.Application.API.Attributes;
-using Model.Application.API.DTO;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Service.Services;
@@ -13,6 +12,9 @@ using ICategoryService = Model.Domain.Interfaces.ICategoryService;
 using IRuleService = Model.Domain.Interfaces.IRuleService;
 using Serilog;
 using Model.Application.API.Util;
+using Model.Application.API.DTO.Request;
+using Model.Application.API.DTO.Response;
+using Model.Application.API.Extensions;
 
 
 namespace Model.Application.API.Controllers
@@ -21,7 +23,7 @@ namespace Model.Application.API.Controllers
     [ApiController]
     [Authorize]
     //[Authorize(Policy = Policies.BusinessHour)]
-    public class RuleController : ControllerBase
+    public class RuleController : BaseController
     {
         private readonly IRuleService _service;
         private readonly ICategoryService _categoryService;
@@ -39,7 +41,7 @@ namespace Model.Application.API.Controllers
         public async Task<IActionResult> GetById([FromRoute] uint id, CancellationToken ct)
         {
             var rule = await _service.GetById(id, ct);
-            return Ok(rule);
+            return Ok(rule!.ToResponse());
         }
         
         [HttpGet]
@@ -67,11 +69,7 @@ namespace Model.Application.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateRule([FromBody] RuleRequestDTO request, CancellationToken ct)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid Rule model state: {@ModelState}", ModelState.Values);
-                return UnprocessableEntity(ModelState);
-            }
+            ValidateWithDataAnotation();
 
             var action = request.Action.Equals("Approve", StringComparison.OrdinalIgnoreCase) ? true : false;
 
@@ -91,7 +89,7 @@ namespace Model.Application.API.Controllers
             var createdRule = await _service.CreateRule(rule, ct);
             _logger.LogInformation("New Rule for Category {@Category} created", createdRule.Category);
 
-            return Ok(createdRule);
+            return Ok(createdRule.ToResponse());
         }
 
         [Authorize(Roles = Roles.Manager)]
@@ -106,7 +104,7 @@ namespace Model.Application.API.Controllers
                 _logger.LogWarning("Rule with id {@Ruleid} was deactived", ruleId);        
                 var response = new DeactivateRuleResponseDTO();
 
-                response.DeactivatedRules.Append(ruleId);
+                response.DeactivatedRulesId.Add(ruleId);
 
                 return Ok(response);
             }
@@ -131,7 +129,7 @@ namespace Model.Application.API.Controllers
 
                 var response = new DeactivateRuleResponseDTO();
 
-                response.DeactivatedRules = rulesIds;
+                response.DeactivatedRulesId.AddRange(rulesIds);
 
                 return Ok(response);
             }

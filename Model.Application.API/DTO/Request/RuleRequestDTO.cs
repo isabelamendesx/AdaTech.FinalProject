@@ -3,10 +3,11 @@ using Model.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Model.Application.API.DTO
+namespace Model.Application.API.DTO.Request
 {
     [MinValueOrMaxValueValidatorAttibute]
-    public class RuleRequestDTO {
+    public class RuleRequestDTO
+    {
 
         [Range(0, double.MaxValue, ErrorMessage = "MinValue must be a positive number")]
         public decimal MinValue { get; set; }
@@ -21,6 +22,6 @@ namespace Model.Application.API.DTO
         [Required(ErrorMessage = "CategoryId is required")]
         [Range(0, uint.MaxValue, ErrorMessage = "CategoryId must be a positive number")]
         public uint CategoryId { get; set; }
-    
+
     }
 }

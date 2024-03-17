@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 
 
-namespace Model.Application.DTO
+namespace Model.Application.API.DTO.Request
 {
     public class RefundRequestDto
     {
@@ -11,16 +11,16 @@ namespace Model.Application.DTO
 
 
         [Required(ErrorMessage = "Category is required.")]
-        public uint CategoryId { get; set;}
+        public uint CategoryId { get; set; }
 
 
         [Required(ErrorMessage = "Total is required.")]
-        [Range(1, double.MaxValue, ErrorMessage = "Total must be a positive value" )]
+        [Range(1, double.MaxValue, ErrorMessage = "Total must be a positive value")]
         public decimal Total { get; set; }
 
 
         [Required(ErrorMessage = "Status is required.")]
-        [ValidateStatus]
+        [ValidateSubmittedStatus]
         public string Status { get; set; }
     }
 }

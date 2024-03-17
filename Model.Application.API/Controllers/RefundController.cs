@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Model.Service.Services;
-using Model.Application.DTO;
 using Model.Domain.Entities;
 using Model.Application.API.Util;
 using Model.Application.DTO.Validators;
@@ -10,8 +9,11 @@ using Identity.Constants;
 using Model.Domain.Interfaces;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Serilog;
-using Model.Application.API.DTO;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Model.Application.API.DTO.Request;
+using Model.Application.API.DTO.Response;
+using Model.Application.API.Extensions;
+using Model.Application.API.DTO.Validators;
 
 namespace Model.Application.API.Controllers
 {
@@ -20,7 +22,7 @@ namespace Model.Application.API.Controllers
     [Authorize]
     [Consumes("application/json")]
     [Produces("application/json")]
-    public class RefundController : ControllerBase
+    public class RefundController : BaseController
     {
         private readonly IRefundService _service;
         private readonly ILogger<RefundController> _logger;
@@ -33,34 +35,37 @@ namespace Model.Application.API.Controllers
 
         
         [HttpPost]
-        [Idempotent(ExpiresInMilliseconds = 10000)]
-        public async Task<IActionResult> CreateRefund([FromHeader] string IdempotencyKey, [FromBody] RefundRequestDto request, CancellationToken ct)            
+        //[Idempotent(ExpiresInMilliseconds = 10000)]
+        public async Task<IActionResult> CreateRefund(/*[FromHeader] string IdempotencyKey*/ [FromBody] RefundRequestDto request, CancellationToken ct)            
         {
-
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid Refund model state: {@ModelState}", ModelState.Values);
-                return UnprocessableEntity(ModelState);
-            }
+            ValidateWithDataAnotation();
 
             var refund = new Refund()
             {
                 Description = request.Description,
-                Category = new Category { Id = request.CategoryId},
+                Category = new Category { Id = request.CategoryId },
                 Status = EnumParser.ParseStatus(request.Status),
                 Total = request.Total,
-                OwnerID = HttpContext.Items["UserId"] as string
-        };
+                OwnerID = GetUserId()
+            };
 
             var createdRefund = await _service.CreateRefund(refund, ct);
-            _logger.LogInformation("New Refund Submitted and {@Status} by rule with ID {@RuleId}", createdRefund.Status, createdRefund.Operations.First().ApprovalRule.Id);
+            _logger.LogInformation("New Refund Submitted and {@Status}", createdRefund.Status);
 
-            return Ok(createdRefund);
+            return Ok(createdRefund.ToResponse());
         }
 
         [HttpGet]
-        [Route("{status}")]
-        public async Task<ActionResult<IEnumerable<Refund?>>> GetAllByStatus([ValidateStatus] string status,
+        [Route("{id}")]
+        public async Task<IActionResult> GetById([FromRoute] uint id, CancellationToken ct)
+        {
+            var refund = await _service.GetById(id, ct);
+            return Ok(refund!.ToDetailResponse());
+        }
+
+        [HttpGet]
+        [Route("/status/{status}")]
+        public async Task<ActionResult<IEnumerable<Refund?>>> GetAllByStatus([ValidateSubmittedStatus] string status,
                                                     [FromQuery] PaginationParametersDTO paginationParameters, CancellationToken ct)
         {
             var parsedStatus = EnumParser.ParseStatus(status);
@@ -88,9 +93,11 @@ namespace Model.Application.API.Controllers
         [Authorize(Roles = Roles.Manager)]
         public async Task<IActionResult> ApproveRefund([FromRoute] uint id, CancellationToken ct)
         {
-            var userId = HttpContext.Items["UserId"] as string;
+            var userId = GetUserId();
+
             var refund = await _service.ApproveRefund(id, userId, ct);
-            return Ok(refund);
+
+            return Ok(refund.ToDetailResponse());
         }
 
         [HttpPost]
@@ -98,9 +105,25 @@ namespace Model.Application.API.Controllers
         [Authorize(Roles = Roles.Manager + "," + Roles.Supervisor)]
         public async Task<IActionResult> RejectRefund([FromRoute] uint id, CancellationToken ct)
         {
-            var userId = HttpContext.Items["UserId"] as string;
+            var userId = GetUserId();
+
             var refund = await _service.RejectRefund(id, userId, ct);
-            return Ok(refund);
+
+            return Ok(refund.ToDetailResponse());
+        }
+
+        [HttpPost]
+        [Route("/modidy-refund/{id}/{status}")]
+        [Authorize(Roles = Roles.Manager)]
+        public async Task<IActionResult> ChangeRefundStatus([FromRoute] uint id, [ValidateStatus] string status, CancellationToken ct)
+        {
+            var userId = GetUserId();
+
+            var parsedStatus = EnumParser.ParseStatus(status);
+
+            var refund = await _service.ChangeRefundStatus(id, parsedStatus, userId, ct); 
+
+            return Ok(refund.ToDetailResponse());
         }
 
     }

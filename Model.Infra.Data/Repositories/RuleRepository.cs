@@ -1,17 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Model.Domain.Common;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Infra.Data.Context;
-using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Model.Infra.Data.Repositories
 {
@@ -31,7 +23,9 @@ namespace Model.Infra.Data.Repositories
               return rule;
         }
         public async Task<Rule?> GetById(uint Id, CancellationToken ct)
-                    => await _context.Rules.FindAsync(Id);
+                    => await _context.Rules
+                                    .Include(x => x.Category)
+                                    .FirstOrDefaultAsync(x => x.Id == Id);
 
         public async Task<IEnumerable<Rule?>> GetByParameter(CancellationToken ct, Expression<Func<Rule, bool>> filter = null)
         {

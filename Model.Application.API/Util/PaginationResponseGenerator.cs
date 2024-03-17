@@ -1,4 +1,5 @@
-﻿using Model.Application.API.DTO;
+﻿using Model.Application.API.DTO.Request;
+using Model.Application.API.DTO.Response;
 using Model.Domain.Common;
 using Model.Domain.Entities;
 

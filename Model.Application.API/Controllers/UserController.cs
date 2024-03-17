@@ -12,7 +12,7 @@ namespace Model.Application.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class UserController : Controller
+    public class UserController : BaseController
     {
         private IIdentityService _identityService;
         private ILogger<UserController> _logger;
@@ -26,11 +26,7 @@ namespace Model.Application.API.Controllers
         [HttpPost("register")] 
         public async Task<ActionResult<UserRegisterResponse>> Register(UserRegisterRequest userRegister)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid User model state: {@ModelState}", ModelState.Values);
-                return UnprocessableEntity(ModelState);
-            }
+            ValidateWithDataAnotation();
 
             var result = await _identityService.RegisterUser(userRegister);
 
@@ -52,17 +48,13 @@ namespace Model.Application.API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserRegisterResponse>> Login(UserLoginRequest userLogin)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid User model state: {@ModelState}", ModelState.Values);
-                return UnprocessableEntity(ModelState);
-            }
+            ValidateWithDataAnotation();
 
             var result = await _identityService.Login(userLogin);
 
             if (result.Success)
             {
-                _logger.LogInformation("User with id {@UserId} logged in successfully", HttpContext.Items["UserId"] as string);
+                _logger.LogInformation("User with id {@UserId} logged in successfully", GetUserId());
                 return Ok(result);
             }
 
@@ -74,7 +66,7 @@ namespace Model.Application.API.Controllers
         [HttpPost("refresh-login")]
         public async Task<ActionResult<UserRegisterResponse>> RefreshLogin()
         {
-            var userId = HttpContext.Items["UserId"] as string;
+            var userId = GetUserId();
 
             if (userId == null)
             {
@@ -83,6 +75,7 @@ namespace Model.Application.API.Controllers
             }
 
             var result = await _identityService.LoginWithoutPassword(userId);
+
             if (result.Success)
             {
                 _logger.LogInformation("User with ID {@UserId} login refreshed successfully", userId);

@@ -5,20 +5,9 @@ using Model.Service.Exceptions;
 using Model.Service.Services;
 using NSubstitute;
 using Rule = Model.Domain.Entities.Rule;
-using NSubstitute.ExceptionExtensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using Model.Service.Services.Util;
-using System.Data;
-using Microsoft.AspNetCore.Rewrite;
-using System.Threading;
-using Model.Infra.Data.Repositories;
-using Serilog;
+using Microsoft.Extensions.Logging;
+using Model.Domain.Common;
 
 namespace ServicesTests
 {
@@ -26,21 +15,23 @@ namespace ServicesTests
     {
         private RuleService _sut;
 
-        private IRepository<Rule> repository;
+        private IRepository<Rule> _repository;
+        private ILogger<RuleService> _logger;
         private CancellationToken ct;
 
         public RuleServiceTests()
         {
             ct = new CancellationToken();
-            repository = Substitute.For<IRepository<Rule>>();
+            _repository = Substitute.For<IRepository<Rule>>();
+            _logger = Substitute.For<ILogger<RuleService>>();
 
-            _sut = new RuleService(repository);
+            _sut = new RuleService(_repository, _logger);
         }
 
         [Fact]
         public async Task get_by_id_must_throw_an_exception_when_rule_could_not_be_found()
         {
-            repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Rule?>(null));
+            _repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Rule?>(null));
 
             await _sut.Invoking(x => x.GetById(3, ct))
                 .Should().ThrowAsync<ResourceNotFoundException>();
@@ -50,7 +41,7 @@ namespace ServicesTests
         public async Task get_by_id_sould_return_rule_when_rule_exists()
         {
             var expectedRule = new Rule { Id = 3, MinValue = 0, MaxValue = 100, Action = true, Category = new Category(), IsActive = true };
-            repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Rule?>(expectedRule));
+            _repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Rule?>(expectedRule));
 
             var result = await _sut.GetById(3, ct);
 
@@ -60,7 +51,7 @@ namespace ServicesTests
         [Fact]
         public async Task get_all_should_return_all_rules()
         {
-            repository.GetByParameter(ct).Returns(Task.FromResult<IEnumerable<Rule?>>(ListOfRules()));
+            _repository.GetByParameter(ct).Returns(Task.FromResult<IEnumerable<Rule?>>(ListOfRules()));
 
             var result = await _sut.GetAll(ct);
 
@@ -68,59 +59,59 @@ namespace ServicesTests
         }
 
 
-        //[Theory]
-        //[InlineData(50, 100, false)]
-        //[InlineData(50, 200, false)]
-        //[InlineData(1500, 2000, true)]
-        //[InlineData(500, 2000, true)]
-        //public async Task create_rule_with_category_0_must_throw_an_exception_when_a_conflict_occurs
-        //                  (decimal minValue, decimal maxValue, bool action)
-        //{
-        //    var existingRules = repository.GetByParameter(ct, Arg.Any<Expression<Func<Rule, bool>>>())
-        //       .Returns(RulesValidToCategoryId0());
+        [Theory]
+        [InlineData(50, 100, false)]
+        [InlineData(50, 200, false)]
+        [InlineData(1500, 2000, true)]
+        [InlineData(500, 2000, true)]
+        public async Task create_rule_with_category_0_must_throw_an_exception_when_a_conflict_occurs
+                          (decimal minValue, decimal maxValue, bool action)
+        {
+            var existingRules = _repository.GetByParameter(ct, Arg.Any<Expression<Func<Rule, bool>>>())
+               .Returns(RulesValidToCategoryId0());
 
-        //    var category = new Category() { Id = 0, Name = "All" };
+            var category = new Category() { Id = 0, Name = "All" };
 
-        //    var newRule = new Rule
-        //    {
-        //        Id = 20,
-        //        MinValue = minValue,
-        //        MaxValue = maxValue,
-        //        Action = action,
-        //        Category = category,
-        //        IsActive = true
-        //    };
+            var newRule = new Rule
+            {
+                Id = 20,
+                MinValue = minValue,
+                MaxValue = maxValue,
+                Action = action,
+                Category = category,
+                IsActive = true
+            };
 
-        //    await _sut.Invoking(x => x.CreateRule(newRule, ct))
-        //           .Should().ThrowAsync<RuleConflictException>();
-        //}
+            await _sut.Invoking(x => x.CreateRule(newRule, ct))
+                   .Should().ThrowAsync<RuleConflictException>();
+        }
 
-        //[Theory]
-        //[InlineData(50, 300, true)]  //Overlap
-        //[InlineData(20, 100, true)] //Overlap
-        //[InlineData(800, 5000, false)] //Overlap
-        //[InlineData(1000, 5000, false)] //Overlap
-        //public async Task create_rule_with_category_0_must_throw_an_exception_when_a_overlap_occurs
-        //                  (decimal minValue, decimal maxValue, bool action)
-        //{
-        //    var existingRules = repository.GetByParameter(ct, Arg.Any<Expression<Func<Rule, bool>>>())
-        //       .Returns(RulesValidToCategoryId0());
+        [Theory]
+        [InlineData(50, 300, true)]
+        [InlineData(20, 100, true)]
+        [InlineData(800, 5000, false)]
+        [InlineData(1000, 5000, false)]
+        public async Task create_rule_with_category_0_must_throw_an_exception_when_a_overlap_occurs
+                          (decimal minValue, decimal maxValue, bool action)
+        {
+            var existingRules = _repository.GetByParameter(ct, Arg.Any<Expression<Func<Rule, bool>>>())
+               .Returns(RulesValidToCategoryId0());
 
-        //    var category = new Category() { Id = 0, Name = "All" };
+            var category = new Category() { Id = 0, Name = "All" };
 
-        //    var newRule = new Rule
-        //    {
-        //        Id = 20,
-        //        MinValue = minValue,
-        //        MaxValue = maxValue,
-        //        Action = action,
-        //        Category = category,
-        //        IsActive = true
-        //    };
+            var newRule = new Rule
+            {
+                Id = 20,
+                MinValue = minValue,
+                MaxValue = maxValue,
+                Action = action,
+                Category = category,
+                IsActive = true
+            };
 
-        //    await _sut.Invoking(x => x.CreateRule(newRule, ct))
-        //           .Should().ThrowAsync<RuleOverlapException>();
-        //}
+            await _sut.Invoking(x => x.CreateRule(newRule, ct))
+                   .Should().ThrowAsync<RuleOverlapException>();
+        }
 
         [Theory]
         [InlineData(50, 100, false)]
@@ -130,7 +121,7 @@ namespace ServicesTests
         public async Task create_rule_with_category_id_1_must_throw_an_exception_when_a_conflict_occurs
                           (decimal minValue, decimal maxValue, bool action)
         {
-            var existingRules = repository.GetByParameter(ct, Arg.Any<Expression<Func<Rule, bool>>>())
+            var existingRules = _repository.GetByParameter(ct, Arg.Any<Expression<Func<Rule, bool>>>())
                .Returns(RulesValidToCategoryId1());
 
             var category = new Category() { Id = 1, Name = "Food" };
@@ -157,7 +148,7 @@ namespace ServicesTests
         public async Task create_rule_with_category_id_1_must_throw_an_exception_when_a_overlap_occurs
                           (decimal minValue, decimal maxValue, bool action)
         {
-            var existingRules = repository.GetByParameter(ct, Arg.Any<Expression<Func<Rule, bool>>>())
+            var existingRules = _repository.GetByParameter(ct, Arg.Any<Expression<Func<Rule, bool>>>())
                .Returns(RulesValidToCategoryId1());
 
             var category = new Category() { Id = 1, Name = "Food" };
@@ -172,7 +163,8 @@ namespace ServicesTests
                 IsActive = true
             };
 
-            await _sut.Invoking(x => x.CreateRule(newRule, ct)).Should().ThrowAsync<RuleOverlapException>();
+            await _sut.Invoking(x => x.CreateRule(newRule, ct))
+                  .Should().ThrowAsync<RuleOverlapException>();
         }
 
         [Theory]
@@ -183,7 +175,7 @@ namespace ServicesTests
         public async Task create_rule_with_category_id_1_should_succeed_when_there_is_no_conflict_or_overlap
                           (decimal minValue, decimal maxValue, bool action)
         {
-            var existingRules = repository.GetByParameter(ct, Arg.Any<Expression<Func<Rule, bool>>>())
+            var existingRules = _repository.GetByParameter(ct, Arg.Any<Expression<Func<Rule, bool>>>())
                .Returns(RulesValidToCategoryId1());
 
             var category = new Category() { Id = 1, Name = "Food" };
@@ -198,7 +190,7 @@ namespace ServicesTests
                 IsActive = true
             };
 
-            await FluentActions.Awaiting(() => _sut.CreateRule(newRule, ct))
+            await _sut.Invoking(x => x.CreateRule(newRule, ct))
                   .Should().NotThrowAsync();
         }
 
@@ -208,7 +200,7 @@ namespace ServicesTests
         {
             uint categoryId = 2;
 
-            repository.GetByParameter(ct, Arg.Any<Expression<Func<Rule, bool>>>())
+            _repository.GetByParameter(ct, Arg.Any<Expression<Func<Rule, bool>>>())
                 .Returns(Task.FromResult<IEnumerable<Rule?>>(null));
 
             await _sut.Invoking(x => x.DeactivateACategorysRules(categoryId, ct))
@@ -220,7 +212,7 @@ namespace ServicesTests
         {
             uint categoryId = 2;
 
-            repository.GetByParameter(ct, Arg.Any<Expression<Func<Rule, bool>>>())
+            _repository.GetByParameter(ct, Arg.Any<Expression<Func<Rule, bool>>>())
                 .Returns(Task.FromResult<IEnumerable<Rule?>>(ActiveRulesToCategoryId2()));
 
             var result = await _sut.DeactivateACategorysRules(categoryId, ct);
@@ -234,75 +226,66 @@ namespace ServicesTests
         public async Task deactivte_rule_must_throw_an_exception_when_there_is_no_rule_found(uint ruleId)
         {
 
-            repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Rule?>(null));
+            _repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Rule?>(null));
 
-            await _sut.Invoking(x => x.GetById(ruleId, ct)).Should().ThrowAsync<ResourceNotFoundException>();
+            await _sut.Invoking(x => x.DeactivateRule(ruleId, ct))
+                  .Should().ThrowAsync<ResourceNotFoundException>();
         }
 
         [Fact]
         public async Task deactivte_rule_with_id_4_should_succeed()
         {
             var category1 = new Category() { Id = 1, Name = "Food" };
-            var expectedRule = new Rule() {
-                    Id = 4, MinValue = 800, MaxValue = 999.99M, Action = false, Category = category1, IsActive = true
-                };
+            var expectedRule = new Rule()
+            {
+                Id = 4,
+                MinValue = 800,
+                MaxValue = 999.99M,
+                Action = false,
+                Category = category1,
+                IsActive = true
+            };
 
-            repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Rule?>(expectedRule));
+            _repository.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Rule?>(expectedRule));
 
             uint ruleId = 4;
 
-            var result = await _sut.DeactivateACategorysRules(ruleId, ct);
+            var result = await _sut.DeactivateRule(ruleId, ct);
 
             result.Should().BeTrue();
         }
 
         [Fact]
-        public async Task get_rules_to_approve_any_should_return_correct_rules()
+        public async Task get_rules_that_apply_to_category_to_category_with_id_1_should_return_list_with_rules()
         {
-            repository.GetByParameter(ct, Arg.Any<Expression<Func<Rule, bool>>>())
-                .Returns(ListOfRules().Where(x => x.Category.Id == 0 && x.Action && x.IsActive));
+            _repository.GetByParameter(ct, Arg.Any<Expression<Func<Rule, bool>>>())
+                .Returns(Task.FromResult<IEnumerable<Rule?>>(RulesValidToCategoryId1()));
 
-            var result = await _sut.GetRulesToApproveAny(ct);
+            uint ruleId = 1;
 
-            result.Should().BeEquivalentTo(RulesToApproveAny());
+            var result = await _sut.GetRulesThatApplyToCategory(ruleId, ct);
+
+            result.Should().BeEquivalentTo(RulesValidToCategoryId1Ordered(), options => options.WithStrictOrdering());
+
         }
 
         [Fact]
-        public async Task get_rules_to_reprove_by_category_id_3_should_return_correct_rules()
+        public async Task get_all_paginated_should_return_paginated_result_with_correct_values()
         {
-            repository.GetByParameter(ct, Arg.Any<Expression<Func<Rule, bool>>>())
-                .Returns(ListOfRules().Where(x => x.Category.Id == 3 && !x.Action && x.IsActive));
+            var expectedTotalCount = 10;
+            var expectedRules = ListOfRules();
 
-            var result = await _sut.GetRulesToRejectByCategoryId(3, ct);
+            var expextedPaginatedResult = new PaginatedResult<Rule> { TotalCount = expectedTotalCount, Items = ListOfRules() };
 
-            result.Should().BeEquivalentTo(RulesToReproveByCategoryId3());
+
+            _repository.GetPaginatedByParameter(ct, Arg.Any<int>(), Arg.Any<int>(), Arg.Any<Expression<Func<Rule, bool>>>())
+                      .Returns(Task.FromResult(expextedPaginatedResult));
+
+            var result = await _sut.GetAllPaginated(ct, skip: 0, take: 10);
+
+            result.TotalCount.Should().Be(expectedTotalCount);
+            result.Items.Should().BeEquivalentTo(expectedRules);
         }
-
-        [Fact]
-        public async Task get_rules_to_approve_by_category_id_2_should_return_correct_rules()
-        {
-            repository.GetByParameter(ct, Arg.Any<Expression<Func<Rule, bool>>>())
-                .Returns(ListOfRules().Where(x => x.Category.Id == 2 && x.Action && x.IsActive));
-
-            var result = await _sut.GetRulesToApproveByCategoryId(2, ct);
-
-            result.Should().BeEquivalentTo(RulesToApproveByCategoryId2());
-        }
-
-        [Fact]
-        public async Task get_rules_to_reprove_any_should_return_correct_rules()
-        {
-            repository.GetByParameter(ct, Arg.Any<Expression<Func<Rule, bool>>>())
-                .Returns(ListOfRules().Where(x => x.Category.Id == 0 && !x.Action && x.IsActive));
-
-            var result = await _sut.GetRulesToRejectAny(ct);
-
-            result.Should().BeEquivalentTo(RulesToReproveAny());
-        }
-
-
-
-
 
 
         public static IEnumerable<Rule> ListOfRules()
@@ -351,19 +334,19 @@ namespace ServicesTests
             };
         }
 
-        //public static IEnumerable<Rule> RulesValidToCategoryId0()
-        //{
-        //    var allCategories = new Category() { Id = 0, Name = "All" };
+        public static IEnumerable<Rule> RulesValidToCategoryId0()
+        {
+            var allCategories = new Category() { Id = 0, Name = "All" };
 
-        //    return new List<Rule>{
-        //        new Rule() {
-        //            Id = 1, MinValue = 0, MaxValue = 100, Action = true, Category = allCategories, IsActive = true
-        //        },
-        //        new Rule() {
-        //            Id = 10, MinValue = 1000, MaxValue = decimal.MaxValue, Action = false, Category = allCategories, IsActive = true
-        //        }
-        //    };
-        //}
+            return new List<Rule>{
+                new Rule() {
+                    Id = 1, MinValue = 0, MaxValue = 100, Action = true, Category = allCategories, IsActive = true
+                },
+                new Rule() {
+                    Id = 10, MinValue = 1000, MaxValue = decimal.MaxValue, Action = false, Category = allCategories, IsActive = true
+                }
+            };
+        }
 
         public static IEnumerable<Rule> RulesValidToCategoryId1()
         {
@@ -401,52 +384,27 @@ namespace ServicesTests
 
         }
 
-            public static IEnumerable<Rule> RulesToApproveAny()
+        public static IEnumerable<Rule> RulesValidToCategoryId1Ordered()
         {
             var allCategories = new Category() { Id = 0, Name = "All" };
-            
+            var category1 = new Category() { Id = 1, Name = "Food" };
+
             return new List<Rule>{
+
+                new Rule() {
+                    Id = 10, MinValue = 1000, MaxValue = decimal.MaxValue, Action = false, Category = allCategories, IsActive = true
+                },
+                new Rule() {
+                    Id = 4, MinValue = 800, MaxValue = 999.99M, Action = false, Category = category1, IsActive = true
+                },
                 new Rule() {
                     Id = 1, MinValue = 0, MaxValue = 100, Action = true, Category = allCategories, IsActive = true
                 },
-            };
-        }
-
-        public static IEnumerable<Rule> RulesToReproveByCategoryId3()
-        {
-            var category3 = new Category() { Id = 3, Name = "Transportation" };
-
-            return new List<Rule>
-                    {
-                        new Rule() {
-                            Id = 8,MinValue = 700, MaxValue = 999.99M, Action = false, Category = category3, IsActive = true
-                        },
-                    };
-        }
-
-        public static IEnumerable<Rule> RulesToApproveByCategoryId2()
-        {
-            var category2 = new Category() { Id = 2, Name = "Accomodation" };
-
-            return new List<Rule>
-            {
                 new Rule() {
-                        Id = 5, MinValue = 100.01M, MaxValue = 200, Action = true, Category = category2, IsActive = true
-                    },
-            };
-        }
-
-        public static IEnumerable<Rule> RulesToReproveAny()
-        {
-            var allCategories = new Category() { Id = 0, Name = "All" };
-
-            return new List<Rule>{
-                 new Rule() {
-                    Id = 10, MinValue = 1000, MaxValue = decimal.MaxValue, Action = false, Category = allCategories, IsActive = true
+                    Id = 3, MinValue = 100.01M, MaxValue = 500, Action = true, Category = category1, IsActive = true
                 },
+
             };
-
         }
-
     }
 }

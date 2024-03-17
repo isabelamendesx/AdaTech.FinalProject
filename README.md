@@ -73,7 +73,12 @@ Para armazenar os dados relacionados aos documentos de reembolso e às regras de
 add pré requisitos da aplicação
 
 ## Como Iniciar
+
 tutorial de como clonar e usar
+
+## Motor de aprovação
+
+explicação do motor de aprovação
 
 ## Segurança
 **JWT (*JSON Web Token*)**

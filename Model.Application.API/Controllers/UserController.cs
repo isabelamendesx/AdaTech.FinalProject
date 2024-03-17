@@ -12,7 +12,7 @@ namespace Model.Application.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class UserController : Controller
+    public class UserController : BaseController
     {
         private IIdentityService _identityService;
         private ILogger<UserController> _logger;
@@ -26,11 +26,7 @@ namespace Model.Application.API.Controllers
         [HttpPost("register")] 
         public async Task<ActionResult<UserRegisterResponse>> Register(UserRegisterRequest userRegister)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid User model state: {@ModelState}", ModelState.Values);
-                return UnprocessableEntity(ModelState);
-            }
+            ValidateWithDataAnotation();
 
             var result = await _identityService.RegisterUser(userRegister);
 
@@ -52,11 +48,7 @@ namespace Model.Application.API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserRegisterResponse>> Login(UserLoginRequest userLogin)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid User model state: {@ModelState}", ModelState.Values);
-                return UnprocessableEntity(ModelState);
-            }
+            ValidateWithDataAnotation();
 
             var result = await _identityService.Login(userLogin);
 

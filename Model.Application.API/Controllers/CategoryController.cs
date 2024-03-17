@@ -12,6 +12,7 @@ using ICategoryService = Model.Domain.Interfaces.ICategoryService;
 
 using Model.Service.Services;
 using Serilog;
+using Model.Service.Exceptions;
 
 namespace Model.Application.API.Controllers
 {
@@ -19,7 +20,7 @@ namespace Model.Application.API.Controllers
     [ApiController]
     [Authorize]
    // [Authorize(Policy = Policies.BusinessHour)]
-    public class CategoryController : ControllerBase
+    public class CategoryController : BaseController
     {
         private readonly ICategoryService _service;
         private readonly ILogger<CategoryController> _logger;
@@ -34,11 +35,7 @@ namespace Model.Application.API.Controllers
         [Authorize(Roles = Roles.Manager)]
         public async Task<IActionResult> CreateCategory([FromBody] CategoryRequestDTO request, CancellationToken ct)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid Category model state: {@ModelState}", ModelState.Values);
-                return UnprocessableEntity(ModelState);
-            }
+            ValidateWithDataAnotation();
 
             var category = new Category()
             {

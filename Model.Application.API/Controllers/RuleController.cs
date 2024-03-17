@@ -21,7 +21,7 @@ namespace Model.Application.API.Controllers
     [ApiController]
     [Authorize]
     //[Authorize(Policy = Policies.BusinessHour)]
-    public class RuleController : ControllerBase
+    public class RuleController : BaseController
     {
         private readonly IRuleService _service;
         private readonly ICategoryService _categoryService;
@@ -67,11 +67,7 @@ namespace Model.Application.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateRule([FromBody] RuleRequestDTO request, CancellationToken ct)
         {
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid Rule model state: {@ModelState}", ModelState.Values);
-                return UnprocessableEntity(ModelState);
-            }
+            ValidateWithDataAnotation();
 
             var action = request.Action.Equals("Approve", StringComparison.OrdinalIgnoreCase) ? true : false;
 

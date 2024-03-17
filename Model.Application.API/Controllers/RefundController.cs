@@ -20,7 +20,7 @@ namespace Model.Application.API.Controllers
     [Authorize]
     [Consumes("application/json")]
     [Produces("application/json")]
-    public class RefundController : ControllerBase
+    public class RefundController : BaseController
     {
         private readonly IRefundService _service;
         private readonly ILogger<RefundController> _logger;
@@ -37,11 +37,7 @@ namespace Model.Application.API.Controllers
         public async Task<IActionResult> CreateRefund([FromHeader] string IdempotencyKey, [FromBody] RefundRequestDto request, CancellationToken ct)            
         {
 
-            if (!ModelState.IsValid)
-            {
-                _logger.LogWarning("Invalid Refund model state: {@ModelState}", ModelState.Values);
-                return UnprocessableEntity(ModelState);
-            }
+            ValidateWithDataAnotation();
 
             var refund = new Refund()
             {

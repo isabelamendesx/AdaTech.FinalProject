@@ -1,9 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Model.Domain.Common;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Infra.Data.Context;
+using Serilog;
+using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Model.Infra.Data.Repositories
 {

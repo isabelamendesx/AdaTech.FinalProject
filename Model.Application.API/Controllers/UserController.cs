@@ -54,7 +54,7 @@ namespace Model.Application.API.Controllers
 
             if (result.Success)
             {
-                _logger.LogInformation("User with id {@UserId} logged in successfully", HttpContext.Items["UserId"] as string);
+                _logger.LogInformation("User with id {@UserId} logged in successfully", GetUserId());
                 return Ok(result);
             }
 
@@ -66,7 +66,7 @@ namespace Model.Application.API.Controllers
         [HttpPost("refresh-login")]
         public async Task<ActionResult<UserRegisterResponse>> RefreshLogin()
         {
-            var userId = HttpContext.Items["UserId"] as string;
+            var userId = GetUserId();
 
             if (userId == null)
             {
@@ -75,6 +75,7 @@ namespace Model.Application.API.Controllers
             }
 
             var result = await _identityService.LoginWithoutPassword(userId);
+
             if (result.Success)
             {
                 _logger.LogInformation("User with ID {@UserId} login refreshed successfully", userId);

@@ -81,11 +81,8 @@ namespace Model.Service.Services
         {
             var refund = await _repository.GetById(Id, ct);
 
-            if (refund is null)
-            {
-                _logger.LogWarning("Attempted to approve a refund with an invalid ID.");
-                throw new ResourceNotFoundException("Refund");
-            }
+            if(refund.Status != EStatus.UnderEvaluation)
+                throw new InvalidRefundException("The refund can only be approved if the status is UnderEvaluation.");
 
             refund.Status = EStatus.Approved;
             RefundOperation op = new RefundOperation()
@@ -98,18 +95,15 @@ namespace Model.Service.Services
 
             await _repository.AddAsync(refund, ct);
 
-            return refund;
+            return refund;      
         }
 
         public async Task<Refund> RejectRefund(uint Id, string userId, CancellationToken ct)
         {
             var refund = await _repository.GetById(Id, ct);
 
-            if (refund is null)
-            {
-                _logger.LogWarning("Attempted to reject a refund with an invalid ID.");
-                throw new ResourceNotFoundException("Refund");
-            }
+            if (refund.Status != EStatus.UnderEvaluation)
+                throw new InvalidRefundException("The refund can only be rejected if the status is UnderEvaluation.");
 
             refund.Status = EStatus.Rejected;
 

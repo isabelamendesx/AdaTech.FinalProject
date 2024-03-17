@@ -105,7 +105,9 @@ namespace Model.Application.API.Controllers
         public async Task<IActionResult> RejectRefund([FromRoute] uint id, CancellationToken ct)
         {
             var userId = GetUserId();
+
             var refund = await _service.RejectRefund(id, userId, ct);
+
             return Ok(refund.ToDetailResponse());
         }
 

@@ -35,9 +35,9 @@ Nossa missão foi criar uma API(**Motor de aprovação**) para automatizar o pro
 - [Descrição do Projeto](#descrição-do-projeto)
 - [Funcionalidades](#funcionalidades)
 - [Pré-requisitos](#pré-requisitos)
-- [Como Iniciar](#como-iniciar)
+- [Como Executar](#como-executar)
+- [API Endpoints](#api-endpoints)
 - [Segurança](#segurança)
-- [Filtros](#filtros)
 - [Documentação](#documentação)
 - [Autoras](#autoras)
 - [Licença](#licença)
@@ -78,12 +78,106 @@ Para armazenar os dados relacionados aos documentos de reembolso e às regras de
 
 ## Pré-requisitos
 
-add pré requisitos da aplicação
+Antes de iniciar, certifique-se de ter o seguinte instalado em sua máquina:
 
-## Como Iniciar
+1. Visual Studio (VS): É necessário para compilar e executar o projeto.
+2. .NET SDK: Verifique se você tem o .NET SDK instalado. Caso contrário, baixe-o [aqui](https://dotnet.microsoft.com/pt-br/download/visual-studio-sdks).
+3. Postico/PgADmin ou outro administrador para desenvolvimento PostegreSQL.
 
-tutorial de como clonar e usar
+## Como Executar
 
+1. Conecte-se ao banco de dados PostgreSQL.
+   
+   Obs: Passo-a-passo [aqui](https://medium.com/@noogetz/how-to-setup-a-database-with-elephantsql-7d87ea9953d0#03d1).
+   
+    **----- DADOS DO SERVIDOR -----**
+   
+     - Host: kesavan.db.elephantsql.com   
+     - User: zpikunvm   
+     - Database: zpikunvm   
+     - Password: MhwN5nJkB6MwaMoWAGUeRVpp89cGTGyu
+   
+2. Abra o projeto no Visual Studio.
+3. Selecione o modo Release.
+4. Compile e execute o projeto.
+5. Ao executar o Swagger irá abrir nessa página e será necessário fazer login com um dos usuários abaixo:
+
+   Obs: Atente-se que cada um dos usuários possui permissões diferentes dentro da aplicação.
+   
+   **----LISTA DE USUARIOS DISPONÍVEIS----**
+
+    **STANDARD**
+    (Apenas envia requisições)
+    - email: standard@me.com.br
+    - senha: Standard123*
+    
+    **MANAGER**
+   (Envia requisições e pode reprovar manualmente)
+    - email: manager@me.com.br
+    - senha: Manager123*
+    
+    **SUPERVISOR**
+   (Envia requisições e pode reprovar ou aprovar manualmente)
+    - email: supervisor@me.com.br
+    - senha: Supervisor123*
+   
+     ![Imagem do campo User/Login no Swagger](https://github.com/isabelamendesx/AdaTech.FinalProject/assets/142990899/02daa3ef-a080-4731-b102-73dd06fb2ca5)
+
+   
+6. Após o login bem sucedido, você deverá autorizar o seu acesso inserindo "Baerer +'acessToken'" no campo Authorize.
+   Obs: O acessToken será retornado após um login bem-sucedido no cmapo **Response body**.
+   
+![Imagem do acesso com acessToken](https://github.com/isabelamendesx/AdaTech.FinalProject/assets/142990899/e4c752d0-875d-4f2c-9af4-1b30b5872b85)
+
+7. Após esse processo, a API estará pronta para ser testada e as requisições ficarão salvas no banco de dados.
+
+## API Endpoints
+A API fornece os seguintes endpoints:
+
+```markdown
+---------CATEGORY-----------
+
+POST /Category -
+
+GET /Category -
+
+GET /Category/{id} -
+
+---------CATEGORY-----------
+
+POST /Refund -
+
+GET /Refund/{id} -
+
+GET /status/{status} -
+
+POST /approve/{id} -
+
+POST /reject/{id} -
+
+POST /modidy-refund/{id}/{status} - 
+
+---------RULE-----------
+
+GET /Rule/rule/{id} -
+
+GET /Rule -
+
+POST /Rule -
+
+POST /deactivate/{ruleId}-
+
+POST /deactivate/categor{categoryId} -
+
+---------USER-----------
+
+POST /Refund -
+
+POST /modidy-refund/{id}/{status} -
+
+POST /User/refresh-login -
+
+````
 ## Motor de aprovação
 
 O cerne da aplicação é o motor de aprovação. 
@@ -108,9 +202,6 @@ Por ser um serviço `stateless`, diversas vantagens podem ser apontadas em seu u
 * **Alta performance:** Devido a não existência de sessão, o servidor necessita apenas calcular o [hash](https://www.voitto.com.br/blog/artigo/o-que-e-hash-e-como-funciona#:~:text=A%20criptografia%20hash%20é%20utilizada,ser%20um%20registro%20alfanumérico%20complexo.), evitando fazer qualquer tipo de busca em bases ou tabelas.
 * **Multiservidores:** É possível ter vários servidores rodando em domínios diferentes utilizando o mesmo token.
 
-## Filtros
-
-filtros que usamos (verificar se é necessário adicionar essa parte)
 
 ## Documentação
 Adicionar prints do swagger e/ou vídeo dos endpoints funcionando

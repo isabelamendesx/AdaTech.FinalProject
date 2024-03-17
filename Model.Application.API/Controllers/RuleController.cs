@@ -105,7 +105,7 @@ namespace Model.Application.API.Controllers
                 _logger.LogWarning("Rule with id {@Ruleid} was deactived", ruleId);        
                 var response = new DeactivateRuleResponseDTO();
 
-                response.DeactivatedRulesId.Append(ruleId);
+                response.DeactivatedRulesId.Add(ruleId);
 
                 return Ok(response);
             }
@@ -130,7 +130,7 @@ namespace Model.Application.API.Controllers
 
                 var response = new DeactivateRuleResponseDTO();
 
-                response.DeactivatedRulesId = rulesIds;
+                response.DeactivatedRulesId.AddRange(rulesIds);
 
                 return Ok(response);
             }

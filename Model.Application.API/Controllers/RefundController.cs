@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Model.Application.API.DTO.Request;
 using Model.Application.API.DTO.Response;
 using Model.Application.API.Extensions;
+using Model.Application.API.DTO.Validators;
 
 namespace Model.Application.API.Controllers
 {
@@ -49,7 +50,7 @@ namespace Model.Application.API.Controllers
             };
 
             var createdRefund = await _service.CreateRefund(refund, ct);
-            _logger.LogInformation("New Refund Submitted and {@Status} by rule with ID {@RuleId}", createdRefund.Status, createdRefund.Operations.First().ApprovalRule.Id);
+            _logger.LogInformation("New Refund Submitted and {@Status}", createdRefund.Status);
 
             return Ok(createdRefund.ToResponse());
         }
@@ -64,7 +65,7 @@ namespace Model.Application.API.Controllers
 
         [HttpGet]
         [Route("/status/{status}")]
-        public async Task<ActionResult<IEnumerable<Refund?>>> GetAllByStatus([ValidateStatus] string status,
+        public async Task<ActionResult<IEnumerable<Refund?>>> GetAllByStatus([ValidateSubmittedStatus] string status,
                                                     [FromQuery] PaginationParametersDTO paginationParameters, CancellationToken ct)
         {
             var parsedStatus = EnumParser.ParseStatus(status);
@@ -107,6 +108,20 @@ namespace Model.Application.API.Controllers
             var userId = GetUserId();
 
             var refund = await _service.RejectRefund(id, userId, ct);
+
+            return Ok(refund.ToDetailResponse());
+        }
+
+        [HttpPost]
+        [Route("/modidy-refund/{id}/{status}")]
+        [Authorize(Roles = Roles.Manager)]
+        public async Task<IActionResult> ChangeRefundStatus([FromRoute] uint id, [ValidateStatus] string status, CancellationToken ct)
+        {
+            var userId = GetUserId();
+
+            var parsedStatus = EnumParser.ParseStatus(status);
+
+            var refund = await _service.ChangeRefundStatus(id, parsedStatus, userId, ct); 
 
             return Ok(refund.ToDetailResponse());
         }

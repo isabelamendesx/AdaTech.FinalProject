@@ -40,7 +40,7 @@ namespace ServicesTests
         }
 
         [Fact]
-        public async Task create_category_should_succeed_when_name_does_not_already_exist()
+        public async Task create_category_should_succeed_when_name_does_not_already_exists()
         {
             var newCategory = new Category { Id = 5, Name = "Eletronics" };
             repository.GetByParameter(ct, Arg.Any<Expression<Func<Category, bool>>>())

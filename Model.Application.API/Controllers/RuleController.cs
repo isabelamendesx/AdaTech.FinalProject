@@ -13,6 +13,9 @@ using ICategoryService = Model.Domain.Interfaces.ICategoryService;
 using IRuleService = Model.Domain.Interfaces.IRuleService;
 using Serilog;
 using Model.Application.API.Util;
+using Model.Application.API.DTO.Request;
+using Model.Application.API.DTO.Response;
+using Model.Application.API.Extensions;
 
 
 namespace Model.Application.API.Controllers
@@ -39,7 +42,7 @@ namespace Model.Application.API.Controllers
         public async Task<IActionResult> GetById([FromRoute] uint id, CancellationToken ct)
         {
             var rule = await _service.GetById(id, ct);
-            return Ok(rule);
+            return Ok(rule!.ToResponse());
         }
         
         [HttpGet]
@@ -87,7 +90,7 @@ namespace Model.Application.API.Controllers
             var createdRule = await _service.CreateRule(rule, ct);
             _logger.LogInformation("New Rule for Category {@Category} created", createdRule.Category);
 
-            return Ok(createdRule);
+            return Ok(createdRule.ToResponse());
         }
 
         [Authorize(Roles = Roles.Manager)]
@@ -102,7 +105,7 @@ namespace Model.Application.API.Controllers
                 _logger.LogWarning("Rule with id {@Ruleid} was deactived", ruleId);        
                 var response = new DeactivateRuleResponseDTO();
 
-                response.DeactivatedRules.Append(ruleId);
+                response.DeactivatedRulesId.Append(ruleId);
 
                 return Ok(response);
             }
@@ -127,7 +130,7 @@ namespace Model.Application.API.Controllers
 
                 var response = new DeactivateRuleResponseDTO();
 
-                response.DeactivatedRules = rulesIds;
+                response.DeactivatedRulesId = rulesIds;
 
                 return Ok(response);
             }

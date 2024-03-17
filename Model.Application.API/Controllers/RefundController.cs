@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Model.Service.Services;
-using Model.Application.DTO;
 using Model.Domain.Entities;
 using Model.Application.API.Util;
 using Model.Application.DTO.Validators;
@@ -12,6 +11,9 @@ using Microsoft.AspNetCore.Http.Timeouts;
 using Serilog;
 using Model.Application.API.DTO;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Model.Application.API.DTO.Request;
+using Model.Application.API.DTO.Response;
+using Model.Application.API.Extensions;
 
 namespace Model.Application.API.Controllers
 {
@@ -33,25 +35,24 @@ namespace Model.Application.API.Controllers
 
         
         [HttpPost]
-        [Idempotent(ExpiresInMilliseconds = 10000)]
-        public async Task<IActionResult> CreateRefund([FromHeader] string IdempotencyKey, [FromBody] RefundRequestDto request, CancellationToken ct)            
+        //[Idempotent(ExpiresInMilliseconds = 10000)]
+        public async Task<IActionResult> CreateRefund(/*[FromHeader] string IdempotencyKey*/ [FromBody] RefundRequestDto request, CancellationToken ct)            
         {
-
             ValidateWithDataAnotation();
 
             var refund = new Refund()
             {
                 Description = request.Description,
-                Category = new Category { Id = request.CategoryId},
+                Category = new Category { Id = request.CategoryId },
                 Status = EnumParser.ParseStatus(request.Status),
                 Total = request.Total,
-                OwnerID = HttpContext.Items["UserId"] as string
-        };
+                OwnerID = GetUserId()
+            };
 
             var createdRefund = await _service.CreateRefund(refund, ct);
             _logger.LogInformation("New Refund Submitted and {@Status} by rule with ID {@RuleId}", createdRefund.Status, createdRefund.Operations.First().ApprovalRule.Id);
 
-            return Ok(createdRefund);
+            return Ok(createdRefund.ToResponse());
         }
 
         [HttpGet]
@@ -84,9 +85,11 @@ namespace Model.Application.API.Controllers
         [Authorize(Roles = Roles.Manager)]
         public async Task<IActionResult> ApproveRefund([FromRoute] uint id, CancellationToken ct)
         {
-            var userId = HttpContext.Items["UserId"] as string;
+            var userId = GetUserId();
+
             var refund = await _service.ApproveRefund(id, userId, ct);
-            return Ok(refund);
+
+            return Ok(refund.ToDetailResponse());
         }
 
         [HttpPost]
@@ -94,9 +97,9 @@ namespace Model.Application.API.Controllers
         [Authorize(Roles = Roles.Manager + "," + Roles.Supervisor)]
         public async Task<IActionResult> RejectRefund([FromRoute] uint id, CancellationToken ct)
         {
-            var userId = HttpContext.Items["UserId"] as string;
+            var userId = GetUserId();
             var refund = await _service.RejectRefund(id, userId, ct);
-            return Ok(refund);
+            return Ok(refund.ToDetailResponse());
         }
 
     }

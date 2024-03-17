@@ -13,13 +13,14 @@ using ICategoryService = Model.Domain.Interfaces.ICategoryService;
 using Model.Service.Services;
 using Serilog;
 using Model.Service.Exceptions;
+using Model.Application.API.DTO.Request;
 
 namespace Model.Application.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-   // [Authorize(Policy = Policies.BusinessHour)]
+    [Authorize(Policy = Policies.BusinessHour)]
     public class CategoryController : BaseController
     {
         private readonly ICategoryService _service;

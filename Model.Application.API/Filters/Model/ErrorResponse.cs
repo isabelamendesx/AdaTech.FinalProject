@@ -1,4 +1,6 @@
-﻿namespace Model.Application.API.Filters.Model
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+
+namespace Model.Application.API.Filters.Model
 {
     public class ErrorResponse
     {
@@ -10,6 +12,6 @@
         public uint? ConflictingRuleId { get; set; }
         public uint? ConflictingCategoryId { get; set; }
         public int StatusCode { get; set; }
-
+        public IDictionary<string, string[]> Errors { get; set; }
     }
 }

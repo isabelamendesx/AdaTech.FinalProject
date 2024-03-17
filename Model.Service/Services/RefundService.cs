@@ -22,17 +22,14 @@ namespace Model.Service.Services
     public class RefundService : IRefundService
     {
         private IRepository<Refund> _repository;
-        private IRepository<RefundOperation> _operationRepository;
         private IRuleService _ruleService;
         private ICategoryService _categoryService;
         private readonly ILogger<RefundService> _logger;
 
-        public RefundService(IRepository<Refund> repository, 
-            IRepository<RefundOperation> operationRepository, IRuleService ruleService, 
-            ICategoryService categoryService, ILogger<RefundService> logger)
+        public RefundService(IRepository<Refund> repository, IRuleService ruleService, 
+                             ICategoryService categoryService, ILogger<RefundService> logger)
         {
             _repository = repository;
-            _operationRepository = operationRepository;
             _ruleService = ruleService;
             _categoryService = categoryService;
             _logger = logger;

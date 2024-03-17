@@ -139,5 +139,18 @@ namespace Model.Service.Services
         {
             return await _repository.GetPaginatedByParameter(ct, skip, take);
         }
+
+        public async Task<Refund?> GetById(uint id, CancellationToken ct)
+        {
+            var refund = await _repository.GetById(id, ct);
+
+            if (refund is null)
+            {
+                _logger.LogInformation("Refund with ID {@CategoryId} not found", id);
+                throw new ResourceNotFoundException("Refund");
+            }
+
+            return refund;
+        }
     }
 }

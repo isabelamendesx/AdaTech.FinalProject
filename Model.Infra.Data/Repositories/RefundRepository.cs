@@ -57,6 +57,9 @@ namespace Model.Infra.Data.Repositories
         public async Task<Refund?> GetById(uint Id, CancellationToken ct)
                => await _context.Refunds
                                 .Include(x => x.Category)
+                                .Include(x => x.Operations)
+                                .ThenInclude(x => x.ApprovalRule)
+                                .ThenInclude(x => x.Category)
                                 .FirstOrDefaultAsync(x => x.Id == Id);
             
 

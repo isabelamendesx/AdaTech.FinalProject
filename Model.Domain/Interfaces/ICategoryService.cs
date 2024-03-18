@@ -10,7 +10,7 @@ namespace Model.Domain.Interfaces
 {
     public interface ICategoryService
     {
-        Task<Category?> GetById(uint id, CancellationToken ct);
+        Task<Category> GetById(uint id, CancellationToken ct);
         Task<IEnumerable<Category?>> GetAll(CancellationToken ct);
         Task<PaginatedResult<Category>> GetAllPaginated(CancellationToken ct, int skip, int take);
         Task<Category> CreateCategory(Category category, CancellationToken ct);

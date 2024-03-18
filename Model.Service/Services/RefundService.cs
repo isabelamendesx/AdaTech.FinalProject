@@ -40,7 +40,7 @@ namespace Model.Service.Services
             refund.Status = processResult.Status;
             refund.CreateDate = DateTime.UtcNow;
 
-            RefundOperation op = new RefundOperation()
+            var op = new RefundOperation()
             {
                 UpdateDate = DateTime.UtcNow,
                 ApprovedBy = "0"
@@ -66,13 +66,13 @@ namespace Model.Service.Services
 
         public async Task<Refund> ApproveRefund(uint Id, string userId, CancellationToken ct)
         {
-            var refund = await _repository.GetById(Id, ct);
+            var refund = await GetById(Id, ct);
 
             if(refund.Status != EStatus.UnderEvaluation)
                 throw new InvalidRefundException("The refund can only be approved if the status is UnderEvaluation.");
 
             refund.Status = EStatus.Approved;
-            RefundOperation op = new RefundOperation()
+            var op = new RefundOperation()
             {
                 UpdateDate = DateTime.UtcNow,
                 ApprovalRule = null,
@@ -88,14 +88,14 @@ namespace Model.Service.Services
 
         public async Task<Refund> RejectRefund(uint Id, string userId, CancellationToken ct)
         {
-            var refund = await _repository.GetById(Id, ct);
+            var refund = await GetById(Id, ct);
 
             if (refund.Status != EStatus.UnderEvaluation)
                 throw new InvalidRefundException("The refund can only be rejected if the status is UnderEvaluation.");
 
             refund.Status = EStatus.Rejected;
 
-            RefundOperation op = new RefundOperation()
+            var op = new RefundOperation
             {
                 UpdateDate = DateTime.UtcNow,
                 ApprovalRule = null,
@@ -114,7 +114,7 @@ namespace Model.Service.Services
 
             refund.Status = status;
 
-            RefundOperation op = new RefundOperation()
+            var op = new RefundOperation()
             {
                 UpdateDate = DateTime.UtcNow,
                 ApprovalRule = null,
@@ -142,7 +142,7 @@ namespace Model.Service.Services
             return await _repository.GetPaginatedByParameter(ct, skip, take);
         }
 
-        public async Task<Refund?> GetById(uint id, CancellationToken ct)
+        public async Task<Refund> GetById(uint id, CancellationToken ct)
         {
             var refund = await _repository.GetById(id, ct);
 

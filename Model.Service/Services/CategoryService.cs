@@ -26,24 +26,19 @@ namespace Model.Service.Services
             if (sameNameCategories.Any())
             {
                 _logger.LogWarning("Attempted to create category '{@CategoryName}' which already exists.", category.Name);
-                throw new CategoryAlreadyRegisteredException(sameNameCategories.First().Id);
+                throw new CategoryAlreadyRegisteredException(sameNameCategories.First()!.Id);
             }
 
             return await _repository.AddAsync(category, ct);
         }
 
         public async Task<IEnumerable<Category?>> GetAll(CancellationToken ct)
-        {
-            //_logger.LogInformation("Fetching all categories");
-            return await _repository.GetByParameter(ct);
-        }
-
+            => await _repository.GetByParameter(ct);
+        
         public async Task<PaginatedResult<Category>> GetAllPaginated(CancellationToken ct, int skip, int take)
-        {
-            return await _repository.GetPaginatedByParameter(ct, skip, take);
-        }
-
-        public async Task<Category?> GetById(uint id, CancellationToken ct)
+            => await _repository.GetPaginatedByParameter(ct, skip, take);
+        
+        public async Task<Category> GetById(uint id, CancellationToken ct)
         {
             var category = await _repository.GetById(id, ct);
 
@@ -53,7 +48,6 @@ namespace Model.Service.Services
                 throw new ResourceNotFoundException("Category");
             }
 
-            //_logger.LogInformation("Category fetched: {@Category}", category);
             return category;
         }
     }

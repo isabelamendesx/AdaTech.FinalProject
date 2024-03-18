@@ -37,7 +37,7 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpGet]
-        [Route("rule/{id}")]
+        [Route("{id}")]
         public async Task<IActionResult> GetById([FromRoute] uint id, CancellationToken ct)
         {
             var rule = await _service.GetById(id, ct);

@@ -58,7 +58,7 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpGet]
-        [Route("/status/{status}")]
+        [Route("status/{status}")]
         public async Task<ActionResult<IEnumerable<Refund?>>> GetAllByStatus([ValidateSubmittedStatus] string status,
                                                     [FromQuery] PaginationParametersDTO paginationParameters, CancellationToken ct)
         {
@@ -83,7 +83,7 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpPost]
-        [Route("/approve/{id}")]
+        [Route("approve/{id}")]
         [Authorize(Roles = Roles.Manager)]
         public async Task<IActionResult> ApproveRefund([FromRoute] uint id, CancellationToken ct)
         {
@@ -95,7 +95,7 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpPost]
-        [Route("/reject/{id}")]
+        [Route("reject/{id}")]
         [Authorize(Roles = Roles.Manager + "," + Roles.Supervisor)]
         public async Task<IActionResult> RejectRefund([FromRoute] uint id, CancellationToken ct)
         {
@@ -105,9 +105,9 @@ namespace Model.Application.API.Controllers
 
             return Ok(refund.ToDetailResponse());
         }
-
+            
         [HttpPost]
-        [Route("/modidy-refund/{id}/{status}")]
+        [Route("modify-refund/{id}/{status}")]
         [Authorize(Roles = Roles.Manager)]
         public async Task<IActionResult> ChangeRefundStatus([FromRoute] uint id, [ValidateStatus] string status, CancellationToken ct)
         {

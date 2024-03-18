@@ -155,7 +155,7 @@ POST /Refund/approve/{id} - Aprovar o reembolso correspondente ao Id fornecido q
 
 POST /reject/{id} - Reprovar o reembolso correspondente ao Id fornecido que está com o status **Em Aprovação**
 
-POST /modidy-refund/{id}/{status} - Alterar o status do reembolso correspondente ao Id fornecido já aprovado ou reprovado
+POST /modify-refund/{id}/{status} - Alterar o status do reembolso correspondente ao Id fornecido já aprovado ou reprovado
 
 ---------RULE-----------
 

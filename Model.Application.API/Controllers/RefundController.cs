@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.Application.API.DTO.Request;
+using Model.Application.API.DTO.Response;
 using Model.Application.API.DTO.Validators;
 using Model.Application.API.Extensions;
 using Model.Application.API.Util;
 using Model.Application.DTO.Validators;
+using Model.Domain.Common;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 
@@ -69,15 +71,28 @@ namespace Model.Application.API.Controllers
 
             var skip = paginationParameters.PageSize * (paginationParameters.PageNumber - 1);
 
-            var paginatedCategories = await _service.GetAllByStatusPaginated(
+            var paginatedRefunds = await _service.GetAllByStatusPaginated(
                     parsedStatus,
                     ct,
                     skip,
                     paginationParameters.PageSize
                 );
 
+            var refundsToResponse = new List<RefundResponseDTO>();
+
+            for (var i = 0; i < paginatedRefunds.Items.Count(); i++)
+                refundsToResponse.Add(paginatedRefunds.Items.ElementAt(i).ToResponse());
+
+
+            var paginatedResult = new PaginatedResult<RefundResponseDTO>()
+            {
+                TotalCount = paginatedRefunds.TotalCount,
+                Items = refundsToResponse
+            };
+
+
             var response = PaginationResponseGenerator.GetPaginatedResponse
-                                    (paginatedCategories, paginationParameters);
+                                    (paginatedResult, paginationParameters);
 
             return Ok(response);
         }

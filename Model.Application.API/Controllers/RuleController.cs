@@ -5,6 +5,7 @@ using Model.Application.API.DTO.Request;
 using Model.Application.API.DTO.Response;
 using Model.Application.API.Extensions;
 using Model.Application.API.Util;
+using Model.Domain.Common;
 using ICategoryService = Model.Domain.Interfaces.ICategoryService;
 using IRuleService = Model.Domain.Interfaces.IRuleService;
 using Rule = Model.Domain.Entities.Rule;
@@ -46,14 +47,26 @@ namespace Model.Application.API.Controllers
 
             var skip = paginationParameters.PageSize * (paginationParameters.PageNumber - 1);
 
-            var paginatedCategories = await _service.GetAllPaginated(
+            var paginatedRules = await _service.GetAllPaginated(
                     ct,
                     skip,
                     paginationParameters.PageSize
                 );
 
-            var response = PaginationResponseGenerator.GetPaginatedResponse
-                                    (paginatedCategories, paginationParameters);
+            var rulesToResponse = new List<RuleResponseDTO>();
+
+            for ( var i = 0; i < paginatedRules.Items.Count(); i++)
+                rulesToResponse.Add(paginatedRules.Items.ElementAt(i).ToResponse());
+
+
+            var paginatedResult = new PaginatedResult<RuleResponseDTO>() { 
+                TotalCount = paginatedRules.TotalCount, 
+                Items = rulesToResponse 
+            };
+
+
+            var response = PaginationResponseGenerator.GetPaginatedResponse<RuleResponseDTO>
+                                    (paginatedResult, paginationParameters);
 
             return Ok(response);
         }

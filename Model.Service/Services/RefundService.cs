@@ -1,10 +1,10 @@
-﻿using Model.Domain.Entities;
+﻿using Microsoft.Extensions.Logging;
+using Model.Domain.Common;
+using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
 using Model.Service.Services.DTO;
-using Microsoft.Extensions.Logging;
 using Model.Service.Services.Handlers;
-using Model.Domain.Common;
 
 namespace Model.Service.Services
 {

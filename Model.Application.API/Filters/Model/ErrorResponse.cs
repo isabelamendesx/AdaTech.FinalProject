@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-
-namespace Model.Application.API.Filters.Model
+﻿namespace Model.Application.API.Filters.Model
 {
     public class ErrorResponse
     {

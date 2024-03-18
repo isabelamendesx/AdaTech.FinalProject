@@ -1,13 +1,13 @@
 ﻿using Identity.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Rule = Model.Domain.Entities.Rule;
-using ICategoryService = Model.Domain.Interfaces.ICategoryService;
-using IRuleService = Model.Domain.Interfaces.IRuleService;
-using Model.Application.API.Util;
 using Model.Application.API.DTO.Request;
 using Model.Application.API.DTO.Response;
 using Model.Application.API.Extensions;
+using Model.Application.API.Util;
+using ICategoryService = Model.Domain.Interfaces.ICategoryService;
+using IRuleService = Model.Domain.Interfaces.IRuleService;
+using Rule = Model.Domain.Entities.Rule;
 
 
 namespace Model.Application.API.Controllers

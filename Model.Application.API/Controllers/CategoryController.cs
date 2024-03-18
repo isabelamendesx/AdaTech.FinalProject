@@ -1,10 +1,10 @@
 ﻿using Identity.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Model.Application.API.DTO.Request;
 using Model.Application.API.Util;
 using Model.Domain.Entities;
 using ICategoryService = Model.Domain.Interfaces.ICategoryService;
-using Model.Application.API.DTO.Request;
 
 namespace Model.Application.API.Controllers
 {

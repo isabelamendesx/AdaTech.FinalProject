@@ -1,12 +1,6 @@
 ﻿using Model.Domain.Entities;
-using FluentAssertions;
-using Model.Service.Services.Util;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Model.Service.Exceptions;
+using Model.Service.Services.Util;
 
 namespace ServicesTests
 {

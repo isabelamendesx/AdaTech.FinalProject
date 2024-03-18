@@ -4,12 +4,6 @@ using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
 using Model.Service.Services;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServicesTests
 {

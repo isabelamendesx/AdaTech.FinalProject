@@ -2,18 +2,7 @@
 using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
 using Model.Service.Services.DTO;
-using Model.Service.Services.Util;
-using Rule = Model.Domain.Entities.Rule;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Serilog;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Model.Service.Services.Handlers;
 using Model.Domain.Common;
 
@@ -22,7 +11,6 @@ namespace Model.Service.Services
     public class RefundService : IRefundService
     {
         private IRepository<Refund> _repository;
-        private IRepository<RefundOperation> _operationRepository;
         private IRuleService _ruleService;
         private ICategoryService _categoryService;
         private readonly ILogger<RefundService> _logger;
@@ -32,7 +20,6 @@ namespace Model.Service.Services
             ICategoryService categoryService, ILogger<RefundService> logger)
         {
             _repository = repository;
-            _operationRepository = operationRepository;
             _ruleService = ruleService;
             _categoryService = categoryService;
             _logger = logger;

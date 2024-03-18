@@ -23,8 +23,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model.Infra.Data", "Model.I
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5 - Tests", "5 - Tests", "{4461B00B-51AF-4225-999A-44E51A732ECA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainTests", "DomainTests\DomainTests.csproj", "{C5790021-9CA0-4D8E-91C4-CBCF8862991B}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{63D3426E-E8CD-4D84-96CB-BDC85E1F8339}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md

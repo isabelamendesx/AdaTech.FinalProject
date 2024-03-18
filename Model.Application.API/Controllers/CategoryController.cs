@@ -1,17 +1,9 @@
 ﻿using Identity.Constants;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
-using Model.Application.API.Attributes;
 using Model.Application.API.Util;
-using Model.Application.DTO;
 using Model.Domain.Entities;
-using Model.Domain.Interfaces;
 using ICategoryService = Model.Domain.Interfaces.ICategoryService;
-
-using Model.Service.Services;
-using Serilog;
-using Model.Service.Exceptions;
 using Model.Application.API.DTO.Request;
 
 namespace Model.Application.API.Controllers

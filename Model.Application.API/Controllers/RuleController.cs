@@ -1,16 +1,9 @@
 ﻿using Identity.Constants;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
-using Model.Application.API.Attributes;
-using Model.Domain.Entities;
-using Model.Domain.Interfaces;
-using Model.Service.Services;
-using System.Data;
 using Rule = Model.Domain.Entities.Rule;
 using ICategoryService = Model.Domain.Interfaces.ICategoryService;
 using IRuleService = Model.Domain.Interfaces.IRuleService;
-using Serilog;
 using Model.Application.API.Util;
 using Model.Application.API.DTO.Request;
 using Model.Application.API.DTO.Response;

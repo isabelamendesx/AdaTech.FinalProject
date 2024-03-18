@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Model.Service.Services;
 using Model.Domain.Entities;
 using Model.Application.API.Util;
 using Model.Application.DTO.Validators;
@@ -7,11 +6,7 @@ using IdempotentAPI.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Identity.Constants;
 using Model.Domain.Interfaces;
-using Microsoft.AspNetCore.Http.Timeouts;
-using Serilog;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Model.Application.API.DTO.Request;
-using Model.Application.API.DTO.Response;
 using Model.Application.API.Extensions;
 using Model.Application.API.DTO.Validators;
 

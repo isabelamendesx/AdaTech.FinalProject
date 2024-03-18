@@ -135,7 +135,7 @@ Antes de iniciar, certifique-se de ter o seguinte instalado em sua máquina:
 A API fornece os seguintes endpoints:
 
 ```markdown
----------CATEGORY-----------
+--------- CATEGORY -----------
 
 POST /Category - Criar uma nova categoria
 
@@ -143,7 +143,7 @@ GET /Category - Consultar todas as categorias
 
 GET /Category/{id} - Consultar a categoria correspondente ao Id fornecido
 
----------CATEGORY-----------
+--------- REFUND -----------
 
 POST /Refund - Criar um novo documento de reembolso
 
@@ -186,7 +186,7 @@ Ele consiste em um método `GetRulesThatApplyToCategory` que, através do [Chain
 
 Ou seja, inicialmente o programa buscará as **regras que rejeitam o pedido para todas as classes**, depois a **regra que rejeita o pedido para a categoria específica**. Caso nesse ponto a requisição ainda não tenha sido recusada, o programa continua buscando, agora nas **regras que aprovam todas as categorias** e em seguida, as **regras que aprovam da categoria específica**, abrangendo todas as possibilidades. Caso nenhuma regra aplicável seja encontrada no bando de dados, a aplicação irá configurar o status da requisição como “Em aprovação” e só poderá ser modificado manualmente por um usuário responsável.
 
-![diagrama](https://github.com/isabelamendesx/AdaTech.FinalProject/assets/48605624/24f2b8d2-4980-427a-bc9c-e896210508da)
+![diagrama](https://github.com/isabelamendesx/AdaTech.FinalProject/assets/48605624/fe5155d0-8672-4146-814e-ed9ba8a6c926)
 
 
 ## Segurança

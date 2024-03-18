@@ -1,20 +1,13 @@
 ﻿using Identity.Constants;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
-using Model.Application.API.Attributes;
-using Model.Domain.Entities;
-using Model.Domain.Interfaces;
-using Model.Service.Services;
-using System.Data;
-using Rule = Model.Domain.Entities.Rule;
-using ICategoryService = Model.Domain.Interfaces.ICategoryService;
-using IRuleService = Model.Domain.Interfaces.IRuleService;
-using Serilog;
-using Model.Application.API.Util;
 using Model.Application.API.DTO.Request;
 using Model.Application.API.DTO.Response;
 using Model.Application.API.Extensions;
+using Model.Application.API.Util;
+using ICategoryService = Model.Domain.Interfaces.ICategoryService;
+using IRuleService = Model.Domain.Interfaces.IRuleService;
+using Rule = Model.Domain.Entities.Rule;
 
 
 namespace Model.Application.API.Controllers
@@ -37,7 +30,7 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpGet]
-        [Route("rule/{id}")]
+        [Route("{id}")]
         public async Task<IActionResult> GetById([FromRoute] uint id, CancellationToken ct)
         {
             var rule = await _service.GetById(id, ct);
@@ -94,7 +87,7 @@ namespace Model.Application.API.Controllers
 
         [Authorize(Roles = Roles.Manager)]
         [HttpPost]
-        [Route("/deactivate/{ruleId}")]
+        [Route("deactivate/{ruleId}")]
         public async Task<IActionResult> DeactivateRule([FromRoute] uint ruleId, CancellationToken ct)
         {
             var deactivate = await _service.DeactivateRule(ruleId, ct);
@@ -116,7 +109,7 @@ namespace Model.Application.API.Controllers
 
         [Authorize(Roles = Roles.Manager)]
         [HttpPost]
-        [Route("/deactivate/category/{categoryId}")]
+        [Route("deactivate/category/{categoryId}")]
         public async Task<IActionResult> DeactivateACategorysRules([FromRoute] uint categoryId, CancellationToken ct)
         {
             var rulesIds = await _service.GetACategorysActiveRulesId(categoryId, ct);

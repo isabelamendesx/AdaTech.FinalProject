@@ -1,13 +1,13 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Model.Domain.Common;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
 using Model.Service.Services;
 using NSubstitute;
-using Rule = Model.Domain.Entities.Rule;
 using System.Linq.Expressions;
-using Microsoft.Extensions.Logging;
-using Model.Domain.Common;
+using Rule = Model.Domain.Entities.Rule;
 
 namespace ServicesTests
 {

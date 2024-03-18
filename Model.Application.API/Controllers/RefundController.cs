@@ -1,19 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Model.Service.Services;
-using Model.Domain.Entities;
+﻿using Identity.Constants;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Model.Application.API.DTO.Request;
+using Model.Application.API.DTO.Validators;
+using Model.Application.API.Extensions;
 using Model.Application.API.Util;
 using Model.Application.DTO.Validators;
-using IdempotentAPI.Filters;
-using Microsoft.AspNetCore.Authorization;
-using Identity.Constants;
+using Model.Domain.Entities;
 using Model.Domain.Interfaces;
-using Microsoft.AspNetCore.Http.Timeouts;
-using Serilog;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Model.Application.API.DTO.Request;
-using Model.Application.API.DTO.Response;
-using Model.Application.API.Extensions;
-using Model.Application.API.DTO.Validators;
 
 namespace Model.Application.API.Controllers
 {
@@ -64,7 +58,7 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpGet]
-        [Route("/status/{status}")]
+        [Route("status/{status}")]
         public async Task<ActionResult<IEnumerable<Refund?>>> GetAllByStatus([ValidateSubmittedStatus] string status,
                                                     [FromQuery] PaginationParametersDTO paginationParameters, CancellationToken ct)
         {
@@ -89,7 +83,7 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpPost]
-        [Route("/approve/{id}")]
+        [Route("approve/{id}")]
         [Authorize(Roles = Roles.Manager)]
         public async Task<IActionResult> ApproveRefund([FromRoute] uint id, CancellationToken ct)
         {
@@ -101,7 +95,7 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpPost]
-        [Route("/reject/{id}")]
+        [Route("reject/{id}")]
         [Authorize(Roles = Roles.Manager + "," + Roles.Supervisor)]
         public async Task<IActionResult> RejectRefund([FromRoute] uint id, CancellationToken ct)
         {
@@ -111,7 +105,7 @@ namespace Model.Application.API.Controllers
 
             return Ok(refund.ToDetailResponse());
         }
-
+            
         [HttpPost]
         [Route("/modify-refund/{id}/{status}")]
         [Authorize(Roles = Roles.Manager)]

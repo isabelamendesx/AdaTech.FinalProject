@@ -3,9 +3,7 @@ using Model.Domain.Common;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Infra.Data.Context;
-using Serilog;
 using System.Data;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace Model.Infra.Data.Repositories

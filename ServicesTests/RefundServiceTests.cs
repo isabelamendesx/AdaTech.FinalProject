@@ -9,7 +9,6 @@ using Model.Service.Services.DTO;
 using NSubstitute;
 using System.Linq.Expressions;
 
-
 namespace ServicesTests
 {
     public class RefundServiceTests

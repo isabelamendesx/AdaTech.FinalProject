@@ -135,47 +135,47 @@ Antes de iniciar, certifique-se de ter o seguinte instalado em sua máquina:
 A API fornece os seguintes endpoints:
 
 ```markdown
----------CATEGORY-----------
+--------- CATEGORY -----------
 
-POST /Category -
+POST /Category - Criar uma nova categoria
 
-GET /Category -
+GET /Category - Consultar todas as categorias
 
-GET /Category/{id} -
+GET /Category/{id} - Consultar a categoria correspondente ao Id fornecido
 
----------CATEGORY-----------
+--------- REFUND -----------
 
-POST /Refund -
+POST /Refund - Criar um novo documento de reembolso
 
-GET /Refund/{id} -
+GET /Refund/{id} - Consultar o reembolso correspondente ao Id fornecido
 
-GET /status/{status} -
+GET /Refund/status/{status} - Consultar todos os reembolsos com o status fornecido
 
-POST /approve/{id} -
+POST /Refund/approve/{id} - Aprovar o reembolso correspondente ao Id fornecido que está com o status **Em Aprovação**
 
-POST /reject/{id} -
+POST /reject/{id} - Reprovar o reembolso correspondente ao Id fornecido que está com o status **Em Aprovação**
 
-POST /modidy-refund/{id}/{status} - 
+POST /modify-refund/{id}/{status} - Alterar o status do reembolso correspondente ao Id fornecido já aprovado ou reprovado
 
 ---------RULE-----------
 
-GET /Rule/rule/{id} -
+GET /Rule/{id} - Consultar a regra correspondente ao Id fornecido
 
-GET /Rule -
+GET /Rule - Consultar todas as regras
 
-POST /Rule -
+POST /Rule - Criar uma nova regra
 
-POST /deactivate/{ruleId}-
+POST /Rule/deactivate/{ruleId}- Desativar a regra correspondente ao Id fornecido
 
-POST /deactivate/categor{categoryId} -
+POST /Rule/deactivate/category/{categoryId} - Desativar todas as regras da categoria correspondente ao Id fornecido
 
 ---------USER-----------
 
-POST /Refund -
+POST /User/register - Criar um novo usuário
 
-POST /modidy-refund/{id}/{status} -
+POST /User/login - Fazer login
 
-POST /User/refresh-login -
+POST /User/refresh-login - Dar refresh no login
 
 ````
 ## Motor de aprovação
@@ -186,6 +186,7 @@ Ele consiste em um método `GetRulesThatApplyToCategory` que, através do [Chain
 
 Ou seja, inicialmente o programa buscará as **regras que rejeitam o pedido para todas as classes**, depois a **regra que rejeita o pedido para a categoria específica**. Caso nesse ponto a requisição ainda não tenha sido recusada, o programa continua buscando, agora nas **regras que aprovam todas as categorias** e em seguida, as **regras que aprovam da categoria específica**, abrangendo todas as possibilidades. Caso nenhuma regra aplicável seja encontrada no bando de dados, a aplicação irá configurar o status da requisição como “Em aprovação” e só poderá ser modificado manualmente por um usuário responsável.
 
+![diagrama](https://github.com/isabelamendesx/AdaTech.FinalProject/assets/48605624/fe5155d0-8672-4146-814e-ed9ba8a6c926)
 
 
 ## Segurança

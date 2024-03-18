@@ -23,6 +23,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model.Infra.Data", "Model.I
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5 - Tests", "5 - Tests", "{4461B00B-51AF-4225-999A-44E51A732ECA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainTests", "DomainTests\DomainTests.csproj", "{C5790021-9CA0-4D8E-91C4-CBCF8862991B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{63D3426E-E8CD-4D84-96CB-BDC85E1F8339}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{CCB46EAA-6568-4F86-A3EE-3152E5939426}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity", "Identity\Identity.csproj", "{20204FDD-8D4E-409D-A040-CA6018CCBC52}"
@@ -51,6 +58,10 @@ Global
 		{C2232524-253E-4801-91DE-F5B893C5A9A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2232524-253E-4801-91DE-F5B893C5A9A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2232524-253E-4801-91DE-F5B893C5A9A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5790021-9CA0-4D8E-91C4-CBCF8862991B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5790021-9CA0-4D8E-91C4-CBCF8862991B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5790021-9CA0-4D8E-91C4-CBCF8862991B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5790021-9CA0-4D8E-91C4-CBCF8862991B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{20204FDD-8D4E-409D-A040-CA6018CCBC52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{20204FDD-8D4E-409D-A040-CA6018CCBC52}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20204FDD-8D4E-409D-A040-CA6018CCBC52}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -1,6 +1,4 @@
-﻿using Model.Domain.Entities;
-using System.ComponentModel;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Model.Application.API.DTO.Response
 {

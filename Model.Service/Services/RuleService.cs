@@ -1,10 +1,10 @@
-﻿using Rule = Model.Domain.Entities.Rule;
+﻿using Microsoft.Extensions.Logging;
+using Model.Domain.Common;
 using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
-using System.Data;
 using Model.Service.Services.Util;
-using Microsoft.Extensions.Logging;
-using Model.Domain.Common;
+using System.Data;
+using Rule = Model.Domain.Entities.Rule;
 
 namespace Model.Service.Services
 {

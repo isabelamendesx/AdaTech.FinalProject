@@ -1,28 +1,16 @@
-﻿using Model.Domain.Entities;
+﻿using Microsoft.Extensions.Logging;
+using Model.Domain.Common;
+using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
 using Model.Service.Services.DTO;
-using Model.Service.Services.Util;
-using Rule = Model.Domain.Entities.Rule;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Serilog;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Model.Service.Services.Handlers;
-using Model.Domain.Common;
 
 namespace Model.Service.Services
 {
     public class RefundService : IRefundService
     {
         private IRepository<Refund> _repository;
-        private IRepository<RefundOperation> _operationRepository;
         private IRuleService _ruleService;
         private ICategoryService _categoryService;
         private readonly ILogger<RefundService> _logger;
@@ -32,7 +20,6 @@ namespace Model.Service.Services
             ICategoryService categoryService, ILogger<RefundService> logger)
         {
             _repository = repository;
-            _operationRepository = operationRepository;
             _ruleService = ruleService;
             _categoryService = categoryService;
             _logger = logger;
@@ -53,7 +40,7 @@ namespace Model.Service.Services
             refund.Status = processResult.Status;
             refund.CreateDate = DateTime.UtcNow;
 
-            RefundOperation op = new RefundOperation()
+            var op = new RefundOperation()
             {
                 UpdateDate = DateTime.UtcNow,
                 ApprovedBy = "0"
@@ -79,13 +66,13 @@ namespace Model.Service.Services
 
         public async Task<Refund> ApproveRefund(uint Id, string userId, CancellationToken ct)
         {
-            var refund = await _repository.GetById(Id, ct);
+            var refund = await GetById(Id, ct);
 
             if(refund.Status != EStatus.UnderEvaluation)
                 throw new InvalidRefundException("The refund can only be approved if the status is UnderEvaluation.");
 
             refund.Status = EStatus.Approved;
-            RefundOperation op = new RefundOperation()
+            var op = new RefundOperation()
             {
                 UpdateDate = DateTime.UtcNow,
                 ApprovalRule = null,
@@ -101,14 +88,14 @@ namespace Model.Service.Services
 
         public async Task<Refund> RejectRefund(uint Id, string userId, CancellationToken ct)
         {
-            var refund = await _repository.GetById(Id, ct);
+            var refund = await GetById(Id, ct);
 
             if (refund.Status != EStatus.UnderEvaluation)
                 throw new InvalidRefundException("The refund can only be rejected if the status is UnderEvaluation.");
 
             refund.Status = EStatus.Rejected;
 
-            RefundOperation op = new RefundOperation()
+            var op = new RefundOperation
             {
                 UpdateDate = DateTime.UtcNow,
                 ApprovalRule = null,
@@ -127,7 +114,7 @@ namespace Model.Service.Services
 
             refund.Status = status;
 
-            RefundOperation op = new RefundOperation()
+            var op = new RefundOperation()
             {
                 UpdateDate = DateTime.UtcNow,
                 ApprovalRule = null,
@@ -155,7 +142,7 @@ namespace Model.Service.Services
             return await _repository.GetPaginatedByParameter(ct, skip, take);
         }
 
-        public async Task<Refund?> GetById(uint id, CancellationToken ct)
+        public async Task<Refund> GetById(uint id, CancellationToken ct)
         {
             var refund = await _repository.GetById(id, ct);
 

@@ -39,7 +39,7 @@ namespace Model.Service.Services
         {
             refund.Category = await _categoryService.GetById(refund.Category.Id, ct);
 
-            if (refund.Category is null)
+            if (refund.Category is null || refund.Category.Id == 0)
             {
                 _logger.LogWarning("Attempted to create a refund with an invalid category.");
                 throw new ResourceNotFoundException("category");

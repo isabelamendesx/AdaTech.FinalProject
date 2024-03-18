@@ -50,7 +50,7 @@ namespace Model.Application.API.Controllers
         }
 
         [HttpGet]
-        [Route("/category/{id}")]
+        [Route("{id}")]
         public async Task<IActionResult> GetById([FromRoute] uint id, CancellationToken ct)
         {
             var category = await _service.GetById(id, ct);      

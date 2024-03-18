@@ -275,11 +275,11 @@ namespace ServicesTests
             var expectedTotalCount = 10;
             var expectedRules = ListOfRules();
 
-            var expextedPaginatedResult = new PaginatedResult<Rule> { TotalCount = expectedTotalCount, Items = ListOfRules() };
+            var expectedPaginatedResult = new PaginatedResult<Rule> { TotalCount = expectedTotalCount, Items = expectedRules };
 
 
             _repository.GetPaginatedByParameter(ct, Arg.Any<int>(), Arg.Any<int>(), Arg.Any<Expression<Func<Rule, bool>>>())
-                      .Returns(Task.FromResult(expextedPaginatedResult));
+                      .Returns(Task.FromResult(expectedPaginatedResult));
 
             var result = await _sut.GetAllPaginated(ct, skip: 0, take: 10);
 

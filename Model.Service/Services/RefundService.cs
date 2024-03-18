@@ -15,9 +15,8 @@ namespace Model.Service.Services
         private ICategoryService _categoryService;
         private readonly ILogger<RefundService> _logger;
 
-        public RefundService(IRepository<Refund> repository, 
-            IRepository<RefundOperation> operationRepository, IRuleService ruleService, 
-            ICategoryService categoryService, ILogger<RefundService> logger)
+        public RefundService(IRepository<Refund> repository, IRuleService ruleService, 
+                             ICategoryService categoryService, ILogger<RefundService> logger)
         {
             _repository = repository;
             _ruleService = ruleService;
@@ -68,7 +67,13 @@ namespace Model.Service.Services
         {
             var refund = await GetById(Id, ct);
 
-            if(refund.Status != EStatus.UnderEvaluation)
+            if (refund is null)
+            {
+                _logger.LogWarning("Attempted to approve a refund with an invalid ID.");
+                throw new ResourceNotFoundException("Refund");
+            }
+
+            if (refund.Status != EStatus.UnderEvaluation)
                 throw new InvalidRefundException("The refund can only be approved if the status is UnderEvaluation.");
 
             refund.Status = EStatus.Approved;
@@ -110,8 +115,8 @@ namespace Model.Service.Services
 
         public async Task<Refund> ChangeRefundStatus(uint Id, EStatus status, string userId, CancellationToken ct)
         {
-            var refund = await _repository.GetById(Id, ct);
-
+            var refund = await GetById(Id, ct);
+            
             refund.Status = status;
 
             var op = new RefundOperation()

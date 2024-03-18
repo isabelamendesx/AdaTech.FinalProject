@@ -8,10 +8,10 @@ namespace Model.Application.API.Filters.Model
         public string Message { get; set; }
         public string? Details { get; set; }
         public DateTime TimeStamp { get; set; }
-        public string RequestPath { get; set; }
+        public string? RequestPath { get; set; }
         public uint? ConflictingRuleId { get; set; }
         public uint? ConflictingCategoryId { get; set; }
         public int StatusCode { get; set; }
-        public IDictionary<string, string[]> Errors { get; set; }
+        public IDictionary<string, string[]>? Errors { get; set; }
     }
 }

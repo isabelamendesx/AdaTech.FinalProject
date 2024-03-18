@@ -1,72 +1,83 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Model.Domain.Common;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Infra.Data.Context;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Model.Infra.Data.Repositories
 {
     public class RefundRepository : IRepository<Refund>
     {
         private readonly DataContext _context;
-        private readonly ILogger _logger;
 
-        public RefundRepository(DataContext context, ILogger logger)
+        public RefundRepository(DataContext context)
         {
             _context = context;
-            _logger = logger;
         }
 
-
-        public async Task<Refund> AddAsync(Refund refund)
+        public async Task<Refund> AddAsync(Refund refund, CancellationToken ct)
         {
             await _context.Refunds.AddAsync(refund);
             await _context.SaveChangesAsync();
             return refund;
         }
 
-        public async Task UpdateAsync(Refund refund)
+        public async Task UpdateAsync(Refund refund, CancellationToken ct)
         {
-            try
-            {
-                _context.Update(refund);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(ex, "An error occurred while updating the refund. Details: {ErrorMessage}", ex.Message);
-                throw new DbUpdateException("Error updating refund. See inner exception for details.", ex);
-            }
+            _context.Refunds.Update(refund);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Refund?>> GetByParameter(Expression<Func<Refund, bool>> filter)
+        public async Task<IEnumerable<Refund?>> GetByParameter(CancellationToken ct, Expression<Func<Refund, bool>> filter = null)
         {
-            try
-            {
                 var query = _context.Refunds.AsQueryable();
 
                 if (filter != null)
                 {
                     query = query
                          .Where(filter)
-                         .AsNoTracking();
+                         .AsNoTrackingWithIdentityResolution();
                 }
 
-                return await query.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while trying to fetch Refunds with filter: {FilterExpression}", filter?.ToString() ?? "No filter applied");
-                throw;
-            }
+                return await query.Include(x => x.Category)
+                    .Include(x => x.Operations)
+                    .ThenInclude(x => x.ApprovalRule)
+                    .ThenInclude(x => x.Category)
+                    .ToListAsync();
         }
 
-        public Task<Refund?> GetById(int Id) => _context.Refunds.FirstOrDefaultAsync(x => x.Id == Id);
+        public async Task<Refund?> GetById(uint Id, CancellationToken ct)
+               => await _context.Refunds
+                                .Include(x => x.Category)
+                                .Include(x => x.Operations)
+                                .ThenInclude(x => x.ApprovalRule)
+                                .ThenInclude(x => x.Category)
+                                .FirstOrDefaultAsync(x => x.Id == Id);
+            
+
+        public async Task<PaginatedResult<Refund>> GetPaginatedByParameter(CancellationToken ct, int skip, int take, Expression<Func<Refund, bool>> filter = null)
+        {
+            var query = _context.Refunds.AsQueryable();
+
+            int totalCount = 0;
+
+            if (filter != null)
+            {
+                query = query
+                     .Where(filter)
+                     .AsNoTrackingWithIdentityResolution();
+
+            }
+
+            var items = await query
+                        .Skip(skip)
+                        .Take(take)
+                        .ToListAsync(ct);
+
+            totalCount = await query.CountAsync(ct);
+
+            return new PaginatedResult<Refund> { TotalCount = totalCount, Items = items };
+        }
     }
 }

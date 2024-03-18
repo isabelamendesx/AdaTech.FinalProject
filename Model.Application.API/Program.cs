@@ -1,12 +1,5 @@
-
-using Microsoft.AspNetCore.DataProtection.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Model.Application.API.Filters;
-using Model.Domain.Entities;
-using Model.Domain.Interfaces;
-using Model.Infra.Data.Context;
-using Model.Infra.Data.Repositories;
-using Model.Service.Services;
+using Model.Application.API.Extensions;
+using Serilog;
 
 namespace Model.Application.API
 {
@@ -16,40 +9,34 @@ namespace Model.Application.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            builder.Host.UseSerilog((context, loggerConfig) =>
+            loggerConfig.ReadFrom.Configuration(context.Configuration));
 
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
-            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-            builder.Services.AddProblemDetails();
-
-            builder.Services.AddDbContext<DataContext>(options =>
-            {
-                options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
-
-            builder.Services.AddScoped<IRefundService, RefundService>();
-            builder.Services.AddScoped<IRepository<Refund>, RefundRepository>();
-            builder.Services.AddScoped<ILogger, Logger<Refund>>();
+            builder.Services
+                .AddConfig(builder.Configuration)
+                .AddDB(builder.Configuration)
+                .AddInterfaces()
+                .UseTimeouts();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            app.UseExceptionHandler();
+            app.UseCors("AllowOrigin");
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            app.UseSerilogRequestLogging();
 
+            app.UseRequestTimeouts();
+
+            app.UseAuthentication();
+
+            app.UseAuthorization();
 
             app.MapControllers();
 
@@ -57,3 +44,4 @@ namespace Model.Application.API
         }
     }
 }
+

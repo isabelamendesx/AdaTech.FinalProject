@@ -20,21 +20,6 @@ namespace Model.Application.API.Util
             return parsedStatus;
         }
 
-        public static ECategory ParseCategory(string category)
-        {
-            var CategoryMap = new Dictionary<string, ECategory>(StringComparer.OrdinalIgnoreCase)
-            {
-                    { "accomodation", ECategory.Accomodation },
-                    { "transportation", ECategory.Transportation },
-                    { "travel", ECategory.Travel },
-                    { "food", ECategory.Food },
-                    { "others", ECategory.Others }
-            };
-
-            CategoryMap.TryGetValue(category, out var parsedCategory);
-
-            return parsedCategory;
-        }
 
 
     }

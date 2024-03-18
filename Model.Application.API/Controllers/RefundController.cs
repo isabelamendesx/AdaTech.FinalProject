@@ -1,62 +1,123 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Model.Service.Services;
-using Model.Application.DTO;
-using Model.Domain.Entities;
+﻿using Identity.Constants;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Model.Application.API.DTO.Request;
+using Model.Application.API.DTO.Validators;
+using Model.Application.API.Extensions;
 using Model.Application.API.Util;
 using Model.Application.DTO.Validators;
+using Model.Domain.Entities;
+using Model.Domain.Interfaces;
 
 namespace Model.Application.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class RefundController : ControllerBase
+    [Authorize]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+    public class RefundController : BaseController
     {
         private readonly IRefundService _service;
-
-        public RefundController(IRefundService service)
+        private readonly ILogger<RefundController> _logger;
+        
+        public RefundController(IRefundService service, ILogger<RefundController> logger)
         {
             _service = service;
+            _logger = logger;   
         }
 
+        
         [HttpPost]
-        public async Task<IActionResult> CreateRefund([FromBody] RefundRequestDto request)
+        //[Idempotent(ExpiresInMilliseconds = 10000)]
+        public async Task<IActionResult> CreateRefund(/*[FromHeader] string IdempotencyKey*/ [FromBody] RefundRequestDto request, CancellationToken ct)            
         {
+            ValidateWithDataAnotation();
+
             var refund = new Refund()
             {
                 Description = request.Description,
-                Category = EnumParser.ParseCategory(request.Category),
+                Category = new Category { Id = request.CategoryId },
                 Status = EnumParser.ParseStatus(request.Status),
-                Total = request.Total
+                Total = request.Total,
+                OwnerID = GetUserId()
             };
 
-            var createdRefund = await _service.CreateRefund(refund);
+            var createdRefund = await _service.CreateRefund(refund, ct);
+            _logger.LogInformation("New Refund Submitted and {@Status}", createdRefund.Status);
 
-            return Ok(createdRefund);
+            return Ok(createdRefund.ToResponse());
         }
 
         [HttpGet]
-        [Route("{status}")]
-        public async Task<ActionResult<IEnumerable<Refund?>>> GetAllByStatus([ValidateStatus] string status)
+        [Route("{id}")]
+        public async Task<IActionResult> GetById([FromRoute] uint id, CancellationToken ct)
+        {
+            var refund = await _service.GetById(id, ct);
+            return Ok(refund!.ToDetailResponse());
+        }
+
+        [HttpGet]
+        [Route("status/{status}")]
+        public async Task<ActionResult<IEnumerable<Refund?>>> GetAllByStatus([ValidateSubmittedStatus] string status,
+                                                    [FromQuery] PaginationParametersDTO paginationParameters, CancellationToken ct)
         {
             var parsedStatus = EnumParser.ParseStatus(status);
 
-            return Ok(await _service.GetAllByStatus(parsedStatus));
+            if (paginationParameters.PageNumber == 0 || paginationParameters.PageSize == 0)
+                return Ok(await _service.GetAllByStatus(parsedStatus, ct));
+
+            var skip = paginationParameters.PageSize * (paginationParameters.PageNumber - 1);
+
+            var paginatedCategories = await _service.GetAllByStatusPaginated(
+                    parsedStatus,
+                    ct,
+                    skip,
+                    paginationParameters.PageSize
+                );
+
+            var response = PaginationResponseGenerator.GetPaginatedResponse
+                                    (paginatedCategories, paginationParameters);
+
+            return Ok(response);
         }
 
         [HttpPost]
-        [Route("/approve/{id}")]
-        public async Task<IActionResult> ApproveRefund([FromRoute] int id)
+        [Route("approve/{id}")]
+        [Authorize(Roles = Roles.Manager)]
+        public async Task<IActionResult> ApproveRefund([FromRoute] uint id, CancellationToken ct)
         {
-            var refund = await _service.ApproveRefund(id);
-            return Ok(refund);
+            var userId = GetUserId();
+
+            var refund = await _service.ApproveRefund(id, userId, ct);
+
+            return Ok(refund.ToDetailResponse());
         }
 
         [HttpPost]
-        [Route("/refuse/{id}")]
-        public async Task<IActionResult> RefuseRefund([FromRoute] int id)
+        [Route("reject/{id}")]
+        [Authorize(Roles = Roles.Manager + "," + Roles.Supervisor)]
+        public async Task<IActionResult> RejectRefund([FromRoute] uint id, CancellationToken ct)
         {
-            var refund = await _service.RefuseRefund(id);
-            return Ok(refund);
+            var userId = GetUserId();
+
+            var refund = await _service.RejectRefund(id, userId, ct);
+
+            return Ok(refund.ToDetailResponse());
+        }
+            
+        [HttpPost]
+        [Route("modify-refund/{id}/{status}")]
+        [Authorize(Roles = Roles.Manager)]
+        public async Task<IActionResult> ChangeRefundStatus([FromRoute] uint id, [ValidateStatus] string status, CancellationToken ct)
+        {
+            var userId = GetUserId();
+
+            var parsedStatus = EnumParser.ParseStatus(status);
+
+            var refund = await _service.ChangeRefundStatus(id, parsedStatus, userId, ct); 
+
+            return Ok(refund.ToDetailResponse());
         }
 
     }

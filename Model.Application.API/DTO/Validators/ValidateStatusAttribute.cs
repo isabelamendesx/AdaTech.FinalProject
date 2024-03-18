@@ -1,7 +1,7 @@
 ﻿using Model.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace Model.Application.DTO.Validators
+namespace Model.Application.API.DTO.Validators
 {
     public class ValidateStatusAttribute : ValidationAttribute
     {

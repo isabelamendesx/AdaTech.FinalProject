@@ -67,12 +67,6 @@ namespace Model.Service.Services
         {
             var refund = await GetById(Id, ct);
 
-            if (refund is null)
-            {
-                _logger.LogWarning("Attempted to approve a refund with an invalid ID.");
-                throw new ResourceNotFoundException("Refund");
-            }
-
             if (refund.Status != EStatus.UnderEvaluation)
                 throw new InvalidRefundException("The refund can only be approved if the status is UnderEvaluation.");
 

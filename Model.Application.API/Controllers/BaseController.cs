@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Microsoft.AspNetCore.Mvc;
 using Model.Service.Exceptions;
 using System.Security.Claims;
 
@@ -14,7 +12,7 @@ namespace Model.Application.API.Controllers
                 throw new ValidationException(ModelState);
         }
 
-        protected string GetUserId()
+        protected string? GetUserId()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             return identity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;

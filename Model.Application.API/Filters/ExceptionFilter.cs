@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Model.Application.API.Filters.Model;
 using Model.Service.Exceptions;
-using Newtonsoft.Json;
 using System.Net;
-using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -38,7 +35,7 @@ namespace Model.Application.API.Filters
 
             if (context.Exception is ValidationException validationEx)
                 errorResultBuilder
-                    .WithErrors(validationEx.Errors);
+                    .WithValidationErrors(validationEx.Errors);
 
             var errorResult = errorResultBuilder.Build();
             var ignoreNullFields = new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };

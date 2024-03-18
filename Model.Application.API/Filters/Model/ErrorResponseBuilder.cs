@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Model.Service.Exceptions;
-using System.Net;
 
 namespace Model.Application.API.Filters.Model
 {
@@ -50,14 +47,16 @@ namespace Model.Application.API.Filters.Model
             _errorResponse.Details = details;
             return this;
         }
+
+        public void WithValidationErrors(IDictionary<string, string[]> Errors)
+        {
+            _errorResponse.Errors = Errors;
+        }
+
         public ErrorResponse Build()
         {
             return _errorResponse;
         }
 
-        public void WithErrors(IDictionary<string, string[]> Errors)
-        {
-            _errorResponse.Errors = Errors;
-        }
     }
 }

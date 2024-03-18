@@ -1,21 +1,10 @@
-﻿using Model.Domain.Entities;
+﻿using Microsoft.Extensions.Logging;
+using Model.Domain.Common;
+using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
 using Model.Service.Services.DTO;
-using Model.Service.Services.Util;
-using Rule = Model.Domain.Entities.Rule;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Serilog;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Model.Service.Services.Handlers;
-using Model.Domain.Common;
 
 namespace Model.Service.Services
 {
@@ -50,7 +39,7 @@ namespace Model.Service.Services
             refund.Status = processResult.Status;
             refund.CreateDate = DateTime.UtcNow;
 
-            RefundOperation op = new RefundOperation()
+            var op = new RefundOperation()
             {
                 UpdateDate = DateTime.UtcNow,
                 ApprovedBy = "0"
@@ -88,7 +77,7 @@ namespace Model.Service.Services
                 throw new InvalidRefundException("The refund can only be approved if the status is UnderEvaluation.");
 
             refund.Status = EStatus.Approved;
-            RefundOperation op = new RefundOperation()
+            var op = new RefundOperation()
             {
                 UpdateDate = DateTime.UtcNow,
                 ApprovalRule = null,
@@ -111,7 +100,7 @@ namespace Model.Service.Services
 
             refund.Status = EStatus.Rejected;
 
-            RefundOperation op = new RefundOperation()
+            var op = new RefundOperation
             {
                 UpdateDate = DateTime.UtcNow,
                 ApprovalRule = null,
@@ -130,7 +119,7 @@ namespace Model.Service.Services
             
             refund.Status = status;
 
-            RefundOperation op = new RefundOperation()
+            var op = new RefundOperation()
             {
                 UpdateDate = DateTime.UtcNow,
                 ApprovalRule = null,
@@ -158,7 +147,7 @@ namespace Model.Service.Services
             return await _repository.GetPaginatedByParameter(ct, skip, take);
         }
 
-        public async Task<Refund?> GetById(uint id, CancellationToken ct)
+        public async Task<Refund> GetById(uint id, CancellationToken ct)
         {
             var refund = await _repository.GetById(id, ct);
 

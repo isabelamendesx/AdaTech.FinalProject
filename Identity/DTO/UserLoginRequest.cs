@@ -1,5 +1,4 @@
-﻿using System.Collections.Specialized;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Identity.DTO
 {

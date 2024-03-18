@@ -1,12 +1,8 @@
 ﻿using Identity.DTO;
 using Identity.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Mvc;
-using Model.Domain.Interfaces;
 using Model.Service.Exceptions;
-using Serilog;
-using System.Security.Claims;
 
 namespace Model.Application.API.Controllers
 {

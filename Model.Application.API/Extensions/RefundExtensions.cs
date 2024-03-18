@@ -1,6 +1,5 @@
 ﻿using Model.Application.API.DTO.Response;
 using Model.Domain.Entities;
-using System.Runtime.CompilerServices;
 
 namespace Model.Application.API.Extensions
 {

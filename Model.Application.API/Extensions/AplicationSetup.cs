@@ -3,18 +3,14 @@ using IdempotentAPI.Extensions.DependencyInjection;
 using Identity;
 using Identity.Interfaces;
 using Identity.Services;
-using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Model.Application.API.Filters;
-using Model.Application.API.Util;
 using Model.Domain.Entities;
 using Model.Domain.Interfaces;
 using Model.Infra.Data.Context;
 using Model.Infra.Data.Repositories;
 using Model.Service.Services;
-using System.Net;
 using Way2Commerce.Api.Extensions;
 
 namespace Model.Application.API.Extensions
@@ -31,6 +27,7 @@ namespace Model.Application.API.Extensions
             {
                 options.SuppressModelStateInvalidFilter = true;
             });   
+
             services.AddSwagger();
             services.AddAuthorizationPolicies();
             services.AddAuthentication(config);

@@ -1,7 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Reflection;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace Way2Commerce.Api.Extensions;
 

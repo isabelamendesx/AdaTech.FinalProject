@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-using Identity.Interfaces;
+﻿using Identity.Configuration;
 using Identity.DTO;
-using System.IdentityModel.Tokens.Jwt;
-using Identity.Configuration;
+using Identity.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace Identity.Services

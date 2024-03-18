@@ -94,7 +94,7 @@ namespace Model.Application.API.Controllers
 
         [Authorize(Roles = Roles.Manager)]
         [HttpPost]
-        [Route("/deactivate/{ruleId}")]
+        [Route("deactivate/{ruleId}")]
         public async Task<IActionResult> DeactivateRule([FromRoute] uint ruleId, CancellationToken ct)
         {
             var deactivate = await _service.DeactivateRule(ruleId, ct);
@@ -116,7 +116,7 @@ namespace Model.Application.API.Controllers
 
         [Authorize(Roles = Roles.Manager)]
         [HttpPost]
-        [Route("/deactivate/category/{categoryId}")]
+        [Route("deactivate/category/{categoryId}")]
         public async Task<IActionResult> DeactivateACategorysRules([FromRoute] uint categoryId, CancellationToken ct)
         {
             var rulesIds = await _service.GetACategorysActiveRulesId(categoryId, ct);

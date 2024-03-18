@@ -1,5 +1,4 @@
-﻿using Model.Domain.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Model.Application.API.DTO.Validators
 {

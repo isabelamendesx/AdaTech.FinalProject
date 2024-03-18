@@ -1,5 +1,4 @@
 ﻿using Model.Application.API.DTO.Validators;
-using Model.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 

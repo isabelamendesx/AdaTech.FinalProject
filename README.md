@@ -137,45 +137,45 @@ A API fornece os seguintes endpoints:
 ```markdown
 ---------CATEGORY-----------
 
-POST /Category -
+POST /Category - Criar uma nova categoria
 
-GET /Category -
+GET /Category - Consultar todas as categorias
 
-GET /Category/{id} -
+GET /Category/{id} - Consultar a categoria correspondente ao Id fornecido
 
 ---------CATEGORY-----------
 
-POST /Refund -
+POST /Refund - Criar um novo documento de reembolso
 
-GET /Refund/{id} -
+GET /Refund/{id} - Consultar o reembolso correspondente ao Id fornecido
 
-GET /status/{status} -
+GET /Refund/status/{status} - Consultar todos os reembolsos com o status fornecido
 
-POST /approve/{id} -
+POST /Refund/approve/{id} - Aprovar o reembolso correspondente ao Id fornecido que está com o status **Em Aprovação**
 
-POST /reject/{id} -
+POST /reject/{id} - Reprovar o reembolso correspondente ao Id fornecido que está com o status **Em Aprovação**
 
-POST /modidy-refund/{id}/{status} - 
+POST /modidy-refund/{id}/{status} - Alterar o status do reembolso correspondente ao Id fornecido já aprovado ou reprovado
 
 ---------RULE-----------
 
-GET /Rule/rule/{id} -
+GET /Rule/{id} - Consultar a regra correspondente ao Id fornecido
 
-GET /Rule -
+GET /Rule - Consultar todas as regras
 
-POST /Rule -
+POST /Rule - Criar uma nova regra
 
-POST /deactivate/{ruleId}-
+POST /Rule/deactivate/{ruleId}- Desativar a regra correspondente ao Id fornecido
 
-POST /deactivate/categor{categoryId} -
+POST /Rule/deactivate/category/{categoryId} - Desativar todas as regras da categoria correspondente ao Id fornecido
 
 ---------USER-----------
 
-POST /Refund -
+POST /User/register - Criar um novo usuário
 
-POST /modidy-refund/{id}/{status} -
+POST /User/login - Fazer login
 
-POST /User/refresh-login -
+POST /User/refresh-login - Dar refresh no login
 
 ````
 ## Motor de aprovação

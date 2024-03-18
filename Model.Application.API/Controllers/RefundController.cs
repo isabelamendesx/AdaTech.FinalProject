@@ -113,7 +113,7 @@ namespace Model.Application.API.Controllers
         }
             
         [HttpPost]
-        [Route("modidy-refund/{id}/{status}")]
+        [Route("modify-refund/{id}/{status}")]
         [Authorize(Roles = Roles.Manager)]
         public async Task<IActionResult> ChangeRefundStatus([FromRoute] uint id, [ValidateStatus] string status, CancellationToken ct)
         {

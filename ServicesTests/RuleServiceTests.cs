@@ -16,6 +16,7 @@ namespace ServicesTests
         private RuleService _sut;
 
         private IRepository<Rule> _repository;
+        private ICategoryService _categoryService;
         private ILogger<RuleService> _logger;
         private CancellationToken ct;
 
@@ -24,8 +25,9 @@ namespace ServicesTests
             ct = new CancellationToken();
             _repository = Substitute.For<IRepository<Rule>>();
             _logger = Substitute.For<ILogger<RuleService>>();
+            _categoryService = Substitute.For<ICategoryService>();
 
-            _sut = new RuleService(_repository, _logger);
+            _sut = new RuleService(_repository, _categoryService, _logger);
         }
 
         [Fact]

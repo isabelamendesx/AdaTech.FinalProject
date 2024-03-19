@@ -12,10 +12,16 @@ namespace Model.Application.API.Controllers
                 throw new ValidationException(ModelState);
         }
 
-        protected string? GetUserId()
+        protected string GetUserId()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
-            return identity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var userId = identity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null)
+                throw new UnauthorizedAccessException();
+
+            return userId;  
         }
 
     }

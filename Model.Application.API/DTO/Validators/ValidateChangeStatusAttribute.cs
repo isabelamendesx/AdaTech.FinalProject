@@ -8,12 +8,12 @@ namespace Model.Application.API.DTO.Validators
         {
             List<string> possibleStatus = new List<string>()
             {
-                "submitted",
+                "underevaluation",
                 "approved",
                 "rejected"
             };
             if (value == null || !possibleStatus.Contains(value.ToString().ToLower()))
-                return new ValidationResult("Only refunds with status 'Submitted' can be created.");
+                return new ValidationResult("You can only change the status to 'UnderEvaluation', 'Approved' or 'Rejected'.");
 
             return ValidationResult.Success;
         }

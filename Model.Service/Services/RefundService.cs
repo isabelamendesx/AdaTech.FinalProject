@@ -67,40 +67,25 @@ namespace Model.Service.Services
         {
             var refund = await GetById(Id, ct);
 
-            if (refund.Status != EStatus.UnderEvaluation)
-                throw new InvalidRefundException("The refund can only be approved if the status is UnderEvaluation.");
-
+            ValidateIfRefundCanBeApprovedOrRejected(refund.Status);
+            
             refund.Status = EStatus.Approved;
-            var op = new RefundOperation()
-            {
-                UpdateDate = DateTime.UtcNow,
-                ApprovalRule = null,
-                ApprovedBy = userId
-            };
 
-            refund.Operations.Add(op);
+            AddRefundOperationToRefund(refund, userId);
 
             await _repository.UpdateAsync(refund, ct);
 
             return refund;      
         }
-
         public async Task<Refund> RejectRefund(uint Id, string userId, CancellationToken ct)
         {
             var refund = await GetById(Id, ct);
 
-            if (refund.Status != EStatus.UnderEvaluation)
-                throw new InvalidRefundException("The refund can only be rejected if the status is UnderEvaluation.");
+            ValidateIfRefundCanBeApprovedOrRejected(refund.Status);
 
             refund.Status = EStatus.Rejected;
 
-            var op = new RefundOperation
-            {
-                UpdateDate = DateTime.UtcNow,
-                ApprovalRule = null,
-                ApprovedBy = userId
-            };
-            refund.Operations.Add(op);
+            AddRefundOperationToRefund(refund, userId);
 
             await _repository.UpdateAsync(refund, ct);
 
@@ -113,14 +98,7 @@ namespace Model.Service.Services
             
             refund.Status = status;
 
-            var op = new RefundOperation()
-            {
-                UpdateDate = DateTime.UtcNow,
-                ApprovalRule = null,
-                ApprovedBy = userId
-            };
-
-            refund.Operations.Add(op);
+            AddRefundOperationToRefund(refund, userId);
 
             await _repository.UpdateAsync(refund, ct);
 
@@ -153,5 +131,23 @@ namespace Model.Service.Services
 
             return refund;
         }
+
+        private void AddRefundOperationToRefund(Refund refund, string userId)
+        {
+            var op = new RefundOperation
+            {
+                UpdateDate = DateTime.UtcNow,
+                ApprovalRule = null,
+                ApprovedBy = userId
+            };
+            refund.Operations.Add(op);
+        }
+
+        private void ValidateIfRefundCanBeApprovedOrRejected(EStatus status)
+        {
+            if (status != EStatus.UnderEvaluation)
+                throw new InvalidRefundException("The refund can only be approved or rejected if the status is UnderEvaluation.");
+        }
+
     }
 }

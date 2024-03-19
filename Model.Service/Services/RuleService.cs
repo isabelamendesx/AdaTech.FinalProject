@@ -11,11 +11,13 @@ namespace Model.Service.Services
     public class RuleService : IRuleService
     {
         private readonly IRepository<Rule> _ruleRepository;
+        private readonly ICategoryService _categoryService;
         private readonly ILogger<RuleService> _logger;
 
-        public RuleService(IRepository<Rule> repository, ILogger<RuleService> logger)
+        public RuleService(IRepository<Rule> repository, ICategoryService categoryService, ILogger<RuleService> logger)
         {
             _ruleRepository = repository;
+            _categoryService = categoryService;
             _logger = logger;
         }
         public async Task<Rule?> GetById(uint id, CancellationToken ct)
@@ -37,6 +39,8 @@ namespace Model.Service.Services
         public async Task<Rule> CreateRule(Rule rule, CancellationToken ct)
         {
             List<Rule?> existingRules;
+
+            var category = await _categoryService.GetById(rule.Category.Id, ct);
 
             if (rule.Category.Id == 0)
                 existingRules = (List<Rule?>)await _ruleRepository.GetByParameter(ct, x => x.IsActive);

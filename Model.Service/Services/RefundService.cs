@@ -26,13 +26,13 @@ namespace Model.Service.Services
 
         public async Task<Refund> CreateRefund(Refund refund, CancellationToken ct)
         {
-            refund.Category = await _categoryService.GetById(refund.Category.Id, ct);
-
-            if (refund.Category is null || refund.Category.Id == 0)
+            if (refund.Category.Id == 0)
             {
                 _logger.LogWarning("Attempted to create a refund with an invalid category.");
                 throw new ResourceNotFoundException("category");
             }
+
+            refund.Category = await _categoryService.GetById(refund.Category.Id, ct);
 
             var processResult = await ProcessRefund(refund.Category.Id, refund.Total, ct);
 

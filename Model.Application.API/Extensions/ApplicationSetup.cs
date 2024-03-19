@@ -15,7 +15,7 @@ using Way2Commerce.Api.Extensions;
 
 namespace Model.Application.API.Extensions
 {
-    public static class AplicationSetup
+    public static class ApplicationSetup
     {
         public static IServiceCollection AddConfig(this IServiceCollection services, IConfiguration config) 
         {

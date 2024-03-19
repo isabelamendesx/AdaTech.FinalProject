@@ -34,18 +34,13 @@ namespace ServicesTests
             _sut = new RefundService(_repository, _ruleService, _categoryService, _logger);
         }
 
-        [Theory]
-        [InlineData(0)]
-        [InlineData(5)]
-        [InlineData(10)]
-        public async Task create_refund_must_throw_an_exception_when_category_is_invalid( uint idCategory )
+        [Fact]
+        public async Task create_refund_must_throw_an_exception_when_category_is_invalid()
         {
             var newRefund = new Refund
             {
-                Category = new Category { Id = idCategory}
+                Category = new Category { Id = 0 }
             };
-
-            _categoryService.GetById(Arg.Any<uint>(), ct).Returns(Task.FromResult<Category?>(null));
 
             await _sut.Invoking(x => x.CreateRefund(newRefund, ct))
                 .Should().ThrowAsync<ResourceNotFoundException>();

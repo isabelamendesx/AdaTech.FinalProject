@@ -1,4 +1,5 @@
-﻿using Identity.Constants;
+﻿using IdempotentAPI.Filters;
+using Identity.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.Application.API.DTO.Request;
@@ -31,8 +32,8 @@ namespace Model.Application.API.Controllers
 
         
         [HttpPost]
-        //[Idempotent(ExpiresInMilliseconds = 10000)]
-        public async Task<IActionResult> CreateRefund(/*[FromHeader] string IdempotencyKey*/ [FromBody] RefundRequestDto request, CancellationToken ct)            
+        [Idempotent(ExpiresInMilliseconds = 30000)]
+        public async Task<IActionResult> CreateRefund([FromHeader] string IdempotencyKey, [FromBody] RefundRequestDto request, CancellationToken ct)            
         {
             ValidateWithDataAnotation();
 
@@ -61,7 +62,7 @@ namespace Model.Application.API.Controllers
 
         [HttpGet]
         [Route("status/{status}")]
-        public async Task<ActionResult<IEnumerable<Refund?>>> GetAllByStatus([ValidateSubmittedStatus] string status,
+        public async Task<ActionResult<IEnumerable<Refund?>>> GetAllByStatus([ValidateStatus] string status,
                                                     [FromQuery] PaginationParametersDTO paginationParameters, CancellationToken ct)
         {
             var parsedStatus = EnumParser.ParseStatus(status);
@@ -124,7 +125,7 @@ namespace Model.Application.API.Controllers
         [HttpPost]
         [Route("modify-refund/{id}/{status}")]
         [Authorize(Roles = Roles.Manager)]
-        public async Task<IActionResult> ChangeRefundStatus([FromRoute] uint id, [ValidateStatus] string status, CancellationToken ct)
+        public async Task<IActionResult> ChangeRefundStatus([FromRoute] uint id, [ValidateChangeStatusAttribute] string status, CancellationToken ct)
         {
             var userId = GetUserId();
 

@@ -16,17 +16,15 @@ namespace Model.Application.API.Controllers
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    //[Authorize(Policy = Policies.BusinessHour)]
+    [Authorize(Policy = Policies.BusinessHour)]
     public class RuleController : BaseController
     {
         private readonly IRuleService _service;
-        private readonly ICategoryService _categoryService;
         private readonly ILogger<RuleController> _logger;
 
-        public RuleController(IRuleService service, ICategoryService categoryService, ILogger<RuleController> logger)
+        public RuleController(IRuleService service, ILogger<RuleController> logger)
         {
             _service = service;
-            _categoryService = categoryService;
             _logger = logger;
         }
 
@@ -71,8 +69,8 @@ namespace Model.Application.API.Controllers
             return Ok(response);
         }
 
-        [Authorize(Roles = Roles.Manager)]
         [HttpPost]
+        [Authorize(Roles = Roles.Manager)]
         public async Task<IActionResult> CreateRule([FromBody] RuleRequestDTO request, CancellationToken ct)
         {
             ValidateWithDataAnotation();
@@ -81,14 +79,12 @@ namespace Model.Application.API.Controllers
 
             var maxValue = request.MaxValue == 0 ? decimal.MaxValue : request.MaxValue;
 
-            var category = await _categoryService.GetById(request.CategoryId, ct);
-
             Rule rule = new Rule()
             {
                 MinValue = request.MinValue,
                 MaxValue = maxValue,
                 Action = action,
-                Category = category,
+                Category = new Domain.Entities.Category() { Id = request.CategoryId },
                 IsActive = true
             };
 
@@ -98,8 +94,9 @@ namespace Model.Application.API.Controllers
             return Ok(createdRule.ToResponse());
         }
 
-        [Authorize(Roles = Roles.Manager)]
+        
         [HttpPost]
+        [Authorize(Roles = Roles.Manager)]
         [Route("deactivate/{ruleId}")]
         public async Task<IActionResult> DeactivateRule([FromRoute] uint ruleId, CancellationToken ct)
         {
@@ -117,11 +114,11 @@ namespace Model.Application.API.Controllers
 
             return BadRequest();
         }
-       
 
 
-        [Authorize(Roles = Roles.Manager)]
+
         [HttpPost]
+        [Authorize(Roles = Roles.Manager)]
         [Route("deactivate/category/{categoryId}")]
         public async Task<IActionResult> DeactivateACategorysRules([FromRoute] uint categoryId, CancellationToken ct)
         {

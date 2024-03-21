@@ -42,6 +42,8 @@ namespace Model.Service.Services
 
             var category = await _categoryService.GetById(rule.Category.Id, ct);
 
+            rule.Category = category;
+
             if (rule.Category.Id == 0)
                 existingRules = (List<Rule?>)await _ruleRepository.GetByParameter(ct, x => x.IsActive);
             else

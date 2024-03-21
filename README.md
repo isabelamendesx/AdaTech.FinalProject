@@ -11,11 +11,11 @@
 
 Esse projeto é uma API criada utilizando C#, .NET, PostgreSQL como banco de dados, Swagger para documentação e JWT para autorização e autenticação.
 
-## Sobre
+## 💡 Sobre
 
 Este projeto foi desenvolvido como trabalho de conclusão do curso de back-end em c# DiverseDev da empresa Mecado Eletrônico em parceria com a Edtech ADA.
 
-### Contexto do Desafio
+### 🌟 Contexto do Desafio
 Dentro do contexto de reembolso, parte crucial do controle de pagamento de reembolsos é o seu processo de aprovação. Essa etapa muitas vezes se revela trabalhosa, pois demanda que o departamento financeiro envie manualmente esse documento para o gestor, que em muitos casos essa informação não está clara e pode impactar negativamente na eficiência operacional.
 
 Nossa missão foi criar uma API(**Motor de aprovação**) para automatizar o proceso de reembolso levando em conta os seguintes critérios:
@@ -29,7 +29,7 @@ Nossa missão foi criar uma API(**Motor de aprovação**) para automatizar o pro
 7. Manutenibilidade e Extensibilidade
 
 
-## Tabela de Conteúdo
+## 📋 Tabela de Conteúdo
 
 - [Sobre](#sobre)
 - [Tabela de Conteúdo](#tabela-de-conteúdo)
@@ -43,7 +43,7 @@ Nossa missão foi criar uma API(**Motor de aprovação**) para automatizar o pro
 - [Autoras](#autoras)
 - [Licença](#licença)
 
-## Descrição do projeto
+## 📝 Descrição do projeto
 Para solucionar o desafio do controle de pagamento de reembolsos, desenvolvemos um motor de aprovação que automatiza o processo de decisão sobre a aprovação ou recusa de documentos de reembolso. Este motor é ativado automaticamente ao criar um novo documento de reembolso e segue uma tabela de decisão com critérios que podem ser pré-definidos e alterados de acordo com a necessidade da gestão financeira responsável, como por exemplo:
 
 * Para valores de reembolso até R$100, todas as categorias são automaticamente aprovadas.
@@ -55,7 +55,7 @@ Para solucionar o desafio do controle de pagamento de reembolsos, desenvolvemos 
 
 Para armazenar os dados relacionados aos documentos de reembolso e às regras de aprovação, utilizamos um banco de dados PostgreSQL hospedado no ElephantSQL, que oferece uma solução de banco de dados na nuvem confiável e escalável. Essa escolha permite o armazenamento seguro e eficiente dos dados, garantindo disponibilidade e performance para a nossa aplicação.
 
-## Funcionalidades
+## 🔍 Funcionalidades
 * **Refund**:
   * Criar solicitação de reembolso
   * Ver todas solicitações por status
@@ -77,7 +77,7 @@ Para armazenar os dados relacionados aos documentos de reembolso e às regras de
   * Atualizar Login
   
 
-## Pré-requisitos
+## 📋 Pré-requisitos
 
 Antes de iniciar, certifique-se de ter o seguinte instalado em sua máquina:
 
@@ -85,7 +85,7 @@ Antes de iniciar, certifique-se de ter o seguinte instalado em sua máquina:
 2. .NET SDK: Verifique se você tem o .NET SDK instalado. Caso contrário, baixe-o [aqui](https://dotnet.microsoft.com/pt-br/download/visual-studio-sdks).
 3. Postico/PgADmin ou outro administrador para desenvolvimento PostegreSQL.
 
-## Como Executar
+## ▶️ Como Executar
 
 1. Conecte-se ao banco de dados PostgreSQL.
    
@@ -132,7 +132,7 @@ Antes de iniciar, certifique-se de ter o seguinte instalado em sua máquina:
 
 7. Após esse processo, a API estará pronta para ser testada e as requisições ficarão salvas no banco de dados.
 
-## API Endpoints
+## 🚀 API Endpoints
 A API fornece os seguintes endpoints:
 
 ```markdown
@@ -190,7 +190,7 @@ Ou seja, inicialmente o programa buscará as **regras que rejeitam o pedido para
 ![Group 2558](https://github.com/isabelamendesx/AdaTech.FinalProject/assets/48605624/465ef666-33d5-4af0-ae7b-c0cfa5213373)
 
 
-## Segurança
+## 🔒 Segurança
 **JWT (*JSON Web Token*)**
 
 Para a segurança no processo de autenticação e autorização, utilizamos o [JWT](https://jwt.io).
@@ -205,10 +205,11 @@ Por ser um serviço `stateless`, diversas vantagens podem ser apontadas em seu u
 * **Multiservidores:** É possível ter vários servidores rodando em domínios diferentes utilizando o mesmo token.
 
 
-## Documentação
-Adicionar prints do swagger e/ou vídeo dos endpoints funcionando
+## 📄 Documentação
 
-## Autoras
+Para acessar a documentação completa, incluindo diagramas UML, diagrama de overview e outros recursos, por favor, visite nosso [Google Drive]([link_do_seu_drive_aqui](https://drive.google.com/drive/folders/1D9TqMPc0iEOQ7T5Ity96dsPvmBXfknKT?usp=sharing)).
+
+## 👩‍💻 Autoras
 
 Este projeto foi desenvolvido por:
 
@@ -218,7 +219,7 @@ Este projeto foi desenvolvido por:
 [![author](https://img.shields.io/badge/author-vitorialira92-purple.svg)](https://github.com/vitorialira92)
 [![author](https://img.shields.io/badge/author-suellensr-cyan.svg)](https://github.com/suellensr)
 
-## Licença
+## ⚖️ Licença
 
 MIT - deve ser add na main http://escolhaumalicenca.com.br/licencas/mit/
 "Permite as pessoas baixarem o projeto e modificar e autor não será responsabilizado por nada."

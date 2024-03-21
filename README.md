@@ -33,7 +33,7 @@ Nossa missão foi criar uma API(**Motor de aprovação**) para automatizar o pro
 
 - [Sobre](#sobre)
 - [Tabela de Conteúdo](#tabela-de-conteúdo)
-- [Descrição do Projeto](#📝-descrição-do-projeto)
+- [Descrição do Projeto](#-descrição-do-projeto)
 - [Funcionalidades](#funcionalidades)
 - [Pré-requisitos](#pré-requisitos)
 - [Como Executar](#como-executar)

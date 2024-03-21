@@ -31,17 +31,17 @@ Nossa missão foi criar uma API(**Motor de aprovação**) para automatizar o pro
 
 ## 📋 Tabela de Conteúdo
 
-- [Sobre](#sobre)
-- [Tabela de Conteúdo](#tabela-de-conteúdo)
+- [Sobre](#-sobre)
+- [Tabela de Conteúdo](#-tabela-de-conteúdo)
 - [Descrição do Projeto](#-descrição-do-projeto)
-- [Funcionalidades](#funcionalidades)
-- [Pré-requisitos](#pré-requisitos)
-- [Como Executar](#como-executar)
-- [API Endpoints](#api-endpoints)
-- [Segurança](#segurança)
-- [Documentação](#documentação)
-- [Autoras](#autoras)
-- [Licença](#licença)
+- [Funcionalidades](#-funcionalidades)
+- [Pré-requisitos](#-pré-requisitos)
+- [Como Executar](#-como-executar)
+- [API Endpoints](#-api-endpoints)
+- [Segurança](#-segurança)
+- [Documentação](#-documentação)
+- [Autoras](#-autoras)
+- [Licença](#-licença)
 
 ## 📝 Descrição do projeto
 Para solucionar o desafio do controle de pagamento de reembolsos, desenvolvemos um motor de aprovação que automatiza o processo de decisão sobre a aprovação ou recusa de documentos de reembolso. Este motor é ativado automaticamente ao criar um novo documento de reembolso e segue uma tabela de decisão com critérios que podem ser pré-definidos e alterados de acordo com a necessidade da gestão financeira responsável, como por exemplo:

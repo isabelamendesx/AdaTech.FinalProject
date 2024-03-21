@@ -207,7 +207,7 @@ Por ser um serviço `stateless`, diversas vantagens podem ser apontadas em seu u
 
 ## 📄 Documentação
 
-Para acessar a documentação completa, incluindo diagramas UML, diagrama de overview e outros recursos, por favor, visite nosso [Google Drive]([link_do_seu_drive_aqui](https://drive.google.com/drive/folders/1D9TqMPc0iEOQ7T5Ity96dsPvmBXfknKT?usp=sharing)).
+Para acessar a documentação completa, incluindo diagramas UML, diagrama de overview e outros recursos, por favor, visite nosso [Google Drive](https://drive.google.com/drive/folders/1D9TqMPc0iEOQ7T5Ity96dsPvmBXfknKT?usp=sharing).
 
 ## 👩‍💻 Autoras
 

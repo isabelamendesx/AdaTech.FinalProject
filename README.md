@@ -1,6 +1,7 @@
-# Motor de Aprovação - DiverseDev
 
-(add logo ou Banner)
+![Frame 2539](https://github.com/isabelamendesx/AdaTech.FinalProject/assets/129897959/706e3e26-022b-42b6-87f7-81f25fe4c65a)
+
+# ⚙️ Motor de Aprovação - DiverseDev
 
 ![C#](https://img.shields.io/badge/c%23-%23239120.svg?style=for-the-badge&logo=csharp&logoColor=white)
 ![.Net](https://img.shields.io/badge/.NET-5C2D91?style=for-the-badge&logo=.net&logoColor=white)
